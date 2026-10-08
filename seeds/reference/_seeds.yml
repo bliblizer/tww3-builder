@@ -1,0 +1,36 @@
+version: 2
+
+seeds:
+  - name: ref_v0_unit_faction_status
+    description: >
+      Référence figée : statut PvP par unité x faction calculé par les scripts Python de la V0
+      (builder_unit_list.csv, patch 9.0). Sert uniquement au test de non-régression de int_unit_faction_status.
+      À supprimer (avec son test) une fois la réécriture SQL validée.
+    config:
+      column_types:
+        faction_key: varchar
+        subculture_key: varchar
+        unit_key: varchar
+        general_unit: boolean
+        is_campaign_exclusive: boolean
+        blocking_cap_sets: varchar
+        is_selectable_pvp: boolean
+        multiplayer_cost: bigint
+        ui_group_key: varchar
+        ui_group_parent_key: varchar
+
+  - name: ref_v0_roster_options
+    description: "Référence figée V0 (roster_race/roster_options.csv) : rattachement des unités aux cartes et libellés d'options. Non-régression de int_unit_cards."
+    config:
+      column_types: {race_key: varchar, card_id: varchar, unit_key: varchar, unit_name: varchar, lore: varchar, mark: varchar,
+                     forest_spirit: varchar, other_variant: varchar, mount: varchar, is_selectable_pvp: boolean}
+
+  - name: ref_v0_roster_cards
+    description: "Référence figée V0 (roster_race/roster_cards.csv) : unité racine, nom et onglet de chaque carte. Non-régression de int_unit_cards."
+    config:
+      column_types: {race_key: varchar, card_id: varchar, root_unit_key: varchar, card_name: varchar, tab_key: varchar, ui_group_name: varchar}
+
+  - name: ref_v0_accepted_differences
+    description: "Écarts assumés entre la V0 et la réécriture SQL (corrections), exclus des tests de non-régression."
+    config:
+      column_types: {unit_key: varchar, column_name: varchar, v0_value: varchar, new_value: varchar, reason: varchar}

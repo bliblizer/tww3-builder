@@ -1,0 +1,269 @@
+version: 2
+
+models:
+  - name: stg_dump__units_custom_battle_permissions
+    description: "Unités recrutables par faction (visibilité builder) (source : db/units_custom_battle_permissions_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "faction_key || '|' || unit_key"
+      - not_null:
+          column_name: "faction_key || '|' || unit_key"
+  - name: stg_dump__custom_battle_factions
+    description: "Factions de bataille personnalisée (source : db/custom_battle_factions_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "faction_key"
+      - not_null:
+          column_name: "faction_key"
+  - name: stg_dump__factions
+    description: "Faction -> sous-culture (race) (source : db/factions_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "faction_key"
+      - not_null:
+          column_name: "faction_key"
+  - name: stg_dump__cultures_subcultures
+    description: "Sous-cultures (races) (source : db/cultures_subcultures_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "subculture_key"
+      - not_null:
+          column_name: "subculture_key"
+  - name: stg_dump__main_units
+    description: "Coût MP / caste / land_unit / sous-groupe UI de chaque unité (source : db/main_units_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "unit_key"
+      - not_null:
+          column_name: "unit_key"
+  - name: stg_dump__ui_unit_group_parents
+    description: "Onglets du builder (source : db/ui_unit_group_parents_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "tab_key"
+      - not_null:
+          column_name: "tab_key"
+  - name: stg_dump__ui_unit_groupings
+    description: "Sous-groupes du builder -> onglet (source : db/ui_unit_groupings_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "ui_group_key"
+      - not_null:
+          column_name: "ui_group_key"
+  - name: stg_dump__units_custom_battle_mounts
+    description: "Montures : unité de base -> unité montée (source : db/units_custom_battle_mounts_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "base_unit_key || '|' || mounted_unit_key"
+      - not_null:
+          column_name: "base_unit_key || '|' || mounted_unit_key"
+  - name: stg_dump__units_custom_battle_types
+    description: "Variantes : domaine de magie / marque / esprit… (source : db/units_custom_battle_types_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "type_id"
+      - not_null:
+          column_name: "type_id"
+  - name: stg_dump__units_custom_battle_types_to_factions
+    description: "Surcharges d'affichage des variantes par faction (source : db/units_custom_battle_types_to_factions_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "faction_key || '|' || type_id"
+      - not_null:
+          column_name: "faction_key || '|' || type_id"
+  - name: stg_dump__units_custom_battle_type_categories
+    description: "Catégories de variantes (source : db/units_custom_battle_type_categories_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "type_category_key"
+      - not_null:
+          column_name: "type_category_key"
+  - name: stg_dump__unit_set_to_mp_unit_caps
+    description: "Plafonds MP par groupe (0 = interdit) (source : db/unit_set_to_mp_unit_caps_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "unit_set_key || '|' || coalesce(subculture_key,'') || '|' || coalesce(character_name,'')"
+      - not_null:
+          column_name: "unit_set_key || '|' || coalesce(subculture_key,'') || '|' || coalesce(character_name,'')"
+  - name: stg_dump__unit_set_to_unit_junctions
+    description: "Composition des groupes de caps (source : db/unit_set_to_unit_junctions_tables/data__.tsv)"
+  - name: stg_dump__mp_budgets
+    description: "Budgets par type de bataille (land_large = 12400) (source : db/mp_budgets_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "budget_key"
+      - not_null:
+          column_name: "budget_key"
+  - name: stg_dump__battle_unit_caps_for_team_sizes
+    description: "Nombre d'unités max par taille d'équipe (1v1 = 20) (source : db/battle_unit_caps_for_team_sizes_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "team_size"
+      - not_null:
+          column_name: "team_size"
+  - name: stg_dump__unit_stats_land_experience_bonuses
+    description: "Coût MP des rangs d'expérience (fixe + multiplicateur) (source : db/unit_stats_land_experience_bonuses_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "xp_level"
+      - not_null:
+          column_name: "xp_level"
+  - name: stg_dump__agent_subtypes
+    description: "Type de personnage -> unité (associated_unit_override) ; peut équiper des objets (source : db/agent_subtypes_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "agent_subtype_key"
+      - not_null:
+          column_name: "agent_subtype_key"
+  - name: stg_dump__agent_subtype_subculture_overrides
+    description: "Surcharges de personnage par sous-culture (source : db/agent_subtype_subculture_overrides_tables/data__.tsv)"
+  - name: stg_dump__special_ability_groups
+    description: "Groupes de capacités (domaines de magie…) (source : db/special_ability_groups_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "ability_group_key"
+      - not_null:
+          column_name: "ability_group_key"
+  - name: stg_dump__special_ability_groups_to_units_junctions
+    description: "Groupes de capacités par unité (source : db/special_ability_groups_to_units_junctions_tables/data__.tsv)"
+  - name: stg_dump__special_ability_groups_to_unit_abilities_junctions
+    description: "Capacités/sorts de chaque groupe (source : db/special_ability_groups_to_unit_abilities_junctions_tables/data__.tsv)"
+  - name: stg_dump__unit_abilities
+    description: "Définition des capacités et sorts (source : db/unit_abilities_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "ability_key"
+      - not_null:
+          column_name: "ability_key"
+  - name: stg_dump__land_units_to_unit_abilites_junctions
+    description: "Capacités natives de chaque land unit (source : db/land_units_to_unit_abilites_junctions_tables/data__.tsv)"
+  - name: stg_dump__ancillaries
+    description: "Objets (catégorie / légendaire / uniqueness_score = coût ?) (source : db/ancillaries_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "ancillary_key"
+      - not_null:
+          column_name: "ancillary_key"
+  - name: stg_dump__ancillaries_included_agent_subtypes
+    description: "Objets autorisés par type de personnage (source : db/ancillaries_included_agent_subtypes_tables/data__.tsv)"
+  - name: stg_dump__ancillary_to_included_agents
+    description: "Objets autorisés par catégorie d'agent (source : db/ancillary_to_included_agents_tables/data__.tsv)"
+  - name: stg_dump__ancillaries_categories
+    description: "Catégories d'objets (source : db/ancillaries_categories_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "ancillary_category_key"
+      - not_null:
+          column_name: "ancillary_category_key"
+  - name: stg_dump__ancillaries_categories_agent_subtype_override_junctions
+    description: "Nombre d'objets par catégorie (exceptions) (source : db/ancillaries_categories_agent_subtype_override_junctions_tables/data__.tsv)"
+  - name: stg_dump__ui_unit_bullet_point_unit_overrides
+    description: "Étiquettes forces/faiblesses par unité (phase ultérieure) (source : db/ui_unit_bullet_point_unit_overrides_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "unit_key || '|' || bullet_point_key"
+      - not_null:
+          column_name: "unit_key || '|' || bullet_point_key"
+  - name: stg_dump__ui_unit_bullet_point_enums
+    description: "Définition des étiquettes (phase ultérieure) (source : db/ui_unit_bullet_point_enums_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "bullet_point_key"
+      - not_null:
+          column_name: "bullet_point_key"
+  - name: stg_dump_loc__land_units
+    description: "Noms des unités (source : text/db/land_units__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__agent_subtypes
+    description: "Noms des personnages (renvois depuis land_units) (source : text/db/agent_subtypes__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__factions
+    description: "Noms des factions (source : text/db/factions__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__cultures_subcultures
+    description: "Noms des races (source : text/db/cultures_subcultures__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__ui_unit_group_parents
+    description: "Noms des onglets (source : text/db/ui_unit_group_parents__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__ui_unit_groupings
+    description: "Noms des sous-groupes (source : text/db/ui_unit_groupings__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__units_custom_battle_mounts
+    description: "Noms des montures (source : text/db/units_custom_battle_mounts__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__units_custom_battle_types
+    description: "Noms des variantes (source : text/db/units_custom_battle_types__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__unit_set_to_mp_unit_caps
+    description: "Noms des groupes de caps (source : text/db/unit_set_to_mp_unit_caps__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__unit_abilities
+    description: "Noms des capacités et sorts (source : text/db/unit_abilities__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__special_ability_groups
+    description: "Noms des groupes de capacités (source : text/db/special_ability_groups__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__ancillaries
+    description: "Noms des objets (source : text/db/ancillaries__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__ui_unit_bullet_point_enums
+    description: "Libellés forces/faiblesses (phase ultérieure) (source : text/db/ui_unit_bullet_point_enums__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_loc_texts
+    description: "Tous les textes du jeu, renvois vers d autres textes résolus (resolved_text)."
+    data_tests:
+      - unique:
+          column_name: loc_key

@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: pvp_races
+    description: "Races jouables en PvP (1 ligne par race) et taille de leur roster."
+    columns:
+      - name: race_key
+        data_tests: [unique, not_null]
+      - name: race_name
+        data_tests: [unique, not_null]
+
+  - name: pvp_roster_cards
+    description: >
+      Cartes du builder PvP : 1 carte = 1 unité de base + ses options jouables. Colonnes calculées après le filtre PvP.
+      has_variant_choice / has_mount_choice = au moins deux valeurs différentes parmi les options PvP de la carte.
+    columns:
+      - name: card_id
+        data_tests: [unique, not_null]
+      - name: card_name
+        data_tests: [not_null]
+      - name: race_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('pvp_races')
+                field: race_key
+      - name: tab_name
+        data_tests: [not_null]
+      - name: tab_order
+        data_tests: [not_null]
+      - name: min_cost
+        data_tests: [not_null]
+
+  - name: pvp_roster_options
+    description: >
+      Options jouables de chaque carte : 1 ligne par race x unité sélectionnable en PvP.
+      unit_key = clé enregistrée dans les fichiers .army_setup. mount = « On foot » pour la version à pied quand la carte propose des montures.
+    data_tests:
+      - unique:
+          column_name: "race_key || '|' || unit_key"
+    columns:
+      - name: card_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('pvp_roster_cards')
+                field: card_id
+      - name: unit_name
+        data_tests: [not_null]
+      - name: multiplayer_cost
+        data_tests: [not_null]

@@ -1,0 +1,30 @@
+-- Type de personnage -> unité (associated_unit_override) ; peut équiper des objets
+-- Source : db/agent_subtypes_tables/data__.tsv  (types déduits du patch 9.0 : un cast qui échoue sur un nouveau patch signale un changement de format)
+select
+    "key"                                                   as agent_subtype_key,
+    cast("auto_generate" as boolean)                        as auto_generate,
+    cast("is_caster" as boolean)                            as is_caster,
+    "small_icon"                                            as small_icon,
+    "associated_unit_override"                              as unit_key,
+    "audio_voiceover_actor_group"                           as audio_voiceover_actor_group,
+    cast("show_in_ui" as boolean)                           as show_in_ui,
+    cast("cap" as bigint)                                   as cap,
+    cast("has_female_name" as boolean)                      as has_female_name,
+    cast("can_gain_xp" as boolean)                          as can_gain_xp,
+    cast("loyalty_is_applicable" as boolean)                as loyalty_is_applicable,
+    cast("contributes_to_agent_cap" as boolean)             as contributes_to_agent_cap,
+    "recruitment_category"                                  as recruitment_category,
+    "magic_lore"                                            as magic_lore,
+    "names_group"                                           as names_group,
+    cast("can_be_loaned" as boolean)                        as can_be_loaned,
+    cast("recruitable" as boolean)                          as recruitable,
+    "saving_settings"                                       as saving_settings,
+    "audio_vo_culture_override"                             as audio_vo_culture_override,
+    cast("spam_click_vo_enabled" as boolean)                as spam_click_vo_enabled,
+    cast("can_equip_ancillaries" as boolean)                as can_equip_ancillaries,
+    cast("cost" as bigint)                                  as cost,
+    "recruitment_button_active_icon_path"                   as recruitment_button_active_icon_path,
+    "recruitment_button_background_icon_path"               as recruitment_button_background_icon_path,
+    cast("audio_force_contextual_vo" as boolean)            as audio_force_contextual_vo,
+    '{{ var("patch") }}' as patch
+from {{ read_raw('db/agent_subtypes_tables/data__.tsv') }}

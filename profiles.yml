@@ -1,0 +1,7 @@
+tww3_builder:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: tww3.duckdb     # base locale, créée à la racine du projet
+      threads: 4

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TWW3 – Army Builder (V0)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Jetons de couleur (sombre par défaut, comme l'écran du jeu) ---------- */
+:root {
+  --bg: #1d1614;          /* fond charbon brun */
+  --panel: #2a1e1a;       /* panneaux */
+  --panel-2: #33241f;
+  --crimson: #7f1a15;     /* bandeaux de section */
+  --crimson-hi: #a3261e;
+  --bronze: #8c6a3b;      /* filets et bordures */
+  --gold: #e2b65a;        /* or : fonds, coûts */
+  --text: #eadfc8;        /* parchemin */
+  --muted: #a8977d;
+  --danger: #ff6b5a;
+  --card-ink: #f4ead6;
+  --shadow: rgba(0, 0, 0, .45);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #efe5d0; --panel: #e3d5b9; --panel-2: #d9c8a7; --crimson: #8e2219; --crimson-hi: #a8342a;
+    --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e;
+    --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); color-scheme: light;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1d1614; --panel: #2a1e1a; --panel-2: #33241f; --crimson: #7f1a15; --crimson-hi: #a3261e;
+  --bronze: #8c6a3b; --gold: #e2b65a; --text: #eadfc8; --muted: #a8977d; --danger: #ff6b5a;
+  --card-ink: #f4ead6; --shadow: rgba(0, 0, 0, .45); color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #efe5d0; --panel: #e3d5b9; --panel-2: #d9c8a7; --crimson: #8e2219; --crimson-hi: #a8342a;
+  --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e;
+  --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); color-scheme: light;
+}
+
+/* ---------- Base ---------- */
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: "Alegreya Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.4;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.serif { font-family: "Cinzel", Georgia, "Times New Roman", serif; }
+
+/* ---------- Bandeau du haut : race + fonds ---------- */
+.topbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;
+  padding: 12px 20px; background: var(--panel); border-bottom: 1px solid var(--bronze);
+}
+.race-picker { display: flex; align-items: center; gap: 8px; }
+.race-arrow {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bronze);
+  background: var(--crimson); cursor: pointer; font-size: 16px; line-height: 1;
+}
+.race-arrow:hover { background: var(--crimson-hi); }
+.race-name { font-size: 26px; font-weight: 700; min-width: 260px; text-align: center; margin: 0; }
+.race-select {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--bronze);
+  border-radius: 4px; padding: 6px 8px; font: inherit;
+}
+.funds { margin-left: auto; display: flex; align-items: baseline; gap: 18px; }
+.funds .value { font-size: 24px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+.funds .value.over { color: var(--danger); }
+.coin {
+  display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px;
+  background: radial-gradient(circle at 35% 35%, #ffe7a3, var(--gold) 60%, #7a5418);
+}
+.funds .label { color: var(--muted); }
+.theme-toggle { background: none; border: 1px solid var(--bronze); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+
+/* ---------- Armée ---------- */
+.army { padding: 12px 20px 14px; background: linear-gradient(var(--crimson), var(--crimson)) top / 100% 34px no-repeat, var(--panel-2); border-bottom: 1px solid var(--bronze); }
+.army-head { display: flex; align-items: center; justify-content: space-between; height: 22px; margin-bottom: 14px; }
+.army-head h2 { font-size: 16px; margin: 0; color: #f4ead6; }
+.army-head .count { color: #f4ead6; font-variant-numeric: tabular-nums; }
+.army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; }
+.slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.slot-empty {
+  flex: 0 0 66px; height: 118px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45;
+}
+.army-hint { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+
+/* ---------- Cartes d'unité ---------- */
+.card {
+  flex: 0 0 66px; width: 66px; height: 118px; padding: 0; position: relative; cursor: pointer;
+  border: 1px solid var(--bronze); border-radius: 4px; overflow: hidden; text-align: center;
+  background: var(--card-bg, #4a2c2a); color: var(--card-ink); box-shadow: 0 2px 4px var(--shadow);
+  display: flex; flex-direction: column;
+}
+.card:hover { border-color: var(--gold); }
+.card .cost {
+  background: rgba(0,0,0,.55); color: #f6d58a; font-weight: 700; font-size: 13px;
+  padding: 1px 0; font-variant-numeric: tabular-nums;
+}
+.card .mono { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; opacity: .9; }
+.card .nm {
+  font-size: 10px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.card .badge-gen { position: absolute; top: 20px; left: 3px; font-size: 11px; color: #f6d58a; }
+.card .badge-opt { position: absolute; top: 20px; right: 3px; font-size: 10px; background: rgba(0,0,0,.5); border-radius: 3px; padding: 0 3px; }
+.card.unaffordable { filter: grayscale(.85) brightness(.6); }
+.card.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
+.card.in-army::after { content: "Retirer"; position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(127,26,21,.75); font-size: 12px; }
+.card.in-army:hover::after, .card.in-army:focus-visible::after { display: flex; }
+
+/* ---------- Corps : panneau de détail + roster ---------- */
+.body { display: grid; grid-template-columns: 300px 1fr; gap: 0; align-items: start; }
+.detail { position: sticky; top: env(safe-area-inset-top, 0px); padding: 16px 18px; background: var(--panel); border-right: 1px solid var(--bronze); min-height: 60vh; }
+.detail h3 { font-size: 19px; margin: 0 0 4px; }
+.detail .sub { color: var(--muted); margin: 0 0 12px; }
+.detail dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0 0 12px; }
+.detail dt { color: var(--muted); }
+.detail dd { margin: 0; }
+.detail .empty { color: var(--muted); }
+.detail .key { font-size: 12px; color: var(--muted); word-break: break-all; }
+.dim { margin: 10px 0; }
+.dim-title { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
+.dim-values { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { border: 1px solid var(--bronze); background: var(--panel-2); border-radius: 3px; padding: 2px 8px; cursor: pointer; font-size: 13px; }
+.chip[aria-pressed="true"] { background: var(--crimson); color: #f4ead6; border-color: var(--gold); }
+.add-btn {
+  width: 100%; margin-top: 10px; padding: 8px; border: 1px solid var(--gold); border-radius: 4px;
+  background: var(--crimson); color: #f4ead6; font-weight: 700; cursor: pointer;
+}
+.add-btn:disabled { opacity: .5; cursor: not-allowed; }
+.msg { color: var(--danger); font-size: 13px; min-height: 18px; margin: 6px 0 0; }
+
+.roster { padding: 14px 20px 40px; }
+.roster h2 { font-size: 18px; margin: 0 0 10px; }
+.sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 14px 18px; }
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--crimson); color: #f4ead6; border: 1px solid var(--bronze); padding: 3px 10px; margin-bottom: 6px;
+}
+.section-head h3 { margin: 0; font-size: 15px; }
+.section-head .n { font-size: 13px; opacity: .85; }
+.section-cards { display: flex; flex-wrap: wrap; gap: 5px; }
+.footer { color: var(--muted); font-size: 13px; padding: 0 20px 24px; }
+
+@media (max-width: 760px) {
+  .body { grid-template-columns: 1fr; }
+  .detail { position: static; border-right: none; border-bottom: 1px solid var(--bronze); min-height: 0; }
+  .sections { grid-template-columns: 1fr; }
+  .race-name { min-width: 0; font-size: 21px; }
+  .funds { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="race-picker">
+    <button class="race-arrow" id="prevRace" aria-label="Race précédente">◀</button>
+    <h1 class="race-name serif" id="raceName">—</h1>
+    <button class="race-arrow" id="nextRace" aria-label="Race suivante">▶</button>
+  </div>
+  <label><span class="sr" hidden>Choisir une race</span>
+    <select class="race-select" id="raceSelect" aria-label="Choisir une race"></select>
+  </label>
+  <div class="funds">
+    <div><span class="label">Fonds restants</span><br><span class="value serif" id="funds"><span class="coin"></span>0</span></div>
+    <button class="theme-toggle" id="themeToggle" title="Changer de thème">Thème</button>
+  </div>
+</header>
+
+<section class="army" aria-label="Armée">
+  <div class="army-head">
+    <h2 class="serif">Main Army</h2>
+    <div><span class="count" id="unitCount">0 / 20</span>
+      <button class="clear" id="clearArmy">Vider</button></div>
+  </div>
+  <div class="slots" id="slots"></div>
+  <p class="army-hint">Clique sur une carte du roster pour l'ajouter, sur une unité de l'armée pour la retirer.</p>
+</section>
+
+<div class="body">
+  <aside class="detail" id="detail" aria-live="polite">
+    <p class="empty">Survole une carte pour voir son détail.</p>
+  </aside>
+  <main class="roster">
+    <h2 class="serif">Unit Roster</h2>
+    <div class="sections" id="sections"></div>
+  </main>
+</div>
+<p class="footer" id="footer"></p>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+/* ---------- État ---------- */
+const state = { raceIndex: 0, army: [], pinned: null, selection: {} };
+const DIMS = [['lore', 'Domaine de magie'], ['mark', 'Marque'], ['spirit', 'Esprit de la forêt'], ['other', 'Variante'], ['mount', 'Monture']];
+const TAB_COLORS = {   // teinte de fond des cartes selon l'onglet (en attendant les vrais visuels)
+  commander: '#5a2a3a', heroes_agents: '#4a2f50', infantry: '#3e3a2c', missile_infantry: '#2f4038',
+  cavalry_chariots: '#4a3424', missile_cavalry_chariots: '#3a4026', monster_beasts: '#2c3a48',
+  constructs: '#3d3d3d', flying_war_machine: '#30404a', missile_monster_beasts: '#2a4340',
+  artillery_war_machines: '#45392a', campaign_exclusives: '#333'
+};
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString('fr-FR');
+const race = () => DATA.races[state.raceIndex];
+const roster = () => DATA.roster[race().key] || [];
+const spent = () => state.army.reduce((s, u) => s + u.opt.c, 0);
+const remaining = () => DATA.budget - spent();
+const initials = name => name.replace(/\(.*?\)/g, '').split(/[\s-]+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w))
+  .slice(0, 2).map(w => w[0].toUpperCase()).join('');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+/* libellé lisible d'une option : « Beasts, Unicorn » */
+const optionLabel = o => DIMS.map(([k]) => o[k]).filter(Boolean).join(', ');
+/* dimensions qui offrent un vrai choix sur cette carte */
+const choiceDims = card => DIMS.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
+
+/* ---------- Construction d'une carte ---------- */
+function cardEl(card, { cost, inArmy = false, label = '' }) {
+  const b = document.createElement('button');
+  b.className = 'card' + (inArmy ? ' in-army' : '');
+  b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
+  b.innerHTML =
+    `<span class="cost">${fmt(cost)}</span>` +
+    (card.g ? '<span class="badge-gen" title="Peut être général">♛</span>' : '') +
+    (!inArmy && card.opts.length > 1 ? `<span class="badge-opt" title="${card.opts.length} options">${card.opts.length}</span>` : '') +
+    `<span class="mono serif">${esc(initials(card.n))}</span>` +
+    `<span class="nm">${esc(card.n)}</span>`;
+  b.title = card.n + (label ? ' (' + label + ')' : '');
+  b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}${inArmy ? ', retirer de l’armée' : ''}`);
+  return b;
+}
+
+/* ---------- Rendu ---------- */
+function renderTop() {
+  $('raceName').textContent = race().name;
+  $('raceSelect').value = String(state.raceIndex);
+  const f = $('funds');
+  f.innerHTML = `<span class="coin"></span>${fmt(remaining())}`;
+  f.classList.toggle('over', remaining() < 0);
+  $('unitCount').textContent = `${state.army.length} / ${DATA.maxUnits}`;
+}
+
+function renderArmy() {
+  const slots = $('slots');
+  slots.innerHTML = '';
+  state.army.forEach((u, i) => {
+    const el = cardEl(u.card, { cost: u.opt.c, inArmy: true, label: optionLabel(u.opt) });
+    el.addEventListener('click', () => { state.army.splice(i, 1); renderAll(); });
+    el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(u.card, u.opt); });
+    el.addEventListener('focus', () => { if (!state.pinned) showDetail(u.card, u.opt); });
+    slots.appendChild(el);
+  });
+  for (let i = state.army.length; i < DATA.maxUnits; i++) {
+    const e = document.createElement('div'); e.className = 'slot-empty'; e.setAttribute('aria-hidden', 'true'); slots.appendChild(e);
+  }
+}
+
+function renderRoster() {
+  const box = $('sections');
+  box.innerHTML = '';
+  const byTab = {};
+  roster().forEach(c => (byTab[c.t] ||= []).push(c));
+  DATA.tabs.filter(t => byTab[t.key]).forEach(t => {
+    const sec = document.createElement('section');
+    sec.innerHTML = `<div class="section-head"><h3 class="serif">${esc(t.name)}</h3><span class="n">${byTab[t.key].length} carte${byTab[t.key].length > 1 ? "s" : ""}</span></div>`;
+    const wrap = document.createElement('div'); wrap.className = 'section-cards';
+    byTab[t.key].forEach(card => {
+      const el = cardEl(card, { cost: card.min });
+      if (card.min > remaining()) el.classList.add('unaffordable');
+      if (state.pinned === card) el.classList.add('selected');
+      el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(card); });
+      el.addEventListener('focus', () => { if (!state.pinned) showDetail(card); });
+      el.addEventListener('click', () => onCardClick(card));
+      wrap.appendChild(el);
+    });
+    sec.appendChild(wrap);
+    box.appendChild(sec);
+  });
+}
+
+function renderAll() { renderTop(); renderArmy(); renderRoster(); if (state.pinned) showPicker(state.pinned); }
+
+/* ---------- Panneau de détail (survol) ---------- */
+function showDetail(card, opt = null) {
+  const tab = DATA.tabs.find(t => t.key === card.t);
+  const dims = choiceDims(card);
+  const lines = dims.map(([k, lbl]) => `<dt>${lbl}</dt><dd>${esc([...new Set(card.opts.map(o => o[k] || 'Aucun'))].join(', '))}</dd>`).join('');
+  $('detail').innerHTML = `
+    <h3 class="serif">${esc(card.n)}</h3>
+    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}</p>
+    <dl>
+      <dt>Coût</dt><dd>${opt ? fmt(opt.c) : (card.min === card.max ? fmt(card.min) : fmt(card.min) + ' – ' + fmt(card.max))}</dd>
+      <dt>Général</dt><dd>${card.g ? 'Oui' : 'Non'}</dd>
+      <dt>Options</dt><dd>${card.opts.length}</dd>
+      ${opt ? `<dt>Choix</dt><dd>${esc(optionLabel(opt) || 'Standard')}</dd>` : lines}
+    </dl>
+    <p class="key">${esc(opt ? opt.u : card.opts.map(o => o.u).join(', '))}</p>`;
+}
+
+/* ---------- Choix des options (carte à plusieurs options) ---------- */
+function matching(card, sel) {
+  return card.opts.filter(o => Object.entries(sel).every(([k, v]) => (o[k] ?? '') === v));
+}
+function currentOption(card) { return matching(card, state.selection)[0] || card.opts[0]; }
+
+function onCardClick(card) {
+  if (card.opts.length === 1) { addToArmy(card, card.opts[0]); return; }
+  state.pinned = card;
+  const first = card.opts[0];
+  state.selection = Object.fromEntries(choiceDims(card).map(([k]) => [k, first[k] ?? '']));
+  renderRoster();
+  showPicker(card);
+}
+
+function showPicker(card, msg = '') {
+  const opt = currentOption(card);
+  const dims = choiceDims(card);
+  const html = dims.map(([k, lbl]) => {
+    const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
+    const chips = values.map(v => {
+      const pressed = state.selection[k] === v;
+      return `<button class="chip" data-k="${k}" data-v="${esc(v)}" aria-pressed="${pressed}">${esc(v || 'Aucun')}</button>`;
+    }).join('');
+    return `<div class="dim"><div class="dim-title">${lbl}</div><div class="dim-values">${chips}</div></div>`;
+  }).join('');
+  const blocked = state.army.length >= DATA.maxUnits ? 'Armée complète (' + DATA.maxUnits + ' unités).'
+                : opt.c > remaining() ? 'Fonds insuffisants.' : '';
+  $('detail').innerHTML = `
+    <h3 class="serif">${esc(card.n)}</h3>
+    <p class="sub">${esc(opt.n)}</p>
+    ${html}
+    <button class="add-btn" id="addBtn" ${blocked ? 'disabled' : ''}>Ajouter à l'armée (${fmt(opt.c)})</button>
+    <p class="msg">${esc(msg || blocked)}</p>
+    <button class="chip" id="cancelPick" style="margin-top:6px">Annuler</button>
+    <p class="key">${esc(opt.u)}</p>`;
+  $('detail').querySelectorAll('.chip[data-k]').forEach(btn => btn.addEventListener('click', () => {
+    const k = btn.dataset.k, v = btn.dataset.v;
+    const next = { ...state.selection, [k]: v };
+    if (matching(card, next).length) state.selection = next;
+    else {   // combinaison inexistante : on garde la valeur cliquée et on prend la première option compatible
+      const o = card.opts.find(o => (o[k] ?? '') === v);
+      state.selection = Object.fromEntries(dims.map(([d]) => [d, o[d] ?? '']));
+    }
+    showPicker(card);
+  }));
+  $('addBtn').addEventListener('click', () => addToArmy(card, currentOption(card)));
+  $('cancelPick').addEventListener('click', () => { state.pinned = null; renderRoster(); showDetail(card); });
+}
+
+function addToArmy(card, opt) {
+  if (state.army.length >= DATA.maxUnits || opt.c > remaining()) {
+    if (state.pinned) showPicker(card); else showDetail(card);
+    return;
+  }
+  state.army.push({ card, opt });
+  state.pinned = null;
+  renderAll();
+  showDetail(card, opt);
+}
+
+/* ---------- Changement de race ---------- */
+function setRace(i) {
+  state.raceIndex = (i + DATA.races.length) % DATA.races.length;
+  state.army = []; state.pinned = null;
+  $('detail').innerHTML = '<p class="empty">Survole une carte pour voir son détail.</p>';
+  renderAll();
+}
+
+/* ---------- Initialisation ---------- */
+function init() {
+  const sel = $('raceSelect');
+  DATA.races.forEach((r, i) => sel.add(new Option(`${r.name} (${r.nb_cards} cartes)`, String(i))));
+  sel.addEventListener('change', e => setRace(Number(e.target.value)));
+  $('prevRace').addEventListener('click', () => setRace(state.raceIndex - 1));
+  $('nextRace').addEventListener('click', () => setRace(state.raceIndex + 1));
+  $('clearArmy').addEventListener('click', () => { state.army = []; renderAll(); });
+  document.addEventListener('keydown', e => {
+    if (e.target.closest('select')) return;
+    if (e.key === 'ArrowLeft' && e.altKey) setRace(state.raceIndex - 1);
+    if (e.key === 'ArrowRight' && e.altKey) setRace(state.raceIndex + 1);
+  });
+  $('themeToggle').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = getComputedStyle(root).colorScheme === 'dark';
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+  $('footer').textContent = `Données du dump WH3 (${DATA.patch}), budget de ${fmt(DATA.budget)} et ${DATA.maxUnits} unités maximum. ` +
+    `V0 : prix de base sans objets ni sorts, sans caps ni validation de l'armée. ` +
+    `Outil de fan non officiel, non affilié à Creative Assembly ni à Games Workshop.`;
+  setRace(0);
+}
+init();
+</script>
+</body>
+</html>

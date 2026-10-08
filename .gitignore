@@ -1,0 +1,18 @@
+# Fichiers reconstruits à chaque exécution : jamais versionnés
+tww3.duckdb
+tww3.duckdb.wal
+target/
+logs/
+dbt_packages/
+exports/
+.user.yml
+
+# Environnement Python local
+.venv/
+__pycache__/
+
+# Ancienne sortie de l'application (remplacée par docs/index.html)
+app/tww3_builder.html
+
+# Images extraites du jeu avec RPFM (originaux) : jamais versionnées
+assets/

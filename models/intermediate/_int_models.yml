@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: int_faction_race
+    description: "Chaque faction du jeu rattachée à sa race (sous-culture). 1 ligne par faction."
+    columns:
+      - name: faction_key
+        data_tests: [unique, not_null]
+      - name: race_key
+        description: "Clé de la race (= subculture_key du jeu)."
+        data_tests: [not_null]
+      - name: has_builder_units
+        description: "true si la faction a au moins une unité dans le builder de bataille."
+
+  - name: int_unit_faction_status
+    description: >
+      Statut de chaque unité dans le builder, faction par faction (1 ligne par couple faction x unité des permissions).
+      Visible = présente dans les permissions ; sélectionnable en PvP = ni campaign_exclusive, ni membre d'un groupe de caps à 0
+      applicable à la race de la faction.
+    data_tests:
+      - unique:
+          column_name: "faction_key || '|' || unit_key"
+    columns:
+      - name: faction_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_faction_race')
+                field: faction_key
+      - name: unit_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_dump__main_units')
+                field: unit_key
+      - name: race_key
+        data_tests: [not_null]
+      - name: multiplayer_cost
+        data_tests: [not_null]
+      - name: tab_key
+        description: "Onglet du builder d'origine de l'unité (Lords, Heroes, Infantry…)."
+        data_tests: [not_null]
+      - name: blocking_reason
+        description: "Motif du blocage PvP (vide si sélectionnable)."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['campaign_exclusive', 'zero_cap', 'campaign_exclusive + zero_cap']

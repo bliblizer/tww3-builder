@@ -1,0 +1,45 @@
+path,domain,purpose,status
+db/units_custom_battle_permissions_tables/data__.tsv,roster,Unités recrutables par faction (visibilité builder),confirmé
+db/custom_battle_factions_tables/data__.tsv,roster,Factions de bataille personnalisée,confirmé
+db/factions_tables/data__.tsv,roster,Faction -> sous-culture (race),confirmé
+db/cultures_subcultures_tables/data__.tsv,roster,Sous-cultures (races),confirmé
+db/main_units_tables/data__.tsv,roster,Coût MP / caste / land_unit / sous-groupe UI de chaque unité,confirmé
+db/ui_unit_group_parents_tables/data__.tsv,roster,Onglets du builder,confirmé
+db/ui_unit_groupings_tables/data__.tsv,roster,Sous-groupes du builder -> onglet,confirmé
+db/units_custom_battle_mounts_tables/data__.tsv,options,Montures : unité de base -> unité montée,confirmé
+db/units_custom_battle_types_tables/data__.tsv,options,Variantes : domaine de magie / marque / esprit…,confirmé
+db/units_custom_battle_types_to_factions_tables/data__.tsv,options,Surcharges d'affichage des variantes par faction,confirmé
+db/units_custom_battle_type_categories_tables/data__.tsv,options,Catégories de variantes,confirmé
+db/unit_set_to_mp_unit_caps_tables/data__.tsv,caps,Plafonds MP par groupe (0 = interdit),confirmé
+db/unit_set_to_unit_junctions_tables/data__.tsv,caps,Composition des groupes de caps,confirmé
+db/mp_budgets_tables/data__.tsv,armee,Budgets par type de bataille (land_large = 12400),confirmé
+db/battle_unit_caps_for_team_sizes_tables/data__.tsv,armee,Nombre d'unités max par taille d'équipe (1v1 = 20),confirmé
+db/unit_stats_land_experience_bonuses_tables/data__.tsv,experience,Coût MP des rangs d'expérience (fixe + multiplicateur),candidat
+db/agent_subtypes_tables/data__.tsv,personnages,Type de personnage -> unité (associated_unit_override) ; peut équiper des objets,candidat
+db/agent_subtype_subculture_overrides_tables/data__.tsv,personnages,Surcharges de personnage par sous-culture,candidat
+db/special_ability_groups_tables/data__.tsv,sorts,Groupes de capacités (domaines de magie…),candidat
+db/special_ability_groups_to_units_junctions_tables/data__.tsv,sorts,Groupes de capacités par unité,candidat
+db/special_ability_groups_to_unit_abilities_junctions_tables/data__.tsv,sorts,Capacités/sorts de chaque groupe,candidat
+db/unit_abilities_tables/data__.tsv,sorts,Définition des capacités et sorts,candidat
+db/land_units_to_unit_abilites_junctions_tables/data__.tsv,sorts,Capacités natives de chaque land unit,candidat
+db/ancillaries_tables/data__.tsv,objets,Objets (catégorie / légendaire / uniqueness_score = coût ?),candidat
+db/ancillaries_included_agent_subtypes_tables/data__.tsv,objets,Objets autorisés par type de personnage,candidat
+db/ancillary_to_included_agents_tables/data__.tsv,objets,Objets autorisés par catégorie d'agent,candidat
+db/ancillaries_categories_tables/data__.tsv,objets,Catégories d'objets,candidat
+db/ancillaries_categories_agent_subtype_override_junctions_tables/data__.tsv,objets,Nombre d'objets par catégorie (exceptions),candidat
+db/ui_unit_bullet_point_unit_overrides_tables/data__.tsv,forces_faiblesses,Étiquettes forces/faiblesses par unité (phase ultérieure),confirmé
+db/ui_unit_bullet_point_enums_tables/data__.tsv,forces_faiblesses,Définition des étiquettes (phase ultérieure),confirmé
+text/db/land_units__.loc.tsv,textes,Noms des unités,confirmé
+text/db/agent_subtypes__.loc.tsv,textes,Noms des personnages (renvois depuis land_units),confirmé
+text/db/factions__.loc.tsv,textes,Noms des factions,confirmé
+text/db/cultures_subcultures__.loc.tsv,textes,Noms des races,confirmé
+text/db/ui_unit_group_parents__.loc.tsv,textes,Noms des onglets,confirmé
+text/db/ui_unit_groupings__.loc.tsv,textes,Noms des sous-groupes,confirmé
+text/db/units_custom_battle_mounts__.loc.tsv,textes,Noms des montures,confirmé
+text/db/units_custom_battle_types__.loc.tsv,textes,Noms des variantes,confirmé
+text/db/unit_set_to_mp_unit_caps__.loc.tsv,textes,Noms des groupes de caps,confirmé
+text/db/unit_abilities__.loc.tsv,textes,Noms des capacités et sorts,candidat
+text/db/special_ability_groups__.loc.tsv,textes,Noms des groupes de capacités,candidat
+text/db/ancillaries__.loc.tsv,textes,Noms des objets,candidat
+text/db/ui_unit_bullet_point_enums__.loc.tsv,textes,Libellés forces/faiblesses (phase ultérieure),confirmé
+ui/frontend ui/custom_battle.twui.xml,reference,Écran du builder (preuve des règles d'affichage),référence
