@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=163 WARN=0 ERROR=0`.
+Le résultat attendu est `Done. PASS=172 WARN=0 ERROR=0`.
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -127,6 +127,7 @@ docs/index.html          application produite, autonome (données incluses) : do
 ```
 
 Pour la reconstruire après un `dbt build` : `python scripts/build_app.py`.
+Un fichier source s'ajoute à un patch déjà téléchargé avec `python scripts/fetch_raw.py patch_9.0 --add`. Le fichier est téléchargé au même commit, sans toucher aux autres.
 
 Fonctions de la V0 :
 - sélection de la race (flèches ◀ ▶, liste déroulante ou Alt + ← / →) ;
@@ -138,8 +139,20 @@ Fonctions de la V0 :
 
 Limites de la V0 :
 - prix de base, sans objets ni sorts ;
-- pas de caps ni de validation de l'armée ;
-- visuels provisoires : couleur par onglet et initiales du nom.
+- pas de caps ni de validation de l'armée.
+
+### Images des cartes
+
+Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu installé.
+Le lien unité → image vient de la table `unit_variants` (`int_unit_card_images`, colonnes `unit_card` des marts). Les 2 698 options PvP ont une image référencée, soit 1 142 fichiers distincts.
+
+1. Avec **RPFM**, extrais le dossier `ui/units/icons/` des packs du jeu.
+2. Copie son contenu dans `assets/unit_cards/` à la racine du projet. Les sous-dossiers sont acceptés.
+3. Lance `python scripts/build_app.py`. Il copie uniquement les images utiles dans `docs/images/` et liste les manquantes dans `exports/missing_unit_cards.csv`.
+
+Points à retenir :
+- `assets/` est **exclu de Git** : ce sont les originaux du jeu. Seules les images utiles au site, dans `docs/images/`, sont versionnées et publiées.
+- Une carte sans image s'affiche avec sa couleur d'onglet et les initiales du nom.
 
 ## Git et GitHub
 

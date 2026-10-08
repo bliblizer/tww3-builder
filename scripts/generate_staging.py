@@ -42,6 +42,7 @@ RENAME = {  # renommages vers des clés homogènes (par table)
  'ancillaries_categories_agent_subtype_override_junctions': {'agent_subtype': 'agent_subtype_key'},
  'ui_unit_bullet_point_enums': {'key': 'bullet_point_key'},
  'ui_unit_bullet_point_unit_overrides': {'bullet_point': 'bullet_point_key'},
+ 'unit_variants': {'faction': 'faction_key', 'unit': 'land_unit_key', 'name': 'variant_name', 'variant': 'variant_key'},
 }
 PK = {  # clé primaire attendue (testée unique + non nulle si les données le confirment)
  'units_custom_battle_permissions': "faction_key || '|' || unit_key", 'custom_battle_factions': 'faction_key',

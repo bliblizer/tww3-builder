@@ -25,6 +25,8 @@ select
     o.is_general_unit_pvp                                              as can_be_general,
     o.multiplayer_cost,
     o.faction_keys_pvp                                                 as faction_keys,
+    img.unit_card,
     o.patch
 from options o
 join cards_with_mounts c using (card_id)
+left join {{ ref('int_unit_card_images') }} img using (unit_key)

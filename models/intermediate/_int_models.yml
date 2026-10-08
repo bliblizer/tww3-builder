@@ -48,3 +48,9 @@ models:
           - accepted_values:
               arguments:
                 values: ['campaign_exclusive', 'zero_cap', 'campaign_exclusive + zero_cap']
+
+  - name: int_unit_card_images
+    description: "Image de carte (unit_card) de chaque unité, via sa land unit. game_file_path = chemin du fichier dans les packs du jeu."
+    columns:
+      - name: unit_key
+        data_tests: [unique, not_null]

@@ -109,8 +109,13 @@ button { font: inherit; color: inherit; }
   font-size: 10px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
 }
-.card .badge-gen { position: absolute; top: 20px; left: 3px; font-size: 11px; color: #f6d58a; }
-.card .badge-opt { position: absolute; top: 20px; right: 3px; font-size: 10px; background: rgba(0,0,0,.5); border-radius: 3px; padding: 0 3px; }
+.card .art { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
+.card.has-img .mono, .card.has-img .nm { display: none; }
+.card.has-img .cost { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
+.card.has-img { padding-top: 0; }
+.detail .portrait { width: 96px; height: 172px; object-fit: cover; object-position: top; border: 1px solid var(--bronze); border-radius: 4px; float: right; margin: 0 0 8px 10px; }
+.card .badge-gen { position: absolute; top: 20px; left: 3px; font-size: 11px; color: #f6d58a; z-index: 1; text-shadow: 0 0 3px #000; }
+.card .badge-opt { position: absolute; top: 20px; right: 3px; font-size: 10px; background: rgba(0,0,0,.6); border-radius: 3px; padding: 0 3px; z-index: 1; }
 .card.unaffordable { filter: grayscale(.85) brightness(.6); }
 .card.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
 .card.in-army::after { content: "Retirer"; position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(127,26,21,.75); font-size: 12px; }
@@ -226,16 +231,20 @@ const optionLabel = o => DIMS.map(([k]) => o[k]).filter(Boolean).join(', ');
 const choiceDims = card => DIMS.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
 
 /* ---------- Construction d'une carte ---------- */
-function cardEl(card, { cost, inArmy = false, label = '' }) {
+function cardEl(card, { cost, inArmy = false, label = '', img = null }) {
   const b = document.createElement('button');
-  b.className = 'card' + (inArmy ? ' in-army' : '');
+  b.className = 'card' + (inArmy ? ' in-army' : '') + (img ? ' has-img' : '');
   b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
     (card.g ? '<span class="badge-gen" title="Peut être général">♛</span>' : '') +
     (!inArmy && card.opts.length > 1 ? `<span class="badge-opt" title="${card.opts.length} options">${card.opts.length}</span>` : '') +
+    (img ? `<img class="art" src="images/${esc(img)}.png" alt="" loading="lazy">` : '') +
     `<span class="mono serif">${esc(initials(card.n))}</span>` +
     `<span class="nm">${esc(card.n)}</span>`;
+  // image introuvable (ex. page ouverte sans le dossier images/) : retour aux initiales
+  const art = b.querySelector('.art');
+  if (art) art.addEventListener('error', () => { art.remove(); b.classList.remove('has-img'); });
   b.title = card.n + (label ? ' (' + label + ')' : '');
   b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}${inArmy ? ', retirer de l’armée' : ''}`);
   return b;
@@ -255,7 +264,7 @@ function renderArmy() {
   const slots = $('slots');
   slots.innerHTML = '';
   state.army.forEach((u, i) => {
-    const el = cardEl(u.card, { cost: u.opt.c, inArmy: true, label: optionLabel(u.opt) });
+    const el = cardEl(u.card, { cost: u.opt.c, inArmy: true, label: optionLabel(u.opt), img: u.opt.img || u.card.img });
     el.addEventListener('click', () => { state.army.splice(i, 1); renderAll(); });
     el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(u.card, u.opt); });
     el.addEventListener('focus', () => { if (!state.pinned) showDetail(u.card, u.opt); });
@@ -276,7 +285,7 @@ function renderRoster() {
     sec.innerHTML = `<div class="section-head"><h3 class="serif">${esc(t.name)}</h3><span class="n">${byTab[t.key].length} carte${byTab[t.key].length > 1 ? "s" : ""}</span></div>`;
     const wrap = document.createElement('div'); wrap.className = 'section-cards';
     byTab[t.key].forEach(card => {
-      const el = cardEl(card, { cost: card.min });
+      const el = cardEl(card, { cost: card.min, img: card.img });
       if (card.min > remaining()) el.classList.add('unaffordable');
       if (state.pinned === card) el.classList.add('selected');
       el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(card); });
@@ -296,7 +305,9 @@ function showDetail(card, opt = null) {
   const tab = DATA.tabs.find(t => t.key === card.t);
   const dims = choiceDims(card);
   const lines = dims.map(([k, lbl]) => `<dt>${lbl}</dt><dd>${esc([...new Set(card.opts.map(o => o[k] || 'Aucun'))].join(', '))}</dd>`).join('');
+  const pic = (opt && opt.img) || card.img;
   $('detail').innerHTML = `
+    ${pic ? `<img class="portrait" src="images/${esc(pic)}.png" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(card.n)}</h3>
     <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}</p>
     <dl>
@@ -337,6 +348,7 @@ function showPicker(card, msg = '') {
   const blocked = state.army.length >= DATA.maxUnits ? 'Armée complète (' + DATA.maxUnits + ' unités).'
                 : opt.c > remaining() ? 'Fonds insuffisants.' : '';
   $('detail').innerHTML = `
+    ${opt.img ? `<img class="portrait" src="images/${esc(opt.img)}.png" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(card.n)}</h3>
     <p class="sub">${esc(opt.n)}</p>
     ${html}

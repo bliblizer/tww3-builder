@@ -43,3 +43,4 @@ text/db/special_ability_groups__.loc.tsv,textes,Noms des groupes de capacités,c
 text/db/ancillaries__.loc.tsv,textes,Noms des objets,candidat
 text/db/ui_unit_bullet_point_enums__.loc.tsv,textes,Libellés forces/faiblesses (phase ultérieure),confirmé
 ui/frontend ui/custom_battle.twui.xml,reference,Écran du builder (preuve des règles d'affichage),référence
+db/unit_variants_tables/data__.tsv,images,Unité -> nom du fichier de carte (unit_card) dans ui/units/icons/,confirmé

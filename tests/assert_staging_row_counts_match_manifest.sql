@@ -85,6 +85,8 @@ with staged as (
     select 'text/db/ancillaries__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__ancillaries') }}
     union all
     select 'text/db/ui_unit_bullet_point_enums__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__ui_unit_bullet_point_enums') }}
+    union all
+    select 'db/unit_variants_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_variants') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

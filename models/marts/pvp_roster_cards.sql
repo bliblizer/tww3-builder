@@ -47,6 +47,7 @@ select
     a.card_id,
     cr.card_name,
     cr.root_unit_key,
+    img.unit_card                         as root_unit_card,
     t.tab_order,
     cr.tab_key,
     tab_name.resolved_text                as tab_name,
@@ -63,5 +64,6 @@ from agg a
 join card_root cr using (card_id)
 left join races r using (race_key)
 left join tabs t on t.tab_key = cr.tab_key
+left join {{ ref('int_unit_card_images') }} img on img.unit_key = cr.root_unit_key
 left join texts tab_name   on tab_name.loc_key   = 'ui_unit_group_parents_onscreen_name_' || cr.tab_key
 left join texts group_name on group_name.loc_key = 'ui_unit_groupings_onscreen_' || cr.ui_group_key

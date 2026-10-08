@@ -267,3 +267,11 @@ models:
     data_tests:
       - unique:
           column_name: loc_key
+  - name: stg_dump__unit_variants
+    description: "Image de carte (unit_card = fichier de ui/units/icons/) de chaque land unit, éventuellement propre à une faction (source : db/unit_variants_tables/data__.tsv)"
+    data_tests:
+      - unique:
+          column_name: "land_unit_key || '|' || coalesce(faction_key, '')"
+    columns:
+      - name: unit_card
+        data_tests: [not_null]

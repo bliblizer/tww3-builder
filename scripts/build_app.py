@@ -8,14 +8,23 @@ docs/ est le dossier publié par GitHub Pages : après un commit + push, le site
 
 Le fichier produit est autonome (données incluses) : on peut l'ouvrir hors ligne ou le mettre en ligne tel quel.
 La mise en page et le code de l'application sont dans app/template.html ; ce script n'y injecte que les données.
+
+Images des cartes (facultatif) :
+- extrais le dossier ui/units/icons/ du jeu avec RPFM et copie son contenu dans assets/unit_cards/
+  (les sous-dossiers sont acceptés : le script cherche les .png partout dans assets/unit_cards/) ;
+- le script copie dans docs/images/ UNIQUEMENT les images utiles au roster PvP et liste celles qui manquent
+  dans exports/missing_unit_cards.csv ;
+- sans images, l'application affiche des cartes de couleur avec les initiales (comme avant).
 """
-import json, os, sys
+import csv, json, os, shutil, sys
 import duckdb
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB = os.path.join(ROOT, 'tww3.duckdb')
 TEMPLATE = os.path.join(ROOT, 'app', 'template.html')
 OUT = os.path.join(ROOT, 'docs', 'index.html')
+ASSETS = os.path.join(ROOT, 'assets', 'unit_cards')
+IMAGES_OUT = os.path.join(ROOT, 'docs', 'images')
 
 if not os.path.exists(DB):
     sys.exit("tww3.duckdb introuvable : lance d'abord `dbt build --profiles-dir .`")
@@ -42,26 +51,53 @@ tabs = rows("""
 races = rows("select race_key as key, race_name as name, nb_cards from marts.pvp_races order by race_name")
 
 cards = rows("""
-    select race_key, card_id, card_name, tab_key, ui_group_name, can_be_general,
+    select race_key, card_id, card_name, root_unit_card, tab_key, ui_group_name, can_be_general,
            nb_options, has_variant_choice, has_mount_choice, min_cost, max_cost
     from marts.pvp_roster_cards
     order by race_key, tab_order, min_cost, card_name""")
 
 options = rows("""
-    select card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general, multiplayer_cost
+    select card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general,
+           multiplayer_cost, unit_card
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
+
+# ---------- images des cartes ----------
+needed = {c['root_unit_card'] for c in cards} | {o['unit_card'] for o in options}
+found = {}
+if os.path.isdir(ASSETS):
+    for dirpath, _, files in os.walk(ASSETS):
+        for name in files:
+            if name.lower().endswith('.png'):
+                found.setdefault(name[:-4].lower(), os.path.join(dirpath, name))
+if os.path.isdir(IMAGES_OUT):                       # on repart d'un dossier propre à chaque construction
+    shutil.rmtree(IMAGES_OUT)
+available = set()
+if found:
+    os.makedirs(IMAGES_OUT, exist_ok=True)
+    for card_name in sorted(needed):
+        src = found.get(card_name.lower())
+        if src:
+            shutil.copyfile(src, os.path.join(IMAGES_OUT, card_name + '.png'))
+            available.add(card_name)
+missing = sorted(needed - available)
+os.makedirs(os.path.join(ROOT, 'exports'), exist_ok=True)
+with open(os.path.join(ROOT, 'exports', 'missing_unit_cards.csv'), 'w', encoding='utf-8', newline='') as f:
+    w = csv.writer(f, lineterminator='\r\n'); w.writerow(['unit_card', 'game_file_path'])
+    w.writerows([m, f'ui/units/icons/{m}.png'] for m in missing)
+img = lambda name: name if name in available else None
 
 opts_by_card = {}
 for o in options:
     opts_by_card.setdefault(o['card_id'], []).append({
         'u': o['unit_key'], 'n': o['unit_name'], 'c': o['multiplayer_cost'], 'g': o['can_be_general'],
-        'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount']})
+        'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount'],
+        'img': img(o['unit_card'])})
 
 roster = {}
 for c in cards:
     roster.setdefault(c['race_key'], []).append({
-        'id': c['card_id'], 'n': c['card_name'], 't': c['tab_key'], 'grp': c['ui_group_name'], 'g': c['can_be_general'],
+        'id': c['card_id'], 'n': c['card_name'], 'img': img(c['root_unit_card']), 't': c['tab_key'], 'grp': c['ui_group_name'], 'g': c['can_be_general'],
         'min': c['min_cost'], 'max': c['max_cost'], 'opts': opts_by_card[c['card_id']]})
 
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster}
@@ -74,3 +110,8 @@ if marker not in html:
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, 'w', encoding='utf-8').write(html.replace(marker, payload))
 print(f"{OUT}\n{len(races)} races, {len(cards)} cartes, {len(options)} options, budget {budget}, {max_units} unités max ({patch})")
+if not found:
+    print(f"Images : aucune trouvée dans {ASSETS} -> cartes sans image (initiales).")
+else:
+    print(f"Images : {len(available)} / {len(needed)} copiées dans docs/images/ ; "
+          f"{len(missing)} manquante(s), listées dans exports/missing_unit_cards.csv")

@@ -31,6 +31,9 @@ models:
         data_tests: [not_null]
       - name: min_cost
         data_tests: [not_null]
+      - name: root_unit_card
+        description: "Image de la carte (unité racine) : fichier ui/units/icons/<root_unit_card>.png du jeu."
+        data_tests: [not_null]
 
   - name: pvp_roster_options
     description: >
@@ -50,4 +53,7 @@ models:
       - name: unit_name
         data_tests: [not_null]
       - name: multiplayer_cost
+        data_tests: [not_null]
+      - name: unit_card
+        description: "Image de l'option : fichier ui/units/icons/<unit_card>.png du jeu."
         data_tests: [not_null]
