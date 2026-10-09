@@ -61,9 +61,9 @@ button { font: inherit; color: inherit; }
 .army-head h2 { font-size: 16px; margin: 0; }
 .army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; margin-left: 8px; }
 .slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 66px; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 60px; }
 .slot .card { flex: none; }
-.slot-empty { flex: 0 0 66px; height: 118px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
+.slot-empty { flex: 0 0 60px; height: 130px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
 .rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
 .rank-ctl button:disabled { opacity: .35; cursor: default; }
@@ -81,7 +81,7 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Cartes d'unité ---------- */
 .card {
-  flex: 0 0 66px; width: 66px; height: 118px; padding: 0; position: relative; cursor: pointer;
+  flex: 0 0 60px; width: 60px; height: 130px; padding: 0; position: relative; cursor: pointer;
   border: 1px solid var(--bronze); border-radius: 4px; overflow: hidden; text-align: center;
   background: var(--card-bg, #4a2c2a); color: var(--card-ink); box-shadow: 0 2px 4px var(--shadow);
   display: flex; flex-direction: column;
@@ -104,6 +104,21 @@ button { font: inherit; color: inherit; }
 .card .chevrons i { display: block; width: 14px; height: 5px; background: var(--chev);
   clip-path: polygon(0 0, 50% 60%, 100% 0, 100% 40%, 50% 100%, 0 40%); filter: drop-shadow(0 0 1px #000); }
 .card.blocked { filter: grayscale(.85) brightness(.6); }
+/* habillage du jeu (ui/skins/default) quand il est fourni : cadre, demi-cercle et icône de catégorie, sélection, survol */
+.card.skinned { border: none; border-radius: 0; box-shadow: none; overflow: visible; background: var(--card-bg, #4a2c2a); }
+.card.skinned .art { position: absolute; inset: 0; width: 60px; height: 130px; }
+.card.skinned .ov { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 3; }
+.card.skinned .ov-selected, .card.skinned .ov-hover { display: none; }
+.card.skinned.selected { outline: none; }
+.card.skinned.selected .ov-selected, .card.skinned:hover .ov-hover { display: block; }
+.card.skinned .semi { position: absolute; bottom: 0; left: 2px; z-index: 4; pointer-events: none; }
+.card.skinned .cat-icon { position: absolute; bottom: 0; left: 19px; width: 22px; height: 22px; z-index: 5; pointer-events: none; }
+.card.skinned .cost { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 6; background: rgba(0,0,0,.55); }
+.card.skinned .badge-gen, .card.skinned .badge-opt { top: 21px; z-index: 6; }
+.card.skinned .chevrons { z-index: 6; }
+.card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
+.card.skinned .badge-cap { bottom: 26px; z-index: 7; }
+.card.skinned.is-general .ov-frame { filter: sepia(1) saturate(4) hue-rotate(5deg); }
 .card.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
 .card.is-general { box-shadow: 0 0 0 2px var(--gold), 0 2px 4px var(--shadow); }
 
@@ -129,7 +144,8 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 
 /* panneau de personnalisation (sous l'armée, comme en jeu) */
 .custom { border: 1px solid var(--bronze); background: color-mix(in srgb, var(--panel) 92%, transparent); border-radius: 4px; margin-bottom: 16px;
-  height: 300px; display: flex; flex-direction: column; }   /* hauteur fixe : le roster ne se décale pas d'un clic à l'autre */
+  max-height: 340px; display: flex; flex-direction: column; }
+.custom[hidden] { display: none; }   /* sans cette règle, display:flex l'emporterait sur l'attribut hidden (rectangle vide) */
 .custom-scroll { flex: 1; overflow-y: auto; }
 .custom-empty { padding: 14px; }
 .custom-head { display: flex; align-items: center; gap: 12px; background: var(--band); color: #f4ead6; padding: 5px 10px; border-bottom: 1px solid var(--bronze); }
@@ -262,7 +278,7 @@ const dimTitle = (card, k) => k === 'mount' ? 'Mounts'
    - sorts cochés : arrondi inférieur de somme(prix de rareté du k-ième sort x (1 - 0,047 k)), du plus cher au moins cher */
 const SPELL_STEP = 0.047;
 const upgradesOf = raceKey => (DATA.up[raceKey] || {});
-const defaultSel = opt => new Set(opt.up || []);   // tout est coché par défaut
+const defaultSel = () => new Set();   // par défaut, aucun sort / capacité / objet n'est coché
 const rankedBase = (c, rank) => Math.round(c * DATA.xp[rank][0]) + DATA.xp[rank][1];
 function upgradesCost(sel, raceKey = race().key) {
   const ups = upgradesOf(raceKey);
@@ -272,7 +288,7 @@ function upgradesCost(sel, raceKey = race().key) {
   return other + Math.floor(spells.reduce((s, c, k) => s + c * (1 - SPELL_STEP * k), 0));
 }
 const unitCost = u => rankedBase(u.opt.c, u.rank) + upgradesCost(u.sel);
-const newUnit = (card, opt, rank = 0) => ({ card, opt, sel: defaultSel(opt), rank });
+const newUnit = (card, opt, rank = 0) => ({ card, opt, sel: defaultSel(), rank });
 const spent = () => state.army.reduce((s, u) => s + unitCost(u), 0);
 const remaining = () => DATA.budget - spent();
 
@@ -329,7 +345,6 @@ function newProblem(before, after) {
   return { kind: 'other', text: e.text };
 }
 function addReason(unit) {
-  if (!generalOf(state.army) && !unit.opt.l) return 'Pick a lord first (♛).';
   if (unit.opt.l && !unit.opt.g) return 'This lord cannot lead an army of this race.';
   const p = newProblem(state.army, withAdded(state.army, unit));
   return p ? p.text : '';
@@ -399,9 +414,19 @@ function bindClicks(el, onSingle, onDouble) {
 }
 
 /* ---------- Carte d'unité ---------- */
-function cardEl(card, { cost, label = '', img = null, rank = 0 }) {
+function cardEl(card, { cost, label = '', img = null, rank = 0, opt = card.opts[0] }) {
   const b = document.createElement('button');
-  b.className = 'card' + (img ? ' has-img' : '');
+  const sk = DATA.skin || {};
+  const skinned = !!sk.frame;
+  b.className = 'card' + (img ? ' has-img' : '') + (skinned ? ' skinned' : '');
+  const isChar = opt.role === 'lord' || opt.role === 'hero';
+  const semi = opt.rn ? sk.semiRenown : isChar ? sk.semiHero : sk.semi;
+  const skinHtml = !skinned ? '' :
+    `<img class="ov ov-frame" src="images/${esc(sk.frame)}" alt="" draggable="false">` +
+    (sk.selected ? `<img class="ov ov-selected" src="images/${esc(sk.selected)}" alt="" draggable="false">` : '') +
+    (sk.hover ? `<img class="ov ov-hover" src="images/${esc(sk.hover)}" alt="" draggable="false">` : '') +
+    (semi ? `<img class="semi" src="images/${esc(semi)}" alt="" draggable="false">` : '') +
+    (opt.ic ? `<img class="cat-icon" src="images/${esc(opt.ic)}" alt="" draggable="false">` : '');
   b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
   b.draggable = true;
   const tier = rank ? Math.ceil(rank / 3) : 0, n = rank ? ((rank - 1) % 3) + 1 : 0;
@@ -409,7 +434,7 @@ function cardEl(card, { cost, label = '', img = null, rank = 0 }) {
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
     (card.g ? '<span class="badge-gen" title="Can lead the army">♛</span>' : '') + chev +
-    (img ? `<img class="art" src="images/${esc(img)}.png" alt="" loading="lazy" draggable="false">` : '') +
+    (img ? `<img class="art" src="images/${esc(img)}" alt="" loading="lazy" draggable="false">` : '') + skinHtml +
     `<span class="mono serif">${esc(initials(card.n))}</span><span class="nm">${esc(card.n)}</span>`;
   b.title = card.n + (label ? ' (' + label + ')' : '') + (rank ? ` – rank ${rank}` : '');
   b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}`);
@@ -434,7 +459,7 @@ function renderArmy() {
   const general = generalOf(state.army);
   state.army.forEach((u, i) => {
     const slot = document.createElement('div'); slot.className = 'slot';
-    const el = cardEl(u.card, { cost: unitCost(u), label: optionLabel(u.opt), img: u.opt.img || u.card.img, rank: u.rank });
+    const el = cardEl(u.card, { cost: unitCost(u), label: optionLabel(u.opt), img: u.opt.img || u.card.img, rank: u.rank, opt: u.opt });
     if (u === general) { el.classList.add('is-general'); el.title += ' – army general'; }
     if (state.focus && state.focus.unit === u) el.classList.add('selected');
     el.dataset.armyIndex = String(i);
@@ -517,7 +542,7 @@ function renderUnitStats() {
   const tags = DATA.tags[opt.u] || [];
   const rk = race().key, capKeys = capsOf(rk).m[opt.u] || [];
   p.innerHTML = `
-    ${pic ? `<img class="portrait" src="images/${esc(pic)}.png" alt="" onerror="this.remove()">` : ''}
+    ${pic ? `<img class="portrait" src="images/${esc(pic)}" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(opt.n)}</h3>
     <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}${opt.fly ? ' · flying' : ''}</p>
     ${tags.length ? `<ul class="tags">${tags.map(([n, s]) => `<li class="${s.includes('negative') ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${esc(n)}</li>`).join('')}</ul>` : ''}
@@ -546,7 +571,7 @@ function renderCustom() {
   const sameOther = (o, k) => DIMS.every(d => d === k || (o[d] ?? '') === (opt[d] ?? ''));
   const targetFor = (k, v) => card.opts.find(o => (o[k] ?? '') === v && sameOther(o, k)) || card.opts.find(o => (o[k] ?? '') === v);
   const carry = next => ({ card, opt: next, rank: unit.rank,
-    sel: new Set((next.up || []).filter(x => unit.sel.has(x) || !(opt.up || []).includes(x))) });
+    sel: new Set((next.up || []).filter(x => unit.sel.has(x))) });   // on garde ce qui reste disponible
   const radioGroup = k => {
     const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
     const foot = card.opts.find(o => (o.mount ?? '') === 'On foot' && sameOther(o, 'mount'));
@@ -652,7 +677,7 @@ function setRace(i) {
   state.army = []; state.focus = null;
   const r = race(), root = document.documentElement;
   if (r.accent) root.style.setProperty('--accent', '#' + r.accent); else root.style.removeProperty('--accent');
-  if (r.race_image) root.style.setProperty('--race-art', `url("images/races/${r.race_image}.png")`); else root.style.removeProperty('--race-art');
+  if (r.race_image) root.style.setProperty('--race-art', `url("images/${r.race_image}")`); else root.style.removeProperty('--race-art');
   renderAll();
 }
 

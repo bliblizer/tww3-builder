@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=223 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
+Le résultat attendu est `Done. PASS=225 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -172,18 +172,33 @@ Le jeu illustre chaque race dans l'écran de bataille personnalisée avec `ui/fr
 2. Copie son contenu dans `assets/race_images/`.
 3. Lance `python scripts/build_app.py`. Les illustrations utiles sont copiées dans `docs/images/races/`. Sans illustration, le fond reste uni.
 
-### Images des cartes
+### Images des cartes et des personnages
 
-Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu installé.
-Le lien unité → image vient de la table `unit_variants` (`int_unit_card_images`, colonnes `unit_card` des marts). Les 2 698 options PvP ont une image référencée, soit 1 142 fichiers distincts.
+Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu, extraits avec RPFM :
 
-1. Avec **RPFM**, extrais le dossier `ui/units/icons/` des packs du jeu.
-2. Copie son contenu dans `assets/unit_cards/` à la racine du projet. Les sous-dossiers sont acceptés.
-3. Lance `python scripts/build_app.py`. Il copie uniquement les images utiles dans `docs/images/` et liste les manquantes dans `exports/missing_unit_cards.csv`.
+| Dossier du jeu | À copier dans | Utilisé pour |
+|---|---|---|
+| `ui/units/icons/` | `assets/unit_cards/` | Les cartes d'unités : `<unit_card>.png` (1 140 images utiles) |
+| `ui/portraits/units/` | `assets/portraits_units/` | Les **personnages** dont la carte du jeu est générique (`placeholder`, 693 options). Le jeu construit leur carte à partir de leur portrait (`units_custom_battle_permissions.general_portrait`), soit 210 portraits utiles |
+| `ui/frontend ui/race_strip_images/` | `assets/race_images/` | Les illustrations de fond des races |
+| `ui/common ui/unit_category_icons/` | `assets/unit_category_icons/` | L'icône de catégorie en bas de chaque carte (`pvp_roster_options.category_icon` : icône du type de personnage, par exemple le domaine de magie, sinon celle du sous-groupe d'interface ; 425 icônes utiles) |
+| `ui/skins/default/unit_card_*` | `assets/ui_skins/` | L'habillage des cartes : `unit_card_frame_plain`, `unit_card_selected`, `unit_card_hover`, `unit_card_semicircle`, `unit_card_semicircle_hero` (lords et héros) et `unit_card_semicircle_renown` (Régiments de Renom, `is_renown`) |
 
-Points à retenir :
-- `assets/` est **exclu de Git** : ce sont les originaux du jeu. Seules les images utiles au site, dans `docs/images/`, sont versionnées et publiées.
-- Une carte sans image s'affiche avec sa couleur d'onglet et les initiales du nom.
+Les fichiers `.png` et `.webp` sont acceptés. Sans habillage, les cartes gardent leur cadre simple.
+
+**Règles de `build_app.py` :**
+- La carte générique `placeholder.png` n'est jamais affichée : on prend le portrait, et à défaut les initiales.
+- Il ignore les masques techniques (`*_maskN.png`) et les morceaux de Daemon Prince (`dae_prince/`), qui servent à la campagne.
+- Les sous-dossiers sont acceptés dans les trois dossiers `assets/`.
+- Il copie **uniquement les images utiles** :
+  - les cartes dans `docs/images/` ;
+  - les portraits dans `docs/images/portraits/` ;
+  - les illustrations dans `docs/images/races/`.
+- Il liste les manquantes dans `exports/missing_unit_cards.csv` (type, fichier attendu, dossier du jeu).
+
+**À relancer après chaque ajout d'images** : `python scripts/build_app.py`, puis **Commit** et **Push** pour mettre le site à jour.
+
+`assets/` est exclu de Git, car il contient les originaux du jeu. Seul `docs/images/` est publié.
 
 ## Caps et validation de l'armée
 
@@ -195,7 +210,7 @@ Points à retenir :
 - `pvp_roster_options.is_lord` : l'option est un lord (caste `lord`).
 
 **Règles :**
-1. **Un seul lord par armée**, en première place, et c'est le général (♛) *(validé en jeu)*. Dans le builder, choisir un lord remplace le précédent, comme en jeu.
+1. **Un seul lord par armée**, en première place, et c'est le général (♛) *(validé en jeu)*. Dans le builder, choisir un lord remplace le précédent, comme en jeu. On peut **commencer l'armée par n'importe quelle unité**. L'armée reste « invalide » tant qu'aucun lord n'est choisi, et le lord ajouté se place automatiquement en tête.
 2. **20 unités au maximum.**
 3. **Coût total de 12 400 au maximum** (prix de base pour l'instant).
 4. **Chaque groupe de caps** limite le nombre total de ses membres dans l'armée. Une unité appartient souvent à plusieurs groupes (plafond individuel, chars et machines de guerre, héros, unités de tir…), et toutes les limites s'appliquent en même temps.
@@ -216,7 +231,6 @@ python -m playwright install chromium
 **Avertissement attendu :** `assert_cap_overrides_resolved` signale 7 plafonds liés à des personnages qu'on ne sait pas rattacher à une carte (Nagash, Arkhan, Liche Priest, Vampire Lord, Mourngul). Ils sont ignorés pour l'instant.
 
 **Dans le builder :**
-- Tant qu'il n'y a pas de lord, seuls les lords pouvant être généraux sont disponibles.
 - Une carte est grisée quand aucune de ses options ne peut être ajoutée (fonds, armée complète, plafond atteint). Le survol en donne la raison.
 - Sous l'armée s'affichent le statut (« ✓ Armée valide » ou la liste des problèmes) et les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés.
 
@@ -237,7 +251,7 @@ python -m playwright install chromium
 - **Capacités et objets cochés** : grille de rareté, common 100, uncommon 150, rare 200, legendary 200 *(vérifié)*. Un élément coché est payant, et son prix est simplement masqué dans le panneau du jeu.
 - **Sorts cochés** : arrondi inférieur de la somme des prix de rareté de chaque sort × (1 − 0,047 × k). Les sorts sont classés du plus cher au moins cher, avec k = 0, 1, 2… C'est une formule empirique, **à ±1 près sur les 8 relevés**.
 - **Rangs d'expérience** : `arrondi(prix × multiplicateur) + coût fixe`. C'est une hypothèse, non vérifiée.
-- **Par défaut** : tout est coché, comme les prix affichés dans le roster du jeu.
+- **Par défaut** : **rien n'est coché**. Le prix affiché dans le roster est donc le prix de base. *(Choix du projet. Le roster du jeu affiche, lui, les prix avec tout coché.)*
 
 **Tests :**
 - `tests/marts/assert_select_all_files_match_model.sql` : pour chaque personnage des fichiers « Tout sélectionner », le modèle propose **exactement** les éléments du fichier.

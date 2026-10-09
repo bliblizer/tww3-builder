@@ -18,6 +18,30 @@ flying as (
     where coalesce(man.fly_speed, 0) > 0 or coalesce(mount_entity.fly_speed, 0) > 0
 ),
 
+portraits as (
+    -- portrait du personnage (permissions de bataille : general_portrait) ; sert d'image quand la carte du jeu est
+    -- « placeholder » (le jeu construit alors la carte d'un personnage à partir de son portrait, dans ui/portraits/units)
+    select unit_key,
+           any_value(regexp_extract(replace(general_portrait, '\\', '/'), '([^/]+)\.png$', 1)) as portrait_image
+    from {{ ref('stg_dump__units_custom_battle_permissions') }}
+    where general_portrait is not null
+    group by unit_key
+),
+
+category_icons as (
+    -- icône de catégorie affichée en bas de la carte (fichier ui/common ui/unit_category_icons/<icône>) :
+    -- personnage avec une icône de type (ex. domaine de magie : wh3_main_lore_slaanesh) -> cette icône ;
+    -- sinon l'icône du sous-groupe d'interface de l'unité (ui_unit_groupings.icon)
+    select m.unit_key,
+           m.is_renown,
+           coalesce(nullif(regexp_extract(replace(a.small_icon, '\\', '/'), '([^/]+)\.png$', 1), ''), g.icon) as category_icon
+    from {{ ref('stg_dump__main_units') }} m
+    left join {{ ref('stg_dump__ui_unit_groupings') }} g using (ui_group_key)
+    left join (select distinct c.unit_key, any_value(st.small_icon) over (partition by c.unit_key) as small_icon
+               from {{ ref('int_character_agent_subtypes') }} c
+               join {{ ref('stg_dump__agent_subtypes') }} st using (agent_subtype_key)) a using (unit_key)
+),
+
 cards_with_mounts as (
     select card_id, bool_or(mount_name is not null) as has_mounts
     from options group by card_id
@@ -56,8 +80,15 @@ select
     o.multiplayer_cost,
     o.faction_keys_pvp                                                 as faction_keys,
     img.unit_card,
+    pt.portrait_image,
+    ci.category_icon,
+    coalesce(ci.is_renown, false)                                      as is_renown,   -- Régiment de Renom (bandeau de carte dédié)
+    -- image à afficher : la carte du jeu, sauf carte générique « placeholder » -> portrait du personnage
+    case when img.unit_card in ('placeholder', 'a_character_placeholder') then 'portrait' else 'card' end as image_source,
     o.patch
 from options o
 join cards_with_mounts c using (card_id)
 left join {{ ref('int_unit_card_images') }} img using (unit_key)
 left join flying f using (unit_key)
+left join portraits pt using (unit_key)
+left join category_icons ci using (unit_key)

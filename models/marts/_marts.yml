@@ -57,6 +57,12 @@ models:
       - name: unit_card
         description: "Image de l'option : fichier ui/units/icons/<unit_card>.png du jeu."
         data_tests: [not_null]
+      - name: image_source
+        description: "card = image ui/units/icons/<unit_card>.png ; portrait = ui/portraits/units/…/<portrait_image>.png (personnages à carte générique)."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['card', 'portrait']
       - name: role
         description: "Rôle dans la composition (lord, hero, infantry_light / line / elite, ranged, artillery, cavalry, monster, war_beast, other)."
         data_tests:
