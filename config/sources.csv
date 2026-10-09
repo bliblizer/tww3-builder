@@ -51,7 +51,3 @@ db/character_skill_level_to_effects_junctions_tables/data__.tsv,personnalisation
 db/effect_bonus_value_unit_ability_junctions_tables/data__.tsv,personnalisation,Effet -> capacité ou sort débloqué,candidat
 db/unit_special_abilities_tables/data__.tsv,personnalisation,Détail des capacités (mana_cost > 0 = sort),candidat
 db/ancillary_uniqueness_groupings_tables/data__.tsv,personnalisation,Groupes de rareté (common / uncommon / rare / unique),candidat
-text/db/units_custom_battle_type_categories__.loc.tsv,textes,Noms des catégories de variantes (Bloodlines…),confirmé
-db/land_units_tables/data__.tsv,unites,Land units : entité, monture, moteur (pour le vol et les statistiques),confirmé
-db/battle_entities_tables/data__.tsv,unites,Entités de combat : vitesses dont fly_speed (vol),confirmé
-db/mounts_tables/data__.tsv,unites,Montures -> entité de combat,confirmé

@@ -29,8 +29,6 @@ with recursive all_loc as (
     select loc_key, text, 'units_custom_battle_mounts' as loc_table from {{ ref('stg_dump_loc__units_custom_battle_mounts') }}
     union all
     select loc_key, text, 'units_custom_battle_types' as loc_table from {{ ref('stg_dump_loc__units_custom_battle_types') }}
-    union all
-    select loc_key, text, 'units_custom_battle_type_categories' as loc_table from {{ ref('stg_dump_loc__units_custom_battle_type_categories') }}
 ),
 resolved(loc_key, loc_table, text, depth) as (
     select loc_key, loc_table, text, 0 from all_loc

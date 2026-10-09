@@ -49,9 +49,6 @@ RENAME = {  # renommages vers des clés homogènes (par table)
  'effect_bonus_value_unit_ability_junctions': {'effect': 'effect_key', 'unit_ability': 'ability_key'},
  'unit_special_abilities': {'key': 'ability_key'},
  'ancillary_uniqueness_groupings': {'group_key': 'uniqueness_group_key'},
- 'land_units': {'key': 'land_unit_key'},
- 'battle_entities': {'key': 'battle_entity_key'},
- 'mounts': {'key': 'mount_key', 'entity': 'battle_entity_key'},
  'unit_variants': {'faction': 'faction_key', 'unit': 'land_unit_key', 'name': 'variant_name', 'variant': 'variant_key'},
 }
 PK = {  # clé primaire attendue (testée unique + non nulle si les données le confirment)

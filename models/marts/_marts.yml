@@ -57,13 +57,6 @@ models:
       - name: unit_card
         description: "Image de l'option : fichier ui/units/icons/<unit_card>.png du jeu."
         data_tests: [not_null]
-      - name: role
-        description: "Rôle dans la composition (lord, hero, infantry_light / line / elite, ranged, artillery, cavalry, monster, war_beast, other)."
-        data_tests:
-          - not_null
-          - accepted_values:
-              arguments:
-                values: ['lord', 'hero', 'infantry_light', 'infantry_line', 'infantry_elite', 'ranged', 'artillery', 'cavalry', 'monster', 'war_beast', 'other']
 
   - name: pvp_cap_groups
     description: "Groupes de caps par race : plafond par défaut (nombre total d'unités membres autorisées dans l'armée)."
@@ -104,15 +97,3 @@ models:
           - accepted_values:
               arguments:
                 values: ['spell', 'ability', 'item']
-
-  - name: pvp_unit_tags
-    description: "Étiquettes forces / faiblesses de chaque unité jouable, comme dans le jeu."
-    data_tests:
-      - unique:
-          column_name: "unit_key || '|' || bullet_point_key"
-
-  - name: pvp_xp_ranks
-    description: "Rangs d'expérience 0-9 : multiplicateur et coût fixe multijoueur (formule de prix supposée)."
-    columns:
-      - name: rank
-        data_tests: [unique, not_null]

@@ -114,7 +114,6 @@ select
     l.mark,
     l.forest_spirit,
     l.other_variant,
-    l.other_variant_category,
     ru.is_selectable_pvp,
     ru.is_general_unit,
     ru.is_general_unit_pvp,

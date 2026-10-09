@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=217 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
+Le résultat attendu est `Done. PASS=204 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -142,32 +142,6 @@ Fonctions de la V0 :
 Limites de la V0 :
 - prix de base, sans objets ni sorts ;
 - pas de caps ni de validation de l'armée.
-
-### Mise en page (inspirée de l'écran du jeu)
-
-- **En haut** : la race, avec sa **couleur d'accent** et son **illustration en fond** (voir plus bas), puis les fonds restants.
-- **Main Army** :
-  - les cartes de l'armée, avec sous chaque unité des boutons **− / +** pour son **rang d'expérience** (0 à 9) ;
-  - sur la carte, des **chevrons** rappellent le rang : 1 à 3 chevrons bronze pour les rangs 1-3, argent pour 4-6, or pour 7-9 ;
-  - en dessous, le statut de l'armée et les plafonds en cours.
-- **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
-- **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
-- **À droite** : les **statistiques de la composition**, avec la part des fonds et le nombre d'unités par rôle (`pvp_roster_options.role` : lord, héros, infanterie légère / de ligne / d'élite, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), plus les volants et l'ensemble « lord & héros ».
-- **Alertes de plafond** : une carte du roster affiche un badge « n/plafond » quand l'un de ses groupes est plein ou n'a plus qu'une place.
-
-**Hypothèses de cette version :**
-- **Coût d'un rang** : `arrondi(prix × multiplicateur) + coût fixe` (`pvp_xp_ranks`, tiré de `unit_stats_land_experience_bonuses`).
-- **Infanterie** : légère < 500, de ligne 500-899, d'élite ≥ 900 (prix de base).
-- **Volant** : l'entité de combat du soldat ou de sa monture a une vitesse de vol (`battle_entities.fly_speed > 0`). Ce point n'est pas une hypothèse, mais un fait tiré des données.
-- **Couleur d'accent** : couleur principale de la faction principale de la race (`factions.primary_colour_hex`), ou sa couleur secondaire si la principale est trop sombre. À défaut, le rouge du builder (Vampire Counts, Chaos Dwarfs).
-
-### Illustrations des races
-
-Le jeu illustre chaque race dans l'écran de bataille personnalisée avec `ui/frontend ui/race_strip_images/<faction>_large.png`. `pvp_races.race_image` donne le nom du fichier pour chaque race.
-
-1. Extrais ce dossier avec RPFM.
-2. Copie son contenu dans `assets/race_images/`.
-3. Lance `python scripts/build_app.py`. Les illustrations utiles sont copiées dans `docs/images/races/`. Sans illustration, le fond reste uni.
 
 ### Images des cartes
 
