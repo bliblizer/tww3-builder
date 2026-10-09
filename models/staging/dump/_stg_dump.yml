@@ -275,3 +275,17 @@ models:
     columns:
       - name: unit_card
         data_tests: [not_null]
+  - name: stg_dump__character_skill_node_sets
+    description: "Arbre de compétences de chaque type de personnage (source : db/character_skill_node_sets_tables/data__.tsv)"
+  - name: stg_dump__character_skill_node_set_items
+    description: "Nœuds de chaque arbre de compétences (source : db/character_skill_node_set_items_tables/data__.tsv)"
+  - name: stg_dump__character_skill_nodes
+    description: "Nœud -> compétence (source : db/character_skill_nodes_tables/data__.tsv)"
+  - name: stg_dump__character_skill_level_to_effects_junctions
+    description: "Compétence -> effets (source : db/character_skill_level_to_effects_junctions_tables/data__.tsv)"
+  - name: stg_dump__effect_bonus_value_unit_ability_junctions
+    description: "Effet -> capacité ou sort débloqué (source : db/effect_bonus_value_unit_ability_junctions_tables/data__.tsv)"
+  - name: stg_dump__unit_special_abilities
+    description: "Détail des capacités (mana_cost > 0 = sort) (source : db/unit_special_abilities_tables/data__.tsv)"
+  - name: stg_dump__ancillary_uniqueness_groupings
+    description: "Groupes de rareté (common / uncommon / rare / unique) (source : db/ancillary_uniqueness_groupings_tables/data__.tsv)"

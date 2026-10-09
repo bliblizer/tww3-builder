@@ -101,6 +101,19 @@ button { font: inherit; color: inherit; }
 .cap-chip.over { border-color: var(--danger); color: var(--danger); font-weight: 700; }
 .card.is-general { outline: 2px solid var(--gold); outline-offset: 1px; }
 .card.blocked { filter: grayscale(.85) brightness(.6); }
+.army.drop-ok { box-shadow: inset 0 0 0 2px var(--gold); }
+.flash { margin: 8px 0 0; color: var(--danger); font-weight: 700; font-size: 14px; }
+.muted { color: var(--muted); font-size: 13px; }
+.add-btn.secondary { background: var(--panel-2); color: var(--text); border-color: var(--bronze); }
+.pz-title { font-size: 16px; margin: 18px 0 6px; padding-top: 10px; border-top: 1px solid var(--bronze); }
+.pz { margin: 0 0 10px; background: var(--panel-2); border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; }
+.pz h4 { margin: 0 0 4px; font-size: 14px; }
+.pz .row { display: flex; align-items: center; gap: 8px; padding: 2px 0; cursor: pointer; font-size: 14px; }
+.pz .row .lbl { flex: 1; }
+.pz .row.all { color: var(--muted); font-size: 13px; border-bottom: 1px solid rgba(140,106,59,.35); margin-bottom: 2px; }
+.pz .price { color: var(--gold); font-variant-numeric: tabular-nums; font-size: 13px; }
+.pz .price.unknown { color: var(--muted); }
+.pz input { accent-color: var(--crimson-hi); }
 .detail .caps-list { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--muted); }
 
 /* ---------- Cartes d'unité ---------- */
@@ -133,8 +146,8 @@ button { font: inherit; color: inherit; }
 .card.in-army:hover::after, .card.in-army:focus-visible::after { display: flex; }
 
 /* ---------- Corps : panneau de détail + roster ---------- */
-.body { display: grid; grid-template-columns: 300px 1fr; gap: 0; align-items: start; }
-.detail { position: sticky; top: env(safe-area-inset-top, 0px); padding: 16px 18px; background: var(--panel); border-right: 1px solid var(--bronze); min-height: 60vh; }
+.body { display: grid; grid-template-columns: 340px 1fr; gap: 0; align-items: start; }
+.detail { position: sticky; top: env(safe-area-inset-top, 0px); padding: 16px 18px; background: var(--panel); border-right: 1px solid var(--bronze); min-height: 60vh; max-height: 100vh; overflow-y: auto; }
 .detail h3 { font-size: 19px; margin: 0 0 4px; }
 .detail .sub { color: var(--muted); margin: 0 0 12px; }
 .detail dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0 0 12px; }
@@ -193,7 +206,7 @@ button { font: inherit; color: inherit; }
   </div>
 </header>
 
-<section class="army" aria-label="Armée">
+<section class="army" id="armyZone" aria-label="Armée">
   <div class="army-head">
     <h2 class="serif">Main Army</h2>
     <div><span class="count" id="unitCount">0 / 20</span>
@@ -202,12 +215,13 @@ button { font: inherit; color: inherit; }
   <div class="slots" id="slots"></div>
   <div class="army-status" id="armyStatus" aria-live="polite"></div>
   <div class="caps" id="capsBar" aria-label="Plafonds atteints par l'armée"></div>
-  <p class="army-hint">Clique sur une carte du roster pour l'ajouter, sur une unité de l'armée pour la retirer. Le lord est le général (♛) : en choisir un autre le remplace.</p>
+  <p class="flash" id="flash" role="status" hidden></p>
+  <p class="army-hint">Clic : afficher et personnaliser. Double-clic ou glisser-déposer : ajouter à l'armée, ou retirer (glisser hors de la barre). Le lord est le général (♛) : en choisir un autre le remplace.</p>
 </section>
 
 <div class="body">
   <aside class="detail" id="detail" aria-live="polite">
-    <p class="empty">Survole une carte pour voir son détail.</p>
+    <p class="empty">Clique sur une carte pour l’afficher et la personnaliser.</p>
   </aside>
   <main class="roster">
     <h2 class="serif">Unit Roster</h2>
@@ -219,10 +233,15 @@ button { font: inherit; color: inherit; }
 <script>
 const DATA = /*__DATA__*/null;
 
-/* ---------- État ---------- */
-const state = { raceIndex: 0, army: [], pinned: null, selection: {} };
-const DIMS = [['lore', 'Domaine de magie'], ['mark', 'Marque'], ['spirit', 'Esprit de la forêt'], ['other', 'Variante'], ['mount', 'Monture']];
-const TAB_COLORS = {   // teinte de fond des cartes selon l'onglet (en attendant les vrais visuels)
+/* ---------- État ----------
+   army  : liste des unités de l'armée { card, opt, sel } (sel = clés des sorts / capacités / objets cochés)
+   focus : unité affichée dans le panneau de personnalisation
+           { kind: 'army', unit } ou { kind: 'roster', unit } (unité « brouillon » pas encore dans l'armée) */
+const state = { raceIndex: 0, army: [], focus: null };
+const VARIANT_DIMS = [['lore', 'Domaine de magie'], ['mark', 'Marque'], ['spirit', 'Esprit de la forêt'], ['other', 'Variante']];
+const DIMS = [...VARIANT_DIMS, ['mount', 'Monture']];
+const UPGRADE_SECTIONS = [['s', 'Sorts'], ['a', 'Capacités'], ['i', 'Objets']];
+const TAB_COLORS = {   // teinte de fond des cartes selon l'onglet (quand l'image manque)
   commander: '#5a2a3a', heroes_agents: '#4a2f50', infantry: '#3e3a2c', missile_infantry: '#2f4038',
   cavalry_chariots: '#4a3424', missile_cavalry_chariots: '#3a4026', monster_beasts: '#2c3a48',
   constructs: '#3d3d3d', flying_war_machine: '#30404a', missile_monster_beasts: '#2a4340',
@@ -232,16 +251,23 @@ const $ = id => document.getElementById(id);
 const fmt = n => n.toLocaleString('fr-FR');
 const race = () => DATA.races[state.raceIndex];
 const roster = () => DATA.roster[race().key] || [];
-const spent = () => state.army.reduce((s, u) => s + u.opt.c, 0);
-const remaining = () => DATA.budget - spent();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const initials = name => name.replace(/\(.*?\)/g, '').split(/[\s-]+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w))
   .slice(0, 2).map(w => w[0].toUpperCase()).join('');
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-/* libellé lisible d'une option : « Beasts, Unicorn » */
 const optionLabel = o => DIMS.map(([k]) => o[k]).filter(Boolean).join(', ');
-/* dimensions qui offrent un vrai choix sur cette carte */
-const choiceDims = card => DIMS.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
+const choiceDims = (card, dims = DIMS) => dims.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
+
+/* ---------- Personnalisation : coûts ----------
+   Hypothèses (models/intermediate/int_character_upgrades.sql) : capacités selon la rareté, objets 200,
+   sorts au coût inconnu (comptés 0, affichés « ? »). Tout est coché par défaut. */
+const upgradesOf = raceKey => (DATA.up[raceKey] || {});
+const upgrade = key => upgradesOf(race().key)[key];          // [nom, type 's'|'a'|'i', coût|null]
+const defaultSel = opt => new Set(opt.up || []);
+const upgradesCost = (opt, sel) => [...sel].reduce((s, k) => s + ((upgradesOf(race().key)[k] || [])[2] || 0), 0);
+const unitCost = u => u.opt.c + upgradesCost(u.opt, u.sel);
+const newUnit = (card, opt) => ({ card, opt, sel: defaultSel(opt) });
+const spent = () => state.army.reduce((s, u) => s + unitCost(u), 0);
+const remaining = () => DATA.budget - spent();
 
 /* ---------- Règles de l'armée ----------
    Même spécification que models/validation/army_validation.sql (testée sur les mêmes armées de test) :
@@ -262,12 +288,12 @@ function capCounts(raceKey, army) {
   army.forEach(u => (capsOf(raceKey).m[u.opt.u] || []).forEach(k => { n[k] = (n[k] || 0) + 1; }));
   return n;
 }
-function validate(raceKey, army) {
+function validate(raceKey, army, costOf = unitCost) {
   const errors = [];
   if (!generalOf(army)) errors.push({ code: 'NO_GENERAL', text: 'La première unité doit être un lord pouvant être général (♛).' });
   if (army.filter(u => u.opt.l).length > 1) errors.push({ code: 'MULTIPLE_LORDS', text: 'Une armée ne peut avoir qu’un seul lord.' });
   if (army.length > DATA.maxUnits) errors.push({ code: 'TOO_MANY_UNITS', text: `Trop d'unités (${army.length}/${DATA.maxUnits}).` });
-  const cost = army.reduce((s, u) => s + u.opt.c, 0);
+  const cost = army.reduce((s, u) => s + costOf(u), 0);
   if (cost > DATA.budget) errors.push({ code: 'OVER_BUDGET', text: `Budget dépassé (${fmt(cost)} / ${fmt(DATA.budget)}).` });
   const counts = capCounts(raceKey, army);
   Object.entries(counts).forEach(([k, n]) => {
@@ -276,64 +302,85 @@ function validate(raceKey, army) {
   });
   return errors;
 }
-/* armée obtenue en ajoutant cette option : un lord remplace le lord existant (ou prend la première place) */
-function withAdded(army, card, opt) {
+/* armée obtenue en ajoutant cette unité : un lord remplace le lord existant (ou prend la première place) */
+function withAdded(army, unit) {
   const next = army.slice();
-  if (opt.l) {
+  if (unit.opt.l) {
     const i = lordIndex(next);
     if (i >= 0) next.splice(i, 1);
-    next.unshift({ card, opt });
-  } else next.push({ card, opt });
+    next.unshift(unit);
+  } else next.push(unit);
   return next;
 }
-/* raison qui empêche cet ajout ('' si possible) : on refuse tout ajout qui crée un nouveau problème */
-function addReason(card, opt) {
-  const rk = race().key, army = state.army;
+/* raison qui empêche l'ajout de cette unité ('' si possible) : on refuse tout ajout qui crée un nouveau problème */
+function addReason(unit) {
+  const rk = race().key, army = state.army, opt = unit.opt;
   if (!generalOf(army) && !opt.l) return "Choisis d'abord un lord (♛).";
+  if (opt.l && !opt.g) return 'Ce lord ne peut pas être général dans cette race.';
   const before = new Set(validate(rk, army).map(e => e.code));
-  const created = validate(rk, withAdded(army, card, opt)).filter(e => !before.has(e.code) && e.code !== 'NO_GENERAL');
-  if (opt.l && !opt.g) return "Ce lord ne peut pas être général dans cette race.";
+  const next = withAdded(army, unit);
+  const created = validate(rk, next).filter(e => !before.has(e.code) && e.code !== 'NO_GENERAL');
   if (!created.length) return '';
   const e = created[0];
   if (e.code === 'TOO_MANY_UNITS') return `Armée complète (${DATA.maxUnits} unités).`;
   if (e.code === 'OVER_BUDGET') return 'Fonds insuffisants.';
   if (e.code.startsWith('CAP_EXCEEDED:')) {
     const k = e.code.slice('CAP_EXCEEDED:'.length);
-    const next = withAdded(army, card, opt);
     return `Plafond atteint : ${capsOf(rk).g[k][0]} (${capCounts(rk, army)[k] || 0}/${effectiveCap(rk, k, next)}).`;
   }
   return e.text;
 }
-
-/* point d'entrée de test : valide une liste de clés d'unités (même format que les fichiers .army_setup).
-   Une clé inconnue de la race donne UNIT_NOT_AVAILABLE ; elle compte dans le nombre d'unités mais ni dans le coût,
-   ni dans les plafonds (comme dans army_validation.sql). */
+/* point d'entrée de test : valide une liste de clés d'unités (même format que les fichiers .army_setup), au prix de base
+   (sans personnalisation), comme army_validation.sql. Une clé inconnue de la race donne UNIT_NOT_AVAILABLE. */
 window.builderValidate = (raceKey, unitKeys) => {
   const byKey = {};
   (DATA.roster[raceKey] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
   const army = unitKeys.map(k => byKey[k] || { card: { id: null }, opt: { u: k, c: 0, g: false, l: false }, unknown: true });
-  const codes = new Set(validate(raceKey, army).map(e => e.code));
+  const codes = new Set(validate(raceKey, army, u => u.opt.c).map(e => e.code));
   if (army.some(u => u.unknown)) codes.add('UNIT_NOT_AVAILABLE');
   return [...codes].sort().join('|');
 };
+
+/* ---------- Ajout / retrait ---------- */
+function addUnit(unit) {
+  const reason = addReason(unit);
+  if (reason) { flash(reason); return false; }
+  state.army = withAdded(state.army, unit);
+  state.focus = { kind: 'army', unit };
+  renderAll();
+  return true;
+}
+function removeUnit(unit) {
+  state.army = state.army.filter(u => u !== unit);
+  if (state.focus && state.focus.unit === unit) state.focus = { kind: 'roster', unit: newUnit(unit.card, unit.opt) };
+  renderAll();
+}
+/* unité à ajouter depuis une carte du roster : la configuration en cours dans le panneau si c'est cette carte,
+   sinon l'option par défaut (la moins chère) avec tout coché */
+const draftFor = card => (state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)
+  ? state.focus.unit : newUnit(card, card.opts[0]);
+function flash(text) {
+  const m = $('flash'); m.textContent = text; m.hidden = false;
+  clearTimeout(flash.t); flash.t = setTimeout(() => { m.hidden = true; }, 3500);
+}
 
 /* ---------- Construction d'une carte ---------- */
 function cardEl(card, { cost, inArmy = false, label = '', img = null }) {
   const b = document.createElement('button');
   b.className = 'card' + (inArmy ? ' in-army' : '') + (img ? ' has-img' : '');
   b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
+  b.draggable = true;
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
     (card.g ? '<span class="badge-gen" title="Peut être général">♛</span>' : '') +
     (!inArmy && card.opts.length > 1 ? `<span class="badge-opt" title="${card.opts.length} options">${card.opts.length}</span>` : '') +
-    (img ? `<img class="art" src="images/${esc(img)}.png" alt="" loading="lazy">` : '') +
+    (img ? `<img class="art" src="images/${esc(img)}.png" alt="" loading="lazy" draggable="false">` : '') +
     `<span class="mono serif">${esc(initials(card.n))}</span>` +
     `<span class="nm">${esc(card.n)}</span>`;
-  // image introuvable (ex. page ouverte sans le dossier images/) : retour aux initiales
+  b.title = card.n + (label ? ' (' + label + ')' : '');
+  b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}`);
   const art = b.querySelector('.art');
   if (art) art.addEventListener('error', () => { art.remove(); b.classList.remove('has-img'); });
-  b.title = card.n + (label ? ' (' + label + ')' : '');
-  b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}${inArmy ? ', retirer de l’armée' : ''}`);
   return b;
 }
 
@@ -351,12 +398,14 @@ function renderArmy() {
   const slots = $('slots');
   slots.innerHTML = '';
   const general = generalOf(state.army);
-  state.army.forEach((u, i) => {
-    const el = cardEl(u.card, { cost: u.opt.c, inArmy: true, label: optionLabel(u.opt), img: u.opt.img || u.card.img });
+  state.army.forEach(u => {
+    const el = cardEl(u.card, { cost: unitCost(u), inArmy: true, label: optionLabel(u.opt), img: u.opt.img || u.card.img });
     if (u === general) { el.classList.add('is-general'); el.title += ' : général de l’armée'; }
-    el.addEventListener('click', () => { state.army.splice(i, 1); renderAll(); });
-    el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(u.card, u.opt); });
-    el.addEventListener('focus', () => { if (!state.pinned) showDetail(u.card, u.opt); });
+    if (state.focus && state.focus.unit === u) el.classList.add('selected');
+    el.addEventListener('click', () => { state.focus = { kind: 'army', unit: u }; renderAll(); });
+    el.addEventListener('dblclick', () => removeUnit(u));
+    el.addEventListener('dragstart', e => { drag = { from: 'army', unit: u }; e.dataTransfer.setData('text/plain', 'army'); e.dataTransfer.effectAllowed = 'move'; });
+    el.addEventListener('dragend', () => { drag = null; });
     slots.appendChild(el);
   });
   for (let i = state.army.length; i < DATA.maxUnits; i++) {
@@ -385,18 +434,24 @@ function renderRoster() {
   box.innerHTML = '';
   const byTab = {};
   roster().forEach(c => (byTab[c.t] ||= []).push(c));
+  Object.values(byTab).forEach(list => list.sort((a, b) => a.min - b.min || a.n.localeCompare(b.n)));   // coût croissant, comme en jeu
   DATA.tabs.filter(t => byTab[t.key]).forEach(t => {
     const sec = document.createElement('section');
-    sec.innerHTML = `<div class="section-head"><h3 class="serif">${esc(t.name)}</h3><span class="n">${byTab[t.key].length} carte${byTab[t.key].length > 1 ? "s" : ""}</span></div>`;
+    const n = byTab[t.key].length;
+    sec.innerHTML = `<div class="section-head"><h3 class="serif">${esc(t.name)}</h3><span class="n">${n} carte${n > 1 ? 's' : ''}</span></div>`;
     const wrap = document.createElement('div'); wrap.className = 'section-cards';
     byTab[t.key].forEach(card => {
       const el = cardEl(card, { cost: card.min, img: card.img });
-      const reasons = card.opts.map(o => addReason(card, o));
+      const reasons = card.opts.map(o => addReason(newUnit(card, o)));
       if (reasons.every(Boolean)) { el.classList.add('blocked'); el.title += ' : ' + reasons[0]; }
-      if (state.pinned === card) el.classList.add('selected');
-      el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(card); });
-      el.addEventListener('focus', () => { if (!state.pinned) showDetail(card); });
-      el.addEventListener('click', () => onCardClick(card));
+      if (state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card) el.classList.add('selected');
+      el.addEventListener('click', () => {
+        if (!(state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)) state.focus = { kind: 'roster', unit: newUnit(card, card.opts[0]) };
+        renderAll();
+      });
+      el.addEventListener('dblclick', () => addUnit(draftFor(card)));
+      el.addEventListener('dragstart', e => { drag = { from: 'roster', unit: draftFor(card) }; e.dataTransfer.setData('text/plain', 'roster'); e.dataTransfer.effectAllowed = 'copy'; });
+      el.addEventListener('dragend', () => { drag = null; });
       wrap.appendChild(el);
     });
     sec.appendChild(wrap);
@@ -404,102 +459,125 @@ function renderRoster() {
   });
 }
 
-function renderAll() { renderTop(); renderArmy(); renderRoster(); if (state.pinned) showPicker(state.pinned); }
-
-/* ---------- Panneau de détail (survol) ---------- */
-function showDetail(card, opt = null) {
+/* ---------- Panneau de personnalisation (clic sur une carte) ---------- */
+function renderPanel() {
+  const p = $('detail');
+  if (!state.focus) { p.innerHTML = '<p class="empty">Clique sur une carte pour l’afficher et la personnaliser. Double-clic ou glisser-déposer pour l’ajouter à l’armée ou l’en retirer.</p>'; return; }
+  const { kind, unit } = state.focus;
+  const { card, opt } = unit;
   const tab = DATA.tabs.find(t => t.key === card.t);
-  const dims = choiceDims(card);
-  const lines = dims.map(([k, lbl]) => `<dt>${lbl}</dt><dd>${esc([...new Set(card.opts.map(o => o[k] || 'Aucun'))].join(', '))}</dd>`).join('');
-  const pic = (opt && opt.img) || card.img;
-  $('detail').innerHTML = `
+  const pic = opt.img || card.img;
+  const reason = kind === 'roster' ? addReason(unit) : '';
+  const costLine = opt.up && opt.up.length
+    ? `${fmt(unitCost(unit))} <span class="muted">(unité ${fmt(opt.c)} + personnalisation ${fmt(upgradesCost(opt, unit.sel))})</span>`
+    : fmt(unitCost(unit));
+
+  // choix uniques : variantes (domaine, marque…) et monture
+  const radioGroup = (k, title) => {
+    const current = opt[k] ?? '';
+    const sameOther = o => DIMS.every(([d]) => d === k || (o[d] ?? '') === (opt[d] ?? ''));
+    const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
+    // prix d'une monture = écart avec la version à pied (même domaine, même marque…), comme dans le jeu
+    const foot = card.opts.find(o => (o.mount ?? '') === 'On foot' && sameOther(o)) || card.opts.find(o => (o.mount ?? '') === 'On foot');
+    const rows = values.map(v => {
+      const target = card.opts.find(o => (o[k] ?? '') === v && sameOther(o)) || card.opts.find(o => (o[k] ?? '') === v);
+      const delta = foot ? target.c - foot.c : 0;
+      const price = k === 'mount' && v !== 'On foot' && delta ? `<span class="price">${fmt(delta)}</span>` : '';
+      const label = k === 'mount' && v === 'On foot' ? 'Aucune (à pied)' : (v || 'Aucun');
+      return `<label class="row"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${v === current ? 'checked' : ''}>` +
+        `<span class="lbl">${esc(label)}</span>${price}</label>`;
+    }).join('');
+    return `<section class="pz"><h4 class="serif">${title}</h4>${rows}</section>`;
+  };
+  const variantHtml = choiceDims(card, VARIANT_DIMS).map(([k, t]) => radioGroup(k, t)).join('');
+  const mountHtml = choiceDims(card, [['mount', 'Montures']]).map(([k, t]) => radioGroup(k, t)).join('');
+
+  // sorts, capacités, objets : cases à cocher libres
+  const ups = upgradesOf(race().key);
+  const sections = UPGRADE_SECTIONS.map(([type, title]) => {
+    const keys = (opt.up || []).filter(k => ups[k] && ups[k][1] === type);
+    if (!keys.length) return '';
+    const all = keys.every(k => unit.sel.has(k));
+    const rows = keys.map(k => {
+      const [name, , cost] = ups[k];
+      const price = cost == null ? '<span class="price unknown" title="Coût à déterminer">?</span>' : `<span class="price">${fmt(cost)}</span>`;
+      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${unit.sel.has(k) ? 'checked' : ''}><span class="lbl">${esc(name)}</span>${price}</label>`;
+    }).join('');
+    return `<section class="pz"><h4 class="serif">${title}</h4>` +
+      `<label class="row all"><input type="checkbox" data-all="${type}" ${all ? 'checked' : ''}><span class="lbl">Tout sélectionner</span></label>${rows}</section>`;
+  }).join('');
+
+  p.innerHTML = `
     ${pic ? `<img class="portrait" src="images/${esc(pic)}.png" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(card.n)}</h3>
-    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}</p>
-    <dl>
-      <dt>Coût</dt><dd>${opt ? fmt(opt.c) : (card.min === card.max ? fmt(card.min) : fmt(card.min) + ' – ' + fmt(card.max))}</dd>
-      <dt>Général</dt><dd>${card.g ? 'Oui' : 'Non'}</dd>
-      <dt>Options</dt><dd>${card.opts.length}</dd>
-      ${opt ? `<dt>Choix</dt><dd>${esc(optionLabel(opt) || 'Standard')}</dd>` : lines}
-    </dl>
-    ${capsHtml(opt || card.opts[0])}
-    <p class="key">${esc(opt ? opt.u : card.opts.map(o => o.u).join(', '))}</p>`;
+    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}${kind === 'army' ? ' · dans l’armée' : ''}</p>
+    <dl><dt>Coût</dt><dd>${costLine}</dd><dt>Général</dt><dd>${opt.l && opt.g ? 'Oui' : 'Non'}</dd></dl>
+    ${kind === 'roster'
+      ? `<button class="add-btn" id="panelAction" ${reason ? 'disabled' : ''}>Ajouter à l'armée</button><p class="msg">${esc(reason)}</p>`
+      : `<button class="add-btn secondary" id="panelAction">Retirer de l'armée</button>`}
+    <h3 class="pz-title serif">Personnalisation d'unité</h3>
+    ${variantHtml}${mountHtml}${sections || ((variantHtml || mountHtml) ? '' : '<p class="empty">Aucune personnalisation pour cette unité.</p>')}
+    ${capsHtml(opt)}
+    <section class="pz"><h4 class="serif">Statistiques</h4><p class="empty">À venir.</p></section>
+    <p class="key">${esc(opt.u)}</p>`;
+
+  $('panelAction').addEventListener('click', () => (kind === 'roster' ? addUnit(unit) : removeUnit(unit)));
+  p.querySelectorAll('input[type=radio][data-u]').forEach(r => r.addEventListener('change', () => {
+    const next = card.opts.find(o => o.u === r.dataset.u);
+    // on garde les éléments cochés qui existent encore ; les nouveaux sont cochés par défaut
+    const keep = new Set((next.up || []).filter(k => unit.sel.has(k) || !(opt.up || []).includes(k)));
+    const changed = { card, opt: next, sel: keep };
+    if (kind === 'army') {
+      const before = new Set(validate(race().key, state.army).map(e => e.code));
+      const test = state.army.map(u => (u === unit ? changed : u));
+      const created = validate(race().key, test).filter(e => !before.has(e.code));
+      if (created.length && created.some(e => e.code === 'OVER_BUDGET' || e.code.startsWith('CAP_EXCEEDED'))) { flash(created[0].text); renderPanel(); return; }
+      state.army = test; state.focus = { kind, unit: changed };
+    } else state.focus = { kind, unit: changed };
+    renderAll();
+  }));
+  p.querySelectorAll('input[type=checkbox][data-k]').forEach(c => c.addEventListener('change', () => {
+    c.checked ? unit.sel.add(c.dataset.k) : unit.sel.delete(c.dataset.k);
+    renderAll();
+  }));
+  p.querySelectorAll('input[type=checkbox][data-all]').forEach(c => c.addEventListener('change', () => {
+    (opt.up || []).filter(k => ups[k] && ups[k][1] === c.dataset.all).forEach(k => (c.checked ? unit.sel.add(k) : unit.sel.delete(k)));
+    renderAll();
+  }));
 }
 
 function capsHtml(opt) {
   const rk = race().key, keys = capsOf(rk).m[opt.u] || [];
   if (!keys.length) return '';
-  return '<div class="dim-title">Plafonds</div><ul class="caps-list">' +
-    keys.map(k => `<li>${esc(capsOf(rk).g[k][0])} : ${effectiveCap(rk, k, state.army)}</li>`).join('') + '</ul>';
+  return '<section class="pz"><h4 class="serif">Plafonds</h4><ul class="caps-list">' +
+    keys.map(k => `<li>${esc(capsOf(rk).g[k][0])} : ${effectiveCap(rk, k, state.army)}</li>`).join('') + '</ul></section>';
 }
 
-/* ---------- Choix des options (carte à plusieurs options) ---------- */
-function matching(card, sel) {
-  return card.opts.filter(o => Object.entries(sel).every(([k, v]) => (o[k] ?? '') === v));
-}
-function currentOption(card) { return matching(card, state.selection)[0] || card.opts[0]; }
+function renderAll() { renderTop(); renderArmy(); renderRoster(); renderPanel(); }
 
-function onCardClick(card) {
-  if (card.opts.length === 1) { addToArmy(card, card.opts[0]); return; }
-  state.pinned = card;
-  const first = card.opts[0];
-  state.selection = Object.fromEntries(choiceDims(card).map(([k]) => [k, first[k] ?? '']));
-  renderRoster();
-  showPicker(card);
-}
-
-function showPicker(card, msg = '') {
-  const opt = currentOption(card);
-  const dims = choiceDims(card);
-  const html = dims.map(([k, lbl]) => {
-    const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
-    const chips = values.map(v => {
-      const pressed = state.selection[k] === v;
-      return `<button class="chip" data-k="${k}" data-v="${esc(v)}" aria-pressed="${pressed}">${esc(v || 'Aucun')}</button>`;
-    }).join('');
-    return `<div class="dim"><div class="dim-title">${lbl}</div><div class="dim-values">${chips}</div></div>`;
-  }).join('');
-  const blocked = addReason(card, opt);
-  $('detail').innerHTML = `
-    ${opt.img ? `<img class="portrait" src="images/${esc(opt.img)}.png" alt="" onerror="this.remove()">` : ''}
-    <h3 class="serif">${esc(card.n)}</h3>
-    <p class="sub">${esc(opt.n)}</p>
-    ${html}
-    <button class="add-btn" id="addBtn" ${blocked ? 'disabled' : ''}>Ajouter à l'armée (${fmt(opt.c)})</button>
-    <p class="msg">${esc(msg || blocked)}</p>
-    <button class="chip" id="cancelPick" style="margin-top:6px">Annuler</button>
-    <p class="key">${esc(opt.u)}</p>`;
-  $('detail').querySelectorAll('.chip[data-k]').forEach(btn => btn.addEventListener('click', () => {
-    const k = btn.dataset.k, v = btn.dataset.v;
-    const next = { ...state.selection, [k]: v };
-    if (matching(card, next).length) state.selection = next;
-    else {   // combinaison inexistante : on garde la valeur cliquée et on prend la première option compatible
-      const o = card.opts.find(o => (o[k] ?? '') === v);
-      state.selection = Object.fromEntries(dims.map(([d]) => [d, o[d] ?? '']));
-    }
-    showPicker(card);
-  }));
-  $('addBtn').addEventListener('click', () => addToArmy(card, currentOption(card)));
-  $('cancelPick').addEventListener('click', () => { state.pinned = null; renderRoster(); showDetail(card); });
-}
-
-function addToArmy(card, opt) {
-  const reason = addReason(card, opt);
-  if (reason) {
-    if (state.pinned) showPicker(card, reason); else { showDetail(card); $('detail').insertAdjacentHTML('beforeend', `<p class="msg">${esc(reason)}</p>`); }
-    return;
-  }
-  state.army = withAdded(state.army, card, opt);   // un lord remplace le lord existant et se place en tête
-  state.pinned = null;
-  renderAll();
-  showDetail(card, opt);
+/* ---------- Glisser-déposer ---------- */
+let drag = null;
+function setupDragAndDrop() {
+  const armyZone = $('armyZone');
+  armyZone.addEventListener('dragover', e => { if (drag && drag.from === 'roster') { e.preventDefault(); armyZone.classList.add('drop-ok'); } });
+  armyZone.addEventListener('dragleave', () => armyZone.classList.remove('drop-ok'));
+  armyZone.addEventListener('drop', e => {
+    e.preventDefault(); armyZone.classList.remove('drop-ok');
+    if (drag && drag.from === 'roster') addUnit(drag.unit);
+    drag = null;
+  });
+  // une unité de l'armée lâchée en dehors de la barre d'armée est retirée
+  document.addEventListener('dragover', e => { if (drag && drag.from === 'army' && !armyZone.contains(e.target)) e.preventDefault(); });
+  document.addEventListener('drop', e => {
+    if (drag && drag.from === 'army' && !armyZone.contains(e.target)) { e.preventDefault(); removeUnit(drag.unit); }
+    drag = null;
+  });
 }
 
 /* ---------- Changement de race ---------- */
 function setRace(i) {
   state.raceIndex = (i + DATA.races.length) % DATA.races.length;
-  state.army = []; state.pinned = null;
-  $('detail').innerHTML = '<p class="empty">Survole une carte pour voir son détail.</p>';
+  state.army = []; state.focus = null;
   renderAll();
 }
 
@@ -510,20 +588,20 @@ function init() {
   sel.addEventListener('change', e => setRace(Number(e.target.value)));
   $('prevRace').addEventListener('click', () => setRace(state.raceIndex - 1));
   $('nextRace').addEventListener('click', () => setRace(state.raceIndex + 1));
-  $('clearArmy').addEventListener('click', () => { state.army = []; renderAll(); });
+  $('clearArmy').addEventListener('click', () => { state.army = []; state.focus = null; renderAll(); });
   document.addEventListener('keydown', e => {
-    if (e.target.closest('select')) return;
+    if (e.target.closest('select, input')) return;
     if (e.key === 'ArrowLeft' && e.altKey) setRace(state.raceIndex - 1);
     if (e.key === 'ArrowRight' && e.altKey) setRace(state.raceIndex + 1);
   });
   $('themeToggle').addEventListener('click', () => {
     const root = document.documentElement;
-    const dark = getComputedStyle(root).colorScheme === 'dark';
-    root.dataset.theme = dark ? 'light' : 'dark';
+    root.dataset.theme = getComputedStyle(root).colorScheme === 'dark' ? 'light' : 'dark';
   });
   $('footer').textContent = `Données du dump WH3 (${DATA.patch}), budget de ${fmt(DATA.budget)} et ${DATA.maxUnits} unités maximum. ` +
-    `Prix de base, sans objets, sorts ni expérience. ` +
+    `Personnalisation : coûts des capacités et objets supposés, coût des sorts à venir. ` +
     `Outil de fan non officiel, non affilié à Creative Assembly ni à Games Workshop.`;
+  setupDragAndDrop();
   setRace(0);
 }
 init();

@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=190 WARN=1 ERROR=0`. L'avertissement est volontaire, voir « Caps et validation ».
+Le résultat attendu est `Done. PASS=204 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -190,6 +190,39 @@ python -m playwright install chromium
 - Tant qu'il n'y a pas de lord, seuls les lords pouvant être généraux sont disponibles.
 - Une carte est grisée quand aucune de ses options ne peut être ajoutée (fonds, armée complète, plafond atteint). Le survol en donne la raison.
 - Sous l'armée s'affichent le statut (« ✓ Armée valide » ou la liste des problèmes) et les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés.
+
+## Personnalisation des personnages (sorts, capacités, objets)
+
+**Données :** `pvp_character_upgrades`, avec 1 ligne par option de personnage et par élément proposé. On y trouve 6 123 sorts, 4 507 capacités et 1 777 objets.
+
+**Règles (hypothèses vérifiées sur le panneau de Neferata en jeu) :**
+- **Sorts et capacités** :
+  - ils viennent des **domaines de magie rattachés à l'unité** (sorts + passif du domaine) et des **capacités propres de l'unité marquées « amélioration »** (`is_unit_upgrade`) ;
+  - un élément qui consomme du mana est un sort (règle lue dans l'écran du jeu) ;
+  - les capacités cachées sont exclues ;
+  - l'arbre de compétences n'est **pas** utilisé : il ajoute des versions « Upgraded » absentes du panneau.
+- **Objets** : les objets réservés au type de personnage, hors suiveurs, formes et montures. Le type de personnage est relié à l'unité par `int_character_agent_subtypes`. 18 options restent sans type (avertissement `assert_character_agent_subtypes_resolved`).
+- **Coûts** :
+  - capacités : selon la rareté, common 100, uncommon 150, rare 200 ;
+  - objets : `uniqueness_score` (200) ;
+  - sorts : **inconnus**. Ils sont affichés « ? » et comptés 0, en attendant la formule dégressive.
+- **Sélection par défaut** : tout est coché (hypothèse : les prix affichés en jeu incluent sorts et objets).
+- Les capacités **innées** (Single Entity, Frenzy…) ne sont pas proposées. Elles sont pourtant enregistrées dans les `.army_setup`, et le test l'accepte.
+
+**Vérifications** (`tests/marts/assert_character_upgrades_known_cases.sql`) :
+- **Neferata sur Destrier Infernal** : exactement les 6 sorts, 6 capacités et 3 objets de la capture du jeu, aux coûts affichés.
+- **Fichiers `.army_setup`** : tout élément coché dans tes deux fichiers est soit proposé, soit une capacité innée.
+- **Montures** : les prix affichés (écart avec la version à pied) correspondent au jeu pour Neferata (250, 450, 700 et 1 200).
+
+**Dans le builder :**
+- **Clic** sur une carte, du roster ou de l'armée : ouvre le panneau, sans ajouter ni retirer. Le panneau contient :
+  - les choix uniques : domaine de magie, marque…, puis la monture avec son prix ;
+  - les cases à cocher libres, avec « Tout sélectionner » : sorts, capacités, objets ;
+  - les plafonds ;
+  - les statistiques (à venir).
+- **Double-clic ou glisser-déposer** : une carte du roster glissée sur la barre d'armée est ajoutée. Une unité de l'armée glissée hors de la barre est retirée. Le panneau propose aussi des boutons « Ajouter » et « Retirer ».
+- **Personnaliser avant d'ajouter** : quand une carte du roster est ouverte dans le panneau, l'ajout reprend sa configuration.
+- **Coût** : le coût d'une unité inclut sa personnalisation. Les fonds et la validation en tiennent compte. La spécification SQL et `test_app.py` restent au prix de base.
 
 ## Git et GitHub
 

@@ -9,3 +9,7 @@ seeds:
     description: "Verdict attendu pour chaque armée de test (codes d'erreur triés, séparés par |)."
     config:
       column_types: {army_id: varchar, description: varchar, expected_valid: boolean, expected_errors: varchar}
+  - name: test_army_selected_upgrades
+    description: "Sorts, capacités (type 0) et objets (type 2) cochés dans les fichiers .army_setup de test."
+    config:
+      column_types: {army_id: varchar, slot: integer, item_type: integer, upgrade_key: varchar}

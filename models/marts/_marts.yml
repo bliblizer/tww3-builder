@@ -83,3 +83,17 @@ models:
 
   - name: pvp_army_rules
     description: "Budget (12 400) et nombre maximal d'unités (20) d'une armée PvP 1v1, lus dans les tables du jeu."
+
+  - name: pvp_character_upgrades
+    description: >
+      Sorts, capacités et objets proposés dans le panneau de personnalisation de chaque personnage jouable (hypothèses
+      vérifiées sur le panneau de Neferata). cost : capacités selon la rareté, objets selon uniqueness_score, sorts inconnus.
+    data_tests:
+      - unique:
+          column_name: "race_key || '|' || unit_key || '|' || upgrade_type || '|' || upgrade_key"
+    columns:
+      - name: upgrade_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['spell', 'ability', 'item']

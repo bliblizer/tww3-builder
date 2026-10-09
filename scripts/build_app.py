@@ -56,7 +56,7 @@ cards = rows("""
     order by race_key, tab_order, min_cost, card_name""")
 
 options = rows("""
-    select card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general, is_lord,
+    select race_key, card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general, is_lord,
            multiplayer_cost, unit_card
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
@@ -86,18 +86,37 @@ with open(os.path.join(ROOT, 'exports', 'missing_unit_cards.csv'), 'w', encoding
     w.writerows([m, f'ui/units/icons/{m}.png'] for m in missing)
 img = lambda name: name if name in available else None
 
+# ---------- personnalisation : sorts, capacités, objets (dictionnaire par race + liste de clés par option) ----------
+TYPE = {'spell': 's', 'ability': 'a', 'item': 'i'}
+up_dict, up_by_option = {}, {}
+for r in rows("""
+    select race_key, unit_key, upgrade_type, upgrade_key, upgrade_name, cost
+    from marts.pvp_character_upgrades
+    order by race_key, unit_key, case upgrade_type when 'spell' then 1 when 'ability' then 2 else 3 end, upgrade_name"""):
+    up_dict.setdefault(r['race_key'], {})[r['upgrade_key']] = [r['upgrade_name'], TYPE[r['upgrade_type']], r['cost']]
+    up_by_option.setdefault((r['race_key'], r['unit_key']), []).append(r['upgrade_key'])
+
 opts_by_card = {}
 for o in options:
     opts_by_card.setdefault(o['card_id'], []).append({
         'u': o['unit_key'], 'n': o['unit_name'], 'c': o['multiplayer_cost'], 'g': o['can_be_general'], 'l': o['is_lord'],
         'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount'],
-        'img': img(o['unit_card'])})
+        'img': img(o['unit_card']), 'race': o['race_key']})
+
+# options : liste des éléments de personnalisation + coût par défaut (tout coché, comme le prix affiché en jeu)
+for opts in opts_by_card.values():
+    for o in opts:
+        race_key = o.pop('race')
+        o['up'] = up_by_option.get((race_key, o['u']), [])
+        o['dc'] = o['c'] + sum((up_dict[race_key][k][2] or 0) for k in o['up'])
+    opts.sort(key=lambda o: (o['dc'], o['u']))
 
 roster = {}
 for c in cards:
     roster.setdefault(c['race_key'], []).append({
         'id': c['card_id'], 'n': c['card_name'], 'img': img(c['root_unit_card']), 't': c['tab_key'], 'grp': c['ui_group_name'], 'g': c['can_be_general'],
-        'min': c['min_cost'], 'max': c['max_cost'], 'opts': opts_by_card[c['card_id']]})
+        'min': min(o['dc'] for o in opts_by_card[c['card_id']]), 'max': max(o['dc'] for o in opts_by_card[c['card_id']]),
+        'opts': opts_by_card[c['card_id']]})
 
 # ---------- caps : groupes, membres, plafonds spéciaux selon le général ----------
 caps = {}
@@ -108,7 +127,7 @@ for r in rows("select race_key, unit_set_key, unit_key from marts.pvp_cap_group_
 for r in rows("select race_key, unit_set_key, general_card_id, cap from marts.pvp_cap_overrides"):
     caps[r['race_key']]['o'].setdefault(r['general_card_id'], {})[r['unit_set_key']] = r['cap']
 
-data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps}
+data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()

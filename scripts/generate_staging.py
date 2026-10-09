@@ -42,6 +42,13 @@ RENAME = {  # renommages vers des clés homogènes (par table)
  'ancillaries_categories_agent_subtype_override_junctions': {'agent_subtype': 'agent_subtype_key'},
  'ui_unit_bullet_point_enums': {'key': 'bullet_point_key'},
  'ui_unit_bullet_point_unit_overrides': {'bullet_point': 'bullet_point_key'},
+ 'character_skill_node_sets': {'key': 'node_set_key', 'agent_subtype_key': 'agent_subtype_key'},
+ 'character_skill_node_set_items': {'set': 'node_set_key', 'item': 'node_key'},
+ 'character_skill_nodes': {'key': 'node_key', 'character_skill_key': 'skill_key', 'subculture': 'subculture_key', 'faction_key': 'faction_key'},
+ 'character_skill_level_to_effects_junctions': {'character_skill_key': 'skill_key', 'effect_key': 'effect_key'},
+ 'effect_bonus_value_unit_ability_junctions': {'effect': 'effect_key', 'unit_ability': 'ability_key'},
+ 'unit_special_abilities': {'key': 'ability_key'},
+ 'ancillary_uniqueness_groupings': {'group_key': 'uniqueness_group_key'},
  'unit_variants': {'faction': 'faction_key', 'unit': 'land_unit_key', 'name': 'variant_name', 'variant': 'variant_key'},
 }
 PK = {  # clé primaire attendue (testée unique + non nulle si les données le confirment)

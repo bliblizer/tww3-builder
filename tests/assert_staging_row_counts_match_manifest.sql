@@ -87,6 +87,20 @@ with staged as (
     select 'text/db/ui_unit_bullet_point_enums__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__ui_unit_bullet_point_enums') }}
     union all
     select 'db/unit_variants_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_variants') }}
+    union all
+    select 'db/character_skill_node_sets_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__character_skill_node_sets') }}
+    union all
+    select 'db/character_skill_node_set_items_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__character_skill_node_set_items') }}
+    union all
+    select 'db/character_skill_nodes_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__character_skill_nodes') }}
+    union all
+    select 'db/character_skill_level_to_effects_junctions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__character_skill_level_to_effects_junctions') }}
+    union all
+    select 'db/effect_bonus_value_unit_ability_junctions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__effect_bonus_value_unit_ability_junctions') }}
+    union all
+    select 'db/unit_special_abilities_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_special_abilities') }}
+    union all
+    select 'db/ancillary_uniqueness_groupings_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__ancillary_uniqueness_groupings') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

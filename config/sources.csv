@@ -44,3 +44,10 @@ text/db/ancillaries__.loc.tsv,textes,Noms des objets,candidat
 text/db/ui_unit_bullet_point_enums__.loc.tsv,textes,Libellés forces/faiblesses (phase ultérieure),confirmé
 ui/frontend ui/custom_battle.twui.xml,reference,Écran du builder (preuve des règles d'affichage),référence
 db/unit_variants_tables/data__.tsv,images,Unité -> nom du fichier de carte (unit_card) dans ui/units/icons/,confirmé
+db/character_skill_node_sets_tables/data__.tsv,personnalisation,Arbre de compétences de chaque type de personnage,candidat
+db/character_skill_node_set_items_tables/data__.tsv,personnalisation,Nœuds de chaque arbre de compétences,candidat
+db/character_skill_nodes_tables/data__.tsv,personnalisation,Nœud -> compétence,candidat
+db/character_skill_level_to_effects_junctions_tables/data__.tsv,personnalisation,Compétence -> effets,candidat
+db/effect_bonus_value_unit_ability_junctions_tables/data__.tsv,personnalisation,Effet -> capacité ou sort débloqué,candidat
+db/unit_special_abilities_tables/data__.tsv,personnalisation,Détail des capacités (mana_cost > 0 = sort),candidat
+db/ancillary_uniqueness_groupings_tables/data__.tsv,personnalisation,Groupes de rareté (common / uncommon / rare / unique),candidat
