@@ -9,3 +9,6 @@ chs_21_units,"21 unités (maximum 20), budget et plafonds respectés",false,TOO_
 chs_over_budget,"Coût total supérieur à 12 400, plafonds respectés",false,OVER_BUDGET
 chs_two_lords,Deux lords dans la même armée (impossible en jeu),false,MULTIPLE_LORDS
 nag_tomb_king_and_hero,Tomb King (TK à 18) + héros Necrotect (TK à 2) : le plafond le plus élevé s’applique,true,
+select_all_durthu,"Sauvegardée en jeu : Durthu, Spellsinger, Eternal Guard RoR, Wardancers (tout sélectionné)",true,
+select_all_spellweaver,"Sauvegardée en jeu : Spellweaver, Waystalker, Ariel (tout sélectionné)",true,
+select_all_neferata,"Sauvegardée en jeu : Neferata, Necromancer, Zombies, Lahmian Handmaidens, Drakenhof Templars (tout sélectionné)",true,

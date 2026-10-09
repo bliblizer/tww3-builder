@@ -13,3 +13,11 @@ seeds:
     description: "Sorts, capacités (type 0) et objets (type 2) cochés dans les fichiers .army_setup de test."
     config:
       column_types: {army_id: varchar, slot: integer, item_type: integer, upgrade_key: varchar}
+  - name: test_army_all_selected
+    description: "Armées de test enregistrées en jeu avec « Tout sélectionner » sur chaque personnage."
+    config:
+      column_types: {army_id: varchar}
+  - name: test_unit_prices
+    description: "Prix d'unités personnalisées relevés en jeu (1 ligne par élément coché ; upgrade_key vide = rien de coché)."
+    config:
+      column_types: {case_id: varchar, race_key: varchar, unit_key: varchar, upgrade_key: varchar, expected_price: integer, description: varchar}

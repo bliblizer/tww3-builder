@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=204 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
+Le résultat attendu est `Done. PASS=223 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -143,6 +143,35 @@ Limites de la V0 :
 - prix de base, sans objets ni sorts ;
 - pas de caps ni de validation de l'armée.
 
+### Mise en page (inspirée de l'écran du jeu)
+
+**Le site est en anglais**, avec un thème sombre unique. Le menu des races n'affiche que leur nom.
+
+
+- **En haut** : la race, avec sa **couleur d'accent** et son **illustration en fond** (voir plus bas), puis les fonds restants.
+- **Main Army** :
+  - les cartes de l'armée, avec sous chaque unité des boutons **− / +** pour son **rang d'expérience** (0 à 9) ;
+  - sur la carte, des **chevrons** rappellent le rang : 1 à 3 chevrons bronze pour les rangs 1-3, argent pour 4-6, or pour 7-9 ;
+  - en dessous, le statut de l'armée et les plafonds en cours.
+- **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
+- **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
+- **À droite** : les **statistiques de la composition**, avec la part des fonds et le nombre d'unités par rôle (`pvp_roster_options.role` : lord, héros, infanterie légère / de ligne / d'élite, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), plus les volants et l'ensemble « lord & héros ».
+- **Alertes de plafond** : une carte du roster affiche un badge « n/plafond » quand l'un de ses groupes est plein ou n'a plus qu'une place.
+
+**Hypothèses de cette version :**
+- **Coût d'un rang** : `arrondi(prix × multiplicateur) + coût fixe` (`pvp_xp_ranks`, tiré de `unit_stats_land_experience_bonuses`).
+- **Infanterie** : légère < 500, de ligne 500-899, d'élite ≥ 900 (prix de base).
+- **Volant** : l'entité de combat du soldat ou de sa monture a une vitesse de vol (`battle_entities.fly_speed > 0`). Ce point n'est pas une hypothèse, mais un fait tiré des données.
+- **Couleur d'accent** : couleur principale de la faction principale de la race (`factions.primary_colour_hex`), ou sa couleur secondaire si la principale est trop sombre. À défaut, le rouge du builder (Vampire Counts, Chaos Dwarfs).
+
+### Illustrations des races
+
+Le jeu illustre chaque race dans l'écran de bataille personnalisée avec `ui/frontend ui/race_strip_images/<faction>_large.png`. `pvp_races.race_image` donne le nom du fichier pour chaque race.
+
+1. Extrais ce dossier avec RPFM.
+2. Copie son contenu dans `assets/race_images/`.
+3. Lance `python scripts/build_app.py`. Les illustrations utiles sont copiées dans `docs/images/races/`. Sans illustration, le fond reste uni.
+
 ### Images des cartes
 
 Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu installé.
@@ -193,36 +222,32 @@ python -m playwright install chromium
 
 ## Personnalisation des personnages (sorts, capacités, objets)
 
-**Données :** `pvp_character_upgrades`, avec 1 ligne par option de personnage et par élément proposé. On y trouve 6 123 sorts, 4 507 capacités et 1 777 objets.
+**Données :** `pvp_character_upgrades`, avec 1 ligne par option de personnage et par élément proposé.
 
-**Règles (hypothèses vérifiées sur le panneau de Neferata en jeu) :**
+**Ce qui est proposé, vérifié en jeu sur 9 personnages** (fichiers « Tout sélectionner » de `tests/fixtures/`) :
 - **Sorts et capacités** :
-  - ils viennent des **domaines de magie rattachés à l'unité** (sorts + passif du domaine) et des **capacités propres de l'unité marquées « amélioration »** (`is_unit_upgrade`) ;
-  - un élément qui consomme du mana est un sort (règle lue dans l'écran du jeu) ;
-  - les capacités cachées sont exclues ;
-  - l'arbre de compétences n'est **pas** utilisé : il ajoute des versions « Upgraded » absentes du panneau.
-- **Objets** : les objets réservés au type de personnage, hors suiveurs, formes et montures. Le type de personnage est relié à l'unité par `int_character_agent_subtypes`. 18 options restent sans type (avertissement `assert_character_agent_subtypes_resolved`).
-- **Coûts** :
-  - capacités : selon la rareté, common 100, uncommon 150, rare 200 ;
-  - objets : `uniqueness_score` (200) ;
-  - sorts : **inconnus**. Ils sont affichés « ? » et comptés 0, en attendant la formule dégressive.
-- **Sélection par défaut** : tout est coché (hypothèse : les prix affichés en jeu incluent sorts et objets).
-- Les capacités **innées** (Single Entity, Frenzy…) ne sont pas proposées. Elles sont pourtant enregistrées dans les `.army_setup`, et le test l'accepte.
+  - ils viennent des **domaines de magie de l'unité** et de ses **capacités marquées « amélioration »** ;
+  - un élément qui consomme du mana est un sort ;
+  - les capacités innées (Wounds, Twilight's Allure…) ne sont pas sélectionnables : elles sont incluses et gratuites.
+- **Objets** : la liste de bataille personnalisée de l'unité, `battle_set_piece_armies_characters_items`, une table au nom trompeur. Elle est vérifiée exactement : objets légendaires des lords, objets génériques des personnages ordinaires (Opal Amulet, Power Stone…).
+  - Correspondance, par ordre de priorité : la clé de l'unité, puis sa version à pied, puis l'unité de son type de personnage, puis une liste dont la clé commence par celle-ci (par exemple Bloab → bloab_rotspawned).
 
-**Vérifications** (`tests/marts/assert_character_upgrades_known_cases.sql`) :
-- **Neferata sur Destrier Infernal** : exactement les 6 sorts, 6 capacités et 3 objets de la capture du jeu, aux coûts affichés.
-- **Fichiers `.army_setup`** : tout élément coché dans tes deux fichiers est soit proposé, soit une capacité innée.
-- **Montures** : les prix affichés (écart avec la version à pied) correspondent au jeu pour Neferata (250, 450, 700 et 1 200).
+**Prix (le jeu ne les stocke pas ; règles déduites de 8 prix relevés en jeu sur Neferata) :**
+- **Unité** : `main_units.multiplayer_cost`, monture comprise dans la clé d'unité *(vérifié : 1 350 pour Barded Nightmare)*.
+- **Capacités et objets cochés** : grille de rareté, common 100, uncommon 150, rare 200, legendary 200 *(vérifié)*. Un élément coché est payant, et son prix est simplement masqué dans le panneau du jeu.
+- **Sorts cochés** : arrondi inférieur de la somme des prix de rareté de chaque sort × (1 − 0,047 × k). Les sorts sont classés du plus cher au moins cher, avec k = 0, 1, 2… C'est une formule empirique, **à ±1 près sur les 8 relevés**.
+- **Rangs d'expérience** : `arrondi(prix × multiplicateur) + coût fixe`. C'est une hypothèse, non vérifiée.
+- **Par défaut** : tout est coché, comme les prix affichés dans le roster du jeu.
+
+**Tests :**
+- `tests/marts/assert_select_all_files_match_model.sql` : pour chaque personnage des fichiers « Tout sélectionner », le modèle propose **exactement** les éléments du fichier.
+- `models/validation/unit_price_checks.sql` et `assert_unit_prices_match_game` : la formule est appliquée aux prix relevés en jeu (`seeds/tests/test_unit_prices.csv`), avec une tolérance de ±1.
+- `scripts/test_app.py` : vérifie que le builder rend les mêmes verdicts et les mêmes prix.
 
 **Dans le builder :**
-- **Clic** sur une carte, du roster ou de l'armée : ouvre le panneau, sans ajouter ni retirer. Le panneau contient :
-  - les choix uniques : domaine de magie, marque…, puis la monture avec son prix ;
-  - les cases à cocher libres, avec « Tout sélectionner » : sorts, capacités, objets ;
-  - les plafonds ;
-  - les statistiques (à venir).
-- **Double-clic ou glisser-déposer** : une carte du roster glissée sur la barre d'armée est ajoutée. Une unité de l'armée glissée hors de la barre est retirée. Le panneau propose aussi des boutons « Ajouter » et « Retirer ».
-- **Personnaliser avant d'ajouter** : quand une carte du roster est ouverte dans le panneau, l'ajout reprend sa configuration.
-- **Coût** : le coût d'une unité inclut sa personnalisation. Les fonds et la validation en tiennent compte. La spécification SQL et `test_app.py` restent au prix de base.
+- **Le panneau de personnalisation n'apparaît que pour une unité personnalisable** : variante, monture, sorts, capacités ou objets.
+- **Comme en jeu**, le prix n'est affiché que sur les éléments non cochés : c'est le surcoût de leur ajout.
+- **Le clic simple attend une fraction de seconde** avant d'ouvrir les panneaux. Sans ce délai, l'apparition du panneau déplacerait le roster entre les deux clics d'un double-clic.
 
 ## Git et GitHub
 

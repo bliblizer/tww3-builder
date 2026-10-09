@@ -289,3 +289,18 @@ models:
     description: "Détail des capacités (mana_cost > 0 = sort) (source : db/unit_special_abilities_tables/data__.tsv)"
   - name: stg_dump__ancillary_uniqueness_groupings
     description: "Groupes de rareté (common / uncommon / rare / unique) (source : db/ancillary_uniqueness_groupings_tables/data__.tsv)"
+  - name: stg_dump_loc__units_custom_battle_type_categories
+    description: "Noms des catégories de variantes (Bloodlines…) (source : text/db/units_custom_battle_type_categories__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump__land_units
+    description: "Land units : entité (source : db/land_units_tables/data__.tsv)"
+  - name: stg_dump__battle_entities
+    description: "Entités de combat : vitesses dont fly_speed (vol) (source : db/battle_entities_tables/data__.tsv)"
+  - name: stg_dump__mounts
+    description: "Montures -> entité de combat (source : db/mounts_tables/data__.tsv)"
+  - name: stg_dump__battle_set_piece_armies_characters_items
+    description: "Objets proposés à chaque personnage en bataille personnalisée (clé d unité) (source : db/battle_set_piece_armies_characters_items_tables/data__.tsv)"

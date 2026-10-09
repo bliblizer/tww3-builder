@@ -7,8 +7,8 @@ with nef as (
     where race_key = 'wh_main_sc_vmp_vampire_counts' and unit_key = 'wh3_dlc29_vmp_cha_neferata_hellsteed_mp'
 ),
 expected(upgrade_type, upgrade_name, cost) as (
-    values ('spell', 'Invocation of Nehek', null), ('spell', 'Spirit Leech', null), ('spell', 'Raise Dead', null),
-           ('spell', 'The Withering', null), ('spell', 'Wind of Death', null), ('spell', 'Pit of Shades', null),
+    values ('spell', 'Invocation of Nehek', 100), ('spell', 'Spirit Leech', 100), ('spell', 'Raise Dead', 150),
+           ('spell', 'The Withering', 150), ('spell', 'Wind of Death', 200), ('spell', 'Pit of Shades', 200),
            ('ability', 'The Curse of Undeath', 100), ('ability', 'Life Leeching', 100), ('ability', 'Smoke & Mirrors', 100),
            ('ability', 'The Hunger', 150), ('ability', 'Bastet', 150), ('ability', 'Shadowblood', 200),
            ('item', 'Akmet-kar, the Dagger of Jet', 200), ('item', 'Ruby of Lahmia', 200), ('item', 'Aken-seth, the Staff of Pain', 200)

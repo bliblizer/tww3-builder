@@ -1,5 +1,6 @@
 """Test (facultatif) du builder : il doit rendre exactement les mêmes verdicts que la spécification SQL
-(models/validation/army_validation.sql) sur les armées de test (seeds/tests/).
+(models/validation/army_validation.sql) sur les armées de test (seeds/tests/), et les mêmes prix que
+models/validation/unit_price_checks.sql sur les prix relevés en jeu (seeds/tests/test_unit_prices.csv, ±1).
 
 Prérequis (une seule fois) :  pip install playwright   puis   python -m playwright install chromium
 Usage :                        python scripts/build_app.py   puis   python scripts/test_app.py
@@ -24,6 +25,17 @@ async def main():
             match = got==exp[aid]; ok+=match
             print(('OK ' if match else 'ÉCART'), aid, '| attendu:', exp[aid] or '(valide)', '| builder:', got or '(valide)')
         print(f'{ok}/{len(armies)} verdicts identiques | erreurs JS: {errs}')
+        cases = collections.defaultdict(lambda: {'keys': []})
+        for r in csv.DictReader(open(os.path.join(ROOT, 'seeds', 'tests', 'test_unit_prices.csv'), encoding='utf-8')):
+            c = cases[r['case_id']]; c.update(race=r['race_key'], unit=r['unit_key'], expected=int(r['expected_price']))
+            if r['upgrade_key']: c['keys'].append(r['upgrade_key'])
+        price_ok = 0
+        for cid, c in cases.items():
+            got = await pg.evaluate('([r,u,k]) => window.builderPrice(r,u,k)', [c['race'], c['unit'], c['keys']])
+            good = got is not None and abs(got - c['expected']) <= 1; price_ok += good
+            print(('OK ' if good else 'ÉCART'), cid, '| jeu:', c['expected'], '| builder:', got)
+        print(f'{price_ok}/{len(cases)} prix conformes (±1)')
+        ok = ok if price_ok == len(cases) else -1
         await b.close()
         return ok == len(armies) and not errs
 sys.exit(0 if asyncio.run(main()) else 1)
