@@ -39,8 +39,7 @@ def rows(sql, params=()):
     return [dict(zip(cols, r)) for r in cur.fetchall()]
 
 patch = con.execute("select any_value(patch) from marts.pvp_races").fetchone()[0]
-budget = con.execute("select budget from staging.stg_dump__mp_budgets where budget_key = 'land_large'").fetchone()[0]
-max_units = con.execute("select starting_unit_cap from staging.stg_dump__battle_unit_caps_for_team_sizes where team_size = 1").fetchone()[0]
+budget, max_units = con.execute("select budget, max_units from marts.pvp_army_rules").fetchone()
 
 tabs = rows("""
     select t.tab_key as key, t.tab_order as ord, x.resolved_text as name
@@ -57,7 +56,7 @@ cards = rows("""
     order by race_key, tab_order, min_cost, card_name""")
 
 options = rows("""
-    select card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general,
+    select card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, mount, can_be_general, is_lord,
            multiplayer_cost, unit_card
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
@@ -90,7 +89,7 @@ img = lambda name: name if name in available else None
 opts_by_card = {}
 for o in options:
     opts_by_card.setdefault(o['card_id'], []).append({
-        'u': o['unit_key'], 'n': o['unit_name'], 'c': o['multiplayer_cost'], 'g': o['can_be_general'],
+        'u': o['unit_key'], 'n': o['unit_name'], 'c': o['multiplayer_cost'], 'g': o['can_be_general'], 'l': o['is_lord'],
         'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount'],
         'img': img(o['unit_card'])})
 
@@ -100,7 +99,16 @@ for c in cards:
         'id': c['card_id'], 'n': c['card_name'], 'img': img(c['root_unit_card']), 't': c['tab_key'], 'grp': c['ui_group_name'], 'g': c['can_be_general'],
         'min': c['min_cost'], 'max': c['max_cost'], 'opts': opts_by_card[c['card_id']]})
 
-data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster}
+# ---------- caps : groupes, membres, plafonds spéciaux selon le général ----------
+caps = {}
+for r in rows("select race_key, unit_set_key, cap_group_name, default_cap from marts.pvp_cap_groups"):
+    caps.setdefault(r['race_key'], {'g': {}, 'm': {}, 'o': {}})['g'][r['unit_set_key']] = [r['cap_group_name'], r['default_cap']]
+for r in rows("select race_key, unit_set_key, unit_key from marts.pvp_cap_group_members order by unit_set_key"):
+    caps[r['race_key']]['m'].setdefault(r['unit_key'], []).append(r['unit_set_key'])
+for r in rows("select race_key, unit_set_key, general_card_id, cap from marts.pvp_cap_overrides"):
+    caps[r['race_key']]['o'].setdefault(r['general_card_id'], {})[r['unit_set_key']] = r['cap']
+
+data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()

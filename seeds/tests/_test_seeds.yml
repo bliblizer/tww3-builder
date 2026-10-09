@@ -1,0 +1,11 @@
+version: 2
+
+seeds:
+  - name: test_armies
+    description: "Armées de test : compositions sauvegardées en jeu (.army_setup) et cas construits pour chaque règle."
+    config:
+      column_types: {army_id: varchar, race_key: varchar, slot: integer, unit_key: varchar}
+  - name: test_army_expectations
+    description: "Verdict attendu pour chaque armée de test (codes d'erreur triés, séparés par |)."
+    config:
+      column_types: {army_id: varchar, description: varchar, expected_valid: boolean, expected_errors: varchar}

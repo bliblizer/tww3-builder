@@ -1,0 +1,11 @@
+army_id,description,expected_valid,expected_errors
+wc_test_army_setup,Composition sauvegardée en jeu (wc_test.army_setup),true,
+test_1_1_army_setup,Composition sauvegardée en jeu avec 2 Coeddil (interdits en PvP),false,UNIT_NOT_AVAILABLE
+chs_5_chariots,5 chars ou machines de guerre pour un plafond de 4,false,CAP_EXCEEDED:mp_cap_group_chariots_warmachines
+chs_no_general,Première unité qui n'est pas un général,false,NO_GENERAL
+nag_tomb_king_3_tk_units,"Undead Legions, général Tomb King : plafond des unités TK porté à 18",true,
+nag_vlad_3_tk_units,"Undead Legions, général Vlad : plafond des unités TK à 2",false,CAP_EXCEEDED:mp_cap_group_tomb_kings_units
+chs_21_units,"21 unités (maximum 20), budget et plafonds respectés",false,TOO_MANY_UNITS
+chs_over_budget,"Coût total supérieur à 12 400, plafonds respectés",false,OVER_BUDGET
+chs_two_lords,Deux lords dans la même armée (impossible en jeu),false,MULTIPLE_LORDS
+nag_tomb_king_and_hero,Tomb King (TK à 18) + héros Necrotect (TK à 2) : le plafond le plus élevé s’applique,true,

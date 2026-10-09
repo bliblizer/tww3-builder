@@ -23,6 +23,8 @@ select
     o.other_variant,
     case when c.has_mounts then coalesce(o.mount_name, 'On foot') end   as mount,
     o.is_general_unit_pvp                                              as can_be_general,
+    o.caste_key,
+    o.caste_key = 'lord'                                               as is_lord,   -- une armée n'a qu'un seul lord (validé en jeu)
     o.multiplayer_cost,
     o.faction_keys_pvp                                                 as faction_keys,
     img.unit_card,

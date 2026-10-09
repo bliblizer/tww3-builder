@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=172 WARN=0 ERROR=0`.
+Le résultat attendu est `Done. PASS=190 WARN=1 ERROR=0`. L'avertissement est volontaire, voir « Caps et validation ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -153,6 +153,41 @@ Le lien unité → image vient de la table `unit_variants` (`int_unit_card_image
 Points à retenir :
 - `assets/` est **exclu de Git** : ce sont les originaux du jeu. Seules les images utiles au site, dans `docs/images/`, sont versionnées et publiées.
 - Une carte sans image s'affiche avec sa couleur d'onglet et les initiales du nom.
+
+## Caps et validation de l'armée
+
+**Données** (marts) :
+- `pvp_army_rules` : budget (12 400) et nombre maximal d'unités (20), lus dans les tables du jeu ;
+- `pvp_cap_groups` : groupes de caps par race, avec leur plafond par défaut (1 424 lignes) ;
+- `pvp_cap_group_members` : appartenance des unités jouables aux groupes. Toute unité jouable appartient à au moins un groupe (son plafond individuel) ;
+- `pvp_cap_overrides` : plafonds qui dépendent d'un personnage présent dans l'armée (27 lignes, chez les Undead Legions) ;
+- `pvp_roster_options.is_lord` : l'option est un lord (caste `lord`).
+
+**Règles :**
+1. **Un seul lord par armée**, en première place, et c'est le général (♛) *(validé en jeu)*. Dans le builder, choisir un lord remplace le précédent, comme en jeu.
+2. **20 unités au maximum.**
+3. **Coût total de 12 400 au maximum** (prix de base pour l'instant).
+4. **Chaque groupe de caps** limite le nombre total de ses membres dans l'armée. Une unité appartient souvent à plusieurs groupes (plafond individuel, chars et machines de guerre, héros, unités de tir…), et toutes les limites s'appliquent en même temps.
+5. Le plafond par défaut d'un groupe est celui de la sous-culture s'il existe, sinon le plafond global.
+6. Les **plafonds liés à un personnage** s'appliquent dès que ce personnage est présent dans l'armée, comme général ou comme héros, quelle que soit sa monture *(validé en jeu)*. Si plusieurs s'appliquent, c'est le plus élevé qui compte.
+7. **2 héros au maximum** : c'est le groupe « Heroes » des données *(validé en jeu)*.
+
+**Une spécification, deux implémentations, testées ensemble :**
+- `models/validation/army_validation.sql` est la spécification exécutable. Elle s'applique aux armées de test de `seeds/tests/test_armies.csv` : tes deux fichiers `.army_setup` et un cas construit par règle.
+- Le test `assert_army_validation_matches_expectations` compare chaque verdict à l'attendu de `test_army_expectations.csv` (10 armées, codes d'erreur : NO_GENERAL, MULTIPLE_LORDS, UNIT_NOT_AVAILABLE, TOO_MANY_UNITS, OVER_BUDGET, CAP_EXCEEDED:<groupe>).
+- Le builder (`app/template.html`, fonction `validate`) applique les mêmes règles. `python scripts/test_app.py` (facultatif) vérifie qu'il rend les mêmes verdicts, avec Playwright :
+
+```
+pip install playwright
+python -m playwright install chromium
+```
+
+**Avertissement attendu :** `assert_cap_overrides_resolved` signale 7 plafonds liés à des personnages qu'on ne sait pas rattacher à une carte (Nagash, Arkhan, Liche Priest, Vampire Lord, Mourngul). Ils sont ignorés pour l'instant.
+
+**Dans le builder :**
+- Tant qu'il n'y a pas de lord, seuls les lords pouvant être généraux sont disponibles.
+- Une carte est grisée quand aucune de ses options ne peut être ajoutée (fonds, armée complète, plafond atteint). Le survol en donne la raison.
+- Sous l'armée s'affichent le statut (« ✓ Armée valide » ou la liste des problèmes) et les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés.
 
 ## Git et GitHub
 

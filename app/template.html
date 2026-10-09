@@ -91,6 +91,17 @@ button { font: inherit; color: inherit; }
   flex: 0 0 66px; height: 118px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45;
 }
 .army-hint { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+.army-status { margin: 10px 0 0; font-size: 14px; }
+.army-status .ok { color: #7fc77f; font-weight: 700; }
+.army-status .ko { color: var(--danger); font-weight: 700; }
+.army-status ul { margin: 4px 0 0; padding-left: 18px; color: var(--danger); }
+.caps { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 8px; }
+.cap-chip { font-size: 12.5px; border: 1px solid var(--bronze); border-radius: 3px; padding: 1px 7px; background: var(--panel); font-variant-numeric: tabular-nums; }
+.cap-chip.full { border-color: var(--gold); color: var(--gold); }
+.cap-chip.over { border-color: var(--danger); color: var(--danger); font-weight: 700; }
+.card.is-general { outline: 2px solid var(--gold); outline-offset: 1px; }
+.card.blocked { filter: grayscale(.85) brightness(.6); }
+.detail .caps-list { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--muted); }
 
 /* ---------- Cartes d'unité ---------- */
 .card {
@@ -189,7 +200,9 @@ button { font: inherit; color: inherit; }
       <button class="clear" id="clearArmy">Vider</button></div>
   </div>
   <div class="slots" id="slots"></div>
-  <p class="army-hint">Clique sur une carte du roster pour l'ajouter, sur une unité de l'armée pour la retirer.</p>
+  <div class="army-status" id="armyStatus" aria-live="polite"></div>
+  <div class="caps" id="capsBar" aria-label="Plafonds atteints par l'armée"></div>
+  <p class="army-hint">Clique sur une carte du roster pour l'ajouter, sur une unité de l'armée pour la retirer. Le lord est le général (♛) : en choisir un autre le remplace.</p>
 </section>
 
 <div class="body">
@@ -230,6 +243,80 @@ const optionLabel = o => DIMS.map(([k]) => o[k]).filter(Boolean).join(', ');
 /* dimensions qui offrent un vrai choix sur cette carte */
 const choiceDims = card => DIMS.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
 
+/* ---------- Règles de l'armée ----------
+   Même spécification que models/validation/army_validation.sql (testée sur les mêmes armées de test) :
+   NO_GENERAL, MULTIPLE_LORDS, TOO_MANY_UNITS, OVER_BUDGET, CAP_EXCEEDED:<groupe>, UNIT_NOT_AVAILABLE.
+   - une armée a un seul lord, en première place, et c'est le général ; choisir un lord remplace le précédent ;
+   - plafond effectif d'un groupe = max(plafond par défaut, plafonds spéciaux des personnages présents). */
+const capsOf = raceKey => DATA.caps[raceKey] || { g: {}, m: {}, o: {} };
+const generalOf = army => (army.length && army[0].opt.l && army[0].opt.g ? army[0] : null);
+const lordIndex = army => army.findIndex(u => u.opt.l);
+function effectiveCap(raceKey, setKey, army) {
+  const c = capsOf(raceKey);
+  let cap = c.g[setKey][1];
+  army.forEach(u => { const ov = c.o[u.card.id]; if (ov && ov[setKey] != null) cap = Math.max(cap, ov[setKey]); });
+  return cap;
+}
+function capCounts(raceKey, army) {
+  const n = {};
+  army.forEach(u => (capsOf(raceKey).m[u.opt.u] || []).forEach(k => { n[k] = (n[k] || 0) + 1; }));
+  return n;
+}
+function validate(raceKey, army) {
+  const errors = [];
+  if (!generalOf(army)) errors.push({ code: 'NO_GENERAL', text: 'La première unité doit être un lord pouvant être général (♛).' });
+  if (army.filter(u => u.opt.l).length > 1) errors.push({ code: 'MULTIPLE_LORDS', text: 'Une armée ne peut avoir qu’un seul lord.' });
+  if (army.length > DATA.maxUnits) errors.push({ code: 'TOO_MANY_UNITS', text: `Trop d'unités (${army.length}/${DATA.maxUnits}).` });
+  const cost = army.reduce((s, u) => s + u.opt.c, 0);
+  if (cost > DATA.budget) errors.push({ code: 'OVER_BUDGET', text: `Budget dépassé (${fmt(cost)} / ${fmt(DATA.budget)}).` });
+  const counts = capCounts(raceKey, army);
+  Object.entries(counts).forEach(([k, n]) => {
+    const cap = effectiveCap(raceKey, k, army);
+    if (n > cap) errors.push({ code: 'CAP_EXCEEDED:' + k, text: `Plafond dépassé : ${capsOf(raceKey).g[k][0]} (${n}/${cap}).` });
+  });
+  return errors;
+}
+/* armée obtenue en ajoutant cette option : un lord remplace le lord existant (ou prend la première place) */
+function withAdded(army, card, opt) {
+  const next = army.slice();
+  if (opt.l) {
+    const i = lordIndex(next);
+    if (i >= 0) next.splice(i, 1);
+    next.unshift({ card, opt });
+  } else next.push({ card, opt });
+  return next;
+}
+/* raison qui empêche cet ajout ('' si possible) : on refuse tout ajout qui crée un nouveau problème */
+function addReason(card, opt) {
+  const rk = race().key, army = state.army;
+  if (!generalOf(army) && !opt.l) return "Choisis d'abord un lord (♛).";
+  const before = new Set(validate(rk, army).map(e => e.code));
+  const created = validate(rk, withAdded(army, card, opt)).filter(e => !before.has(e.code) && e.code !== 'NO_GENERAL');
+  if (opt.l && !opt.g) return "Ce lord ne peut pas être général dans cette race.";
+  if (!created.length) return '';
+  const e = created[0];
+  if (e.code === 'TOO_MANY_UNITS') return `Armée complète (${DATA.maxUnits} unités).`;
+  if (e.code === 'OVER_BUDGET') return 'Fonds insuffisants.';
+  if (e.code.startsWith('CAP_EXCEEDED:')) {
+    const k = e.code.slice('CAP_EXCEEDED:'.length);
+    const next = withAdded(army, card, opt);
+    return `Plafond atteint : ${capsOf(rk).g[k][0]} (${capCounts(rk, army)[k] || 0}/${effectiveCap(rk, k, next)}).`;
+  }
+  return e.text;
+}
+
+/* point d'entrée de test : valide une liste de clés d'unités (même format que les fichiers .army_setup).
+   Une clé inconnue de la race donne UNIT_NOT_AVAILABLE ; elle compte dans le nombre d'unités mais ni dans le coût,
+   ni dans les plafonds (comme dans army_validation.sql). */
+window.builderValidate = (raceKey, unitKeys) => {
+  const byKey = {};
+  (DATA.roster[raceKey] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
+  const army = unitKeys.map(k => byKey[k] || { card: { id: null }, opt: { u: k, c: 0, g: false, l: false }, unknown: true });
+  const codes = new Set(validate(raceKey, army).map(e => e.code));
+  if (army.some(u => u.unknown)) codes.add('UNIT_NOT_AVAILABLE');
+  return [...codes].sort().join('|');
+};
+
 /* ---------- Construction d'une carte ---------- */
 function cardEl(card, { cost, inArmy = false, label = '', img = null }) {
   const b = document.createElement('button');
@@ -263,8 +350,10 @@ function renderTop() {
 function renderArmy() {
   const slots = $('slots');
   slots.innerHTML = '';
+  const general = generalOf(state.army);
   state.army.forEach((u, i) => {
     const el = cardEl(u.card, { cost: u.opt.c, inArmy: true, label: optionLabel(u.opt), img: u.opt.img || u.card.img });
+    if (u === general) { el.classList.add('is-general'); el.title += ' : général de l’armée'; }
     el.addEventListener('click', () => { state.army.splice(i, 1); renderAll(); });
     el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(u.card, u.opt); });
     el.addEventListener('focus', () => { if (!state.pinned) showDetail(u.card, u.opt); });
@@ -273,6 +362,22 @@ function renderArmy() {
   for (let i = state.army.length; i < DATA.maxUnits; i++) {
     const e = document.createElement('div'); e.className = 'slot-empty'; e.setAttribute('aria-hidden', 'true'); slots.appendChild(e);
   }
+  renderStatus();
+}
+
+function renderStatus() {
+  const rk = race().key, army = state.army;
+  const st = $('armyStatus'), bar = $('capsBar');
+  if (!army.length) { st.innerHTML = ''; bar.innerHTML = ''; return; }
+  const errors = validate(rk, army);
+  st.innerHTML = errors.length
+    ? `<span class="ko">Armée non valide (${errors.length} problème${errors.length > 1 ? 's' : ''})</span><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
+    : '<span class="ok">✓ Armée valide</span>';
+  const counts = capCounts(rk, army);
+  const chips = Object.entries(counts).map(([k, n]) => ({ k, n, cap: effectiveCap(rk, k, army) }))
+    .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k));
+  bar.innerHTML = chips.map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}" title="Plafond de groupe">` +
+    `${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('');
 }
 
 function renderRoster() {
@@ -286,7 +391,8 @@ function renderRoster() {
     const wrap = document.createElement('div'); wrap.className = 'section-cards';
     byTab[t.key].forEach(card => {
       const el = cardEl(card, { cost: card.min, img: card.img });
-      if (card.min > remaining()) el.classList.add('unaffordable');
+      const reasons = card.opts.map(o => addReason(card, o));
+      if (reasons.every(Boolean)) { el.classList.add('blocked'); el.title += ' : ' + reasons[0]; }
       if (state.pinned === card) el.classList.add('selected');
       el.addEventListener('mouseenter', () => { if (!state.pinned) showDetail(card); });
       el.addEventListener('focus', () => { if (!state.pinned) showDetail(card); });
@@ -316,7 +422,15 @@ function showDetail(card, opt = null) {
       <dt>Options</dt><dd>${card.opts.length}</dd>
       ${opt ? `<dt>Choix</dt><dd>${esc(optionLabel(opt) || 'Standard')}</dd>` : lines}
     </dl>
+    ${capsHtml(opt || card.opts[0])}
     <p class="key">${esc(opt ? opt.u : card.opts.map(o => o.u).join(', '))}</p>`;
+}
+
+function capsHtml(opt) {
+  const rk = race().key, keys = capsOf(rk).m[opt.u] || [];
+  if (!keys.length) return '';
+  return '<div class="dim-title">Plafonds</div><ul class="caps-list">' +
+    keys.map(k => `<li>${esc(capsOf(rk).g[k][0])} : ${effectiveCap(rk, k, state.army)}</li>`).join('') + '</ul>';
 }
 
 /* ---------- Choix des options (carte à plusieurs options) ---------- */
@@ -345,8 +459,7 @@ function showPicker(card, msg = '') {
     }).join('');
     return `<div class="dim"><div class="dim-title">${lbl}</div><div class="dim-values">${chips}</div></div>`;
   }).join('');
-  const blocked = state.army.length >= DATA.maxUnits ? 'Armée complète (' + DATA.maxUnits + ' unités).'
-                : opt.c > remaining() ? 'Fonds insuffisants.' : '';
+  const blocked = addReason(card, opt);
   $('detail').innerHTML = `
     ${opt.img ? `<img class="portrait" src="images/${esc(opt.img)}.png" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(card.n)}</h3>
@@ -371,11 +484,12 @@ function showPicker(card, msg = '') {
 }
 
 function addToArmy(card, opt) {
-  if (state.army.length >= DATA.maxUnits || opt.c > remaining()) {
-    if (state.pinned) showPicker(card); else showDetail(card);
+  const reason = addReason(card, opt);
+  if (reason) {
+    if (state.pinned) showPicker(card, reason); else { showDetail(card); $('detail').insertAdjacentHTML('beforeend', `<p class="msg">${esc(reason)}</p>`); }
     return;
   }
-  state.army.push({ card, opt });
+  state.army = withAdded(state.army, card, opt);   // un lord remplace le lord existant et se place en tête
   state.pinned = null;
   renderAll();
   showDetail(card, opt);
@@ -408,7 +522,7 @@ function init() {
     root.dataset.theme = dark ? 'light' : 'dark';
   });
   $('footer').textContent = `Données du dump WH3 (${DATA.patch}), budget de ${fmt(DATA.budget)} et ${DATA.maxUnits} unités maximum. ` +
-    `V0 : prix de base sans objets ni sorts, sans caps ni validation de l'armée. ` +
+    `Prix de base, sans objets, sorts ni expérience. ` +
     `Outil de fan non officiel, non affilié à Creative Assembly ni à Games Workshop.`;
   setRace(0);
 }

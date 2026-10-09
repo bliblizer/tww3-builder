@@ -22,7 +22,12 @@ models:
     marts:
       +materialized: table
       +schema: marts
+    validation:
+      +materialized: table
+      +schema: validation
 
 seeds:
   tww3_builder:
     +schema: reference
+    tests:
+      +schema: test_fixtures
