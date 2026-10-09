@@ -7,8 +7,14 @@ with options as (
 ),
 
 card_root as (
-    -- nom, racine, onglet et sous-groupe de la carte (portés par l'unité racine)
-    select card_id, card_name, root_unit_key, tab_key, ui_group_key
+    -- nom, racine, onglet et sous-groupe de la carte (portés par l'unité racine).
+    -- Onglet : un lord pouvant être général va dans l'onglet Lords, même si son sous-groupe d'interface est
+    -- rattaché aux Heroes (Drycha, Vlad, Isabella, Great Shaman-Sorcerers : versions « héros » de campagne,
+    -- jouables uniquement comme lord en PvP, validé en jeu pour Drycha / Vlad / Isabella).
+    select
+        card_id, card_name, root_unit_key, ui_group_key,
+        tab_key                                                            as ui_tab_key,
+        case when caste_key = 'lord' and is_general_unit_pvp then 'commander' else tab_key end as tab_key
     from {{ ref('int_unit_cards') }}
     where is_root
 ),
@@ -51,6 +57,7 @@ select
     t.tab_order,
     cr.tab_key,
     tab_name.resolved_text                as tab_name,
+    cr.ui_tab_key                         as ui_group_tab_key,   -- onglet d'origine du sous-groupe d'interface
     cr.ui_group_key,
     group_name.resolved_text              as ui_group_name,
     a.can_be_general,

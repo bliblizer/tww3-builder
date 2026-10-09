@@ -85,6 +85,8 @@ L'unité racine donne son nom, son onglet et son sous-groupe à la carte. On la 
 
 Le nom de carte est celui de la racine, sans la parenthèse de sa variante : « Spellweaver (Beasts) » devient « Spellweaver ».
 
+**Onglet des lords (marts).** Une carte dont l'unité racine est un lord (caste `lord`) pouvant être général est placée dans l'onglet **Lords**, même si son sous-groupe d'interface est rattaché aux Heroes. C'est le cas de personnages qui sont des héros en campagne mais des lords en PvP : Drycha, Vlad et Isabella von Carstein *(validé en jeu)*, et les Great Shaman-Sorcerers de Norsca. L'onglet d'origine reste visible dans `pvp_roster_cards.ui_group_tab_key`.
+
 Règle PvP : une unité présente dans les permissions de la faction est **visible**. Elle est **bloquée** si elle est `campaign_exclusive`, ou si elle appartient à un groupe de caps à 0 qui s'applique à la race de la faction (cap global ou cap de cette sous-culture).
 
 Tests associés (`tests/intermediate/`) :

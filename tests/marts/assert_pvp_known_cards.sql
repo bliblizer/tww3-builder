@@ -30,6 +30,12 @@ checks as (
             from options o join cards c using (card_id)
             where c.race_key = 'wh_main_sc_chs_chaos' and c.root_unit_key = 'wh_dlc01_chs_cha_chaos_sorcerer_lord_death_0')
     union all
+    -- personnages « héros » en campagne mais lords en PvP : onglet Lords (validé en jeu)
+    select 'Drycha, Vlad, Isabella, Great Shaman-Sorcerers dans l''onglet Lords',
+           (select count(*) = 0 from cards
+            where (card_name in ('Drycha', 'Vlad von Carstein', 'Isabella von Carstein') or card_name like 'Great Shaman-Sorcerer%')
+              and tab_key <> 'commander')
+    union all
     -- compositions sauvegardées en jeu : les unités jouables doivent être dans le roster de leur race
     select 'compo wc_test.army_setup (Warriors of Chaos) : 7 unités jouables',
            (select count(*) = 7 from options where race_key = 'wh_main_sc_chs_chaos' and unit_key in (
