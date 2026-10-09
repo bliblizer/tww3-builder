@@ -101,6 +101,14 @@ with staged as (
     select 'db/unit_special_abilities_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_special_abilities') }}
     union all
     select 'db/ancillary_uniqueness_groupings_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__ancillary_uniqueness_groupings') }}
+    union all
+    select 'text/db/units_custom_battle_type_categories__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__units_custom_battle_type_categories') }}
+    union all
+    select 'db/land_units_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__land_units') }}
+    union all
+    select 'db/battle_entities_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battle_entities') }}
+    union all
+    select 'db/mounts_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__mounts') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

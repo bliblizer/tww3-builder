@@ -3,43 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>TWW3 – Army Builder (V0)</title>
+<title>TWW3 – Army Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ---------- Jetons de couleur (sombre par défaut, comme l'écran du jeu) ---------- */
+/* ---------- Jetons de couleur (sombre par défaut, comme l'écran du jeu) ----------
+   --accent : couleur de la race affichée (couleur officielle de sa faction principale), injectée par le script */
 :root {
-  --bg: #1d1614;          /* fond charbon brun */
-  --panel: #2a1e1a;       /* panneaux */
-  --panel-2: #33241f;
-  --crimson: #7f1a15;     /* bandeaux de section */
-  --crimson-hi: #a3261e;
-  --bronze: #8c6a3b;      /* filets et bordures */
-  --gold: #e2b65a;        /* or : fonds, coûts */
-  --text: #eadfc8;        /* parchemin */
-  --muted: #a8977d;
-  --danger: #ff6b5a;
-  --card-ink: #f4ead6;
-  --shadow: rgba(0, 0, 0, .45);
+  --bg: #1d1614; --panel: #2a1e1a; --panel-2: #33241f; --crimson: #7f1a15; --crimson-hi: #a3261e;
+  --bronze: #8c6a3b; --gold: #e2b65a; --text: #eadfc8; --muted: #a8977d; --danger: #ff6b5a; --ok: #7fc77f;
+  --card-ink: #f4ead6; --shadow: rgba(0, 0, 0, .45); --accent: #a3261e;
+  --band: color-mix(in srgb, var(--accent) 45%, #3a0d0b);
   color-scheme: dark;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     --bg: #efe5d0; --panel: #e3d5b9; --panel-2: #d9c8a7; --crimson: #8e2219; --crimson-hi: #a8342a;
-    --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e;
-    --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); color-scheme: light;
+    --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e; --ok: #2f7a2f;
+    --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); --band: color-mix(in srgb, var(--accent) 55%, #5a1a12); color-scheme: light;
   }
 }
 :root[data-theme="dark"] {
   --bg: #1d1614; --panel: #2a1e1a; --panel-2: #33241f; --crimson: #7f1a15; --crimson-hi: #a3261e;
-  --bronze: #8c6a3b; --gold: #e2b65a; --text: #eadfc8; --muted: #a8977d; --danger: #ff6b5a;
-  --card-ink: #f4ead6; --shadow: rgba(0, 0, 0, .45); color-scheme: dark;
+  --bronze: #8c6a3b; --gold: #e2b65a; --text: #eadfc8; --muted: #a8977d; --danger: #ff6b5a; --ok: #7fc77f;
+  --card-ink: #f4ead6; --shadow: rgba(0, 0, 0, .45); --band: color-mix(in srgb, var(--accent) 45%, #3a0d0b); color-scheme: dark;
 }
 :root[data-theme="light"] {
   --bg: #efe5d0; --panel: #e3d5b9; --panel-2: #d9c8a7; --crimson: #8e2219; --crimson-hi: #a8342a;
-  --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e;
-  --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); color-scheme: light;
+  --bronze: #8a6a3c; --gold: #8a5a10; --text: #2a1d17; --muted: #6b5b47; --danger: #b3261e; --ok: #2f7a2f;
+  --card-ink: #fbf5e8; --shadow: rgba(60, 40, 20, .25); --band: color-mix(in srgb, var(--accent) 55%, #5a1a12); color-scheme: light;
 }
 
 /* ---------- Base ---------- */
@@ -50,71 +43,60 @@ body {
   margin: 0; background: var(--bg); color: var(--text);
   font-family: "Alegreya Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.4;
 }
+/* illustration de la race en fond (si disponible), très atténuée */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--race-art, none) center 20% / cover no-repeat; opacity: .16;
+  -webkit-mask-image: linear-gradient(#000 0%, transparent 85%); mask-image: linear-gradient(#000 0%, transparent 85%);
+}
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .serif { font-family: "Cinzel", Georgia, "Times New Roman", serif; }
+.muted { color: var(--muted); font-size: 13px; }
+.empty { color: var(--muted); }
 
-/* ---------- Bandeau du haut : race + fonds ---------- */
+/* ---------- Bandeau du haut ---------- */
 .topbar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;
-  padding: 12px 20px; background: var(--panel); border-bottom: 1px solid var(--bronze);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding: 12px 20px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, var(--panel)), var(--panel) 60%);
+  border-bottom: 2px solid var(--accent);
 }
 .race-picker { display: flex; align-items: center; gap: 8px; }
-.race-arrow {
-  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bronze);
-  background: var(--crimson); cursor: pointer; font-size: 16px; line-height: 1;
-}
-.race-arrow:hover { background: var(--crimson-hi); }
+.race-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bronze); background: var(--band); cursor: pointer; color: #f4ead6; }
+.race-arrow:hover { filter: brightness(1.2); }
 .race-name { font-size: 26px; font-weight: 700; min-width: 260px; text-align: center; margin: 0; }
-.race-select {
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--bronze);
-  border-radius: 4px; padding: 6px 8px; font: inherit;
-}
+.race-select { background: var(--panel-2); color: var(--text); border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; font: inherit; }
 .funds { margin-left: auto; display: flex; align-items: baseline; gap: 18px; }
 .funds .value { font-size: 24px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
 .funds .value.over { color: var(--danger); }
-.coin {
-  display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px;
-  background: radial-gradient(circle at 35% 35%, #ffe7a3, var(--gold) 60%, #7a5418);
-}
-.funds .label { color: var(--muted); }
+.coin { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px;
+  background: radial-gradient(circle at 35% 35%, #ffe7a3, var(--gold) 60%, #7a5418); }
 .theme-toggle { background: none; border: 1px solid var(--bronze); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
 
 /* ---------- Armée ---------- */
-.army { padding: 12px 20px 14px; background: linear-gradient(var(--crimson), var(--crimson)) top / 100% 34px no-repeat, var(--panel-2); border-bottom: 1px solid var(--bronze); }
-.army-head { display: flex; align-items: center; justify-content: space-between; height: 22px; margin-bottom: 14px; }
-.army-head h2 { font-size: 16px; margin: 0; color: #f4ead6; }
-.army-head .count { color: #f4ead6; font-variant-numeric: tabular-nums; }
-.army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; }
+.army { padding: 12px 20px 14px; background: linear-gradient(var(--band), var(--band)) top / 100% 34px no-repeat, color-mix(in srgb, var(--panel-2) 92%, transparent); border-bottom: 1px solid var(--bronze); }
+.army.drop-ok { box-shadow: inset 0 0 0 2px var(--gold); }
+.army-head { display: flex; align-items: center; justify-content: space-between; height: 22px; margin-bottom: 14px; color: #f4ead6; }
+.army-head h2 { font-size: 16px; margin: 0; }
+.army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; margin-left: 8px; }
 .slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.slot-empty {
-  flex: 0 0 66px; height: 118px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45;
-}
-.army-hint { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 66px; }
+.slot .card { flex: none; }
+.slot-empty { flex: 0 0 66px; height: 118px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
+.rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
+.rank-ctl button:disabled { opacity: .35; cursor: default; }
+.rank-ctl span { min-width: 20px; text-align: center; color: var(--muted); }
 .army-status { margin: 10px 0 0; font-size: 14px; }
-.army-status .ok { color: #7fc77f; font-weight: 700; }
+.army-status .ok { color: var(--ok); font-weight: 700; }
 .army-status .ko { color: var(--danger); font-weight: 700; }
 .army-status ul { margin: 4px 0 0; padding-left: 18px; color: var(--danger); }
 .caps { display: flex; flex-wrap: wrap; gap: 4px 6px; margin-top: 8px; }
 .cap-chip { font-size: 12.5px; border: 1px solid var(--bronze); border-radius: 3px; padding: 1px 7px; background: var(--panel); font-variant-numeric: tabular-nums; }
 .cap-chip.full { border-color: var(--gold); color: var(--gold); }
 .cap-chip.over { border-color: var(--danger); color: var(--danger); font-weight: 700; }
-.card.is-general { outline: 2px solid var(--gold); outline-offset: 1px; }
-.card.blocked { filter: grayscale(.85) brightness(.6); }
-.army.drop-ok { box-shadow: inset 0 0 0 2px var(--gold); }
 .flash { margin: 8px 0 0; color: var(--danger); font-weight: 700; font-size: 14px; }
-.muted { color: var(--muted); font-size: 13px; }
-.add-btn.secondary { background: var(--panel-2); color: var(--text); border-color: var(--bronze); }
-.pz-title { font-size: 16px; margin: 18px 0 6px; padding-top: 10px; border-top: 1px solid var(--bronze); }
-.pz { margin: 0 0 10px; background: var(--panel-2); border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; }
-.pz h4 { margin: 0 0 4px; font-size: 14px; }
-.pz .row { display: flex; align-items: center; gap: 8px; padding: 2px 0; cursor: pointer; font-size: 14px; }
-.pz .row .lbl { flex: 1; }
-.pz .row.all { color: var(--muted); font-size: 13px; border-bottom: 1px solid rgba(140,106,59,.35); margin-bottom: 2px; }
-.pz .price { color: var(--gold); font-variant-numeric: tabular-nums; font-size: 13px; }
-.pz .price.unknown { color: var(--muted); }
-.pz input { accent-color: var(--crimson-hi); }
-.detail .caps-list { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--muted); }
+.army-hint { color: var(--muted); margin: 8px 0 0; font-size: 13.5px; }
 
 /* ---------- Cartes d'unité ---------- */
 .card {
@@ -124,64 +106,93 @@ button { font: inherit; color: inherit; }
   display: flex; flex-direction: column;
 }
 .card:hover { border-color: var(--gold); }
-.card .cost {
-  background: rgba(0,0,0,.55); color: #f6d58a; font-weight: 700; font-size: 13px;
-  padding: 1px 0; font-variant-numeric: tabular-nums;
-}
+.card .cost { background: rgba(0,0,0,.6); color: #f6d58a; font-weight: 700; font-size: 13px; padding: 1px 0; font-variant-numeric: tabular-nums; }
 .card .mono { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; opacity: .9; }
-.card .nm {
-  font-size: 10px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
-}
+.card .nm { font-size: 10px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .card .art { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
 .card.has-img .mono, .card.has-img .nm { display: none; }
 .card.has-img .cost { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
-.card.has-img { padding-top: 0; }
-.detail .portrait { width: 96px; height: 172px; object-fit: cover; object-position: top; border: 1px solid var(--bronze); border-radius: 4px; float: right; margin: 0 0 8px 10px; }
 .card .badge-gen { position: absolute; top: 20px; left: 3px; font-size: 11px; color: #f6d58a; z-index: 1; text-shadow: 0 0 3px #000; }
 .card .badge-opt { position: absolute; top: 20px; right: 3px; font-size: 10px; background: rgba(0,0,0,.6); border-radius: 3px; padding: 0 3px; z-index: 1; }
-.card.unaffordable { filter: grayscale(.85) brightness(.6); }
+.card .badge-cap { position: absolute; bottom: 3px; right: 3px; font-size: 10px; font-weight: 700; border-radius: 3px; padding: 0 3px; z-index: 2;
+  background: rgba(0,0,0,.75); color: var(--gold); border: 1px solid currentColor; }
+.card .badge-cap.full { color: var(--danger); }
+/* chevrons de rang : 1-3 bronze, 4-6 argent, 7-9 or (1 à 3 chevrons par palier) */
+.card .chevrons { position: absolute; top: 34px; left: 3px; z-index: 2; display: flex; flex-direction: column; gap: 1px; }
+.card .chevrons i { display: block; width: 14px; height: 5px; background: var(--chev);
+  clip-path: polygon(0 0, 50% 60%, 100% 0, 100% 40%, 50% 100%, 0 40%); filter: drop-shadow(0 0 1px #000); }
+.card.blocked { filter: grayscale(.85) brightness(.6); }
 .card.selected { outline: 2px solid var(--gold); outline-offset: 1px; }
-.card.in-army::after { content: "Retirer"; position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(127,26,21,.75); font-size: 12px; }
-.card.in-army:hover::after, .card.in-army:focus-visible::after { display: flex; }
+.card.is-general { box-shadow: 0 0 0 2px var(--gold), 0 2px 4px var(--shadow); }
 
-/* ---------- Corps : panneau de détail + roster ---------- */
-.body { display: grid; grid-template-columns: 340px 1fr; gap: 0; align-items: start; }
-.detail { position: sticky; top: env(safe-area-inset-top, 0px); padding: 16px 18px; background: var(--panel); border-right: 1px solid var(--bronze); min-height: 60vh; max-height: 100vh; overflow-y: auto; }
-.detail h3 { font-size: 19px; margin: 0 0 4px; }
-.detail .sub { color: var(--muted); margin: 0 0 12px; }
-.detail dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0 0 12px; }
-.detail dt { color: var(--muted); }
-.detail dd { margin: 0; }
-.detail .empty { color: var(--muted); }
-.detail .key { font-size: 12px; color: var(--muted); word-break: break-all; }
-.dim { margin: 10px 0; }
-.dim-title { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
-.dim-values { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip { border: 1px solid var(--bronze); background: var(--panel-2); border-radius: 3px; padding: 2px 8px; cursor: pointer; font-size: 13px; }
-.chip[aria-pressed="true"] { background: var(--crimson); color: #f4ead6; border-color: var(--gold); }
-.add-btn {
-  width: 100%; margin-top: 10px; padding: 8px; border: 1px solid var(--gold); border-radius: 4px;
-  background: var(--crimson); color: #f4ead6; font-weight: 700; cursor: pointer;
-}
-.add-btn:disabled { opacity: .5; cursor: not-allowed; }
-.msg { color: var(--danger); font-size: 13px; min-height: 18px; margin: 6px 0 0; }
+/* ---------- Mise en page : statistiques d'unité | personnalisation + roster | composition ---------- */
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr) 270px; align-items: start; }
+.side { position: sticky; top: env(safe-area-inset-top, 0px); max-height: 100vh; overflow-y: auto; padding: 16px; background: color-mix(in srgb, var(--panel) 94%, transparent); }
+.side.left { border-right: 1px solid var(--bronze); min-height: 60vh; }
+.side.right { border-left: 1px solid var(--bronze); min-height: 60vh; }
+.side h3 { font-size: 18px; margin: 0 0 2px; }
+.side .sub { color: var(--muted); margin: 0 0 10px; font-size: 14px; }
+.portrait { width: 84px; height: 150px; object-fit: cover; object-position: top; border: 1px solid var(--bronze); border-radius: 4px; float: right; margin: 0 0 8px 10px; }
+.tags { list-style: none; margin: 0 0 12px; padding: 0; font-size: 13.5px; }
+.tags li::before { content: "▲ "; color: var(--ok); }
+.tags li.neg::before { content: "▼ "; color: var(--danger); }
+.tags li.strong { font-weight: 700; }
+dl.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0 0 12px; font-size: 14px; }
+dl.kv dt { color: var(--muted); }
+dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.block-title { font-size: 14px; margin: 14px 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--bronze); }
+.caps-list { margin: 0; padding-left: 18px; font-size: 13px; color: var(--muted); }
+.key { font-size: 11.5px; color: var(--muted); word-break: break-all; margin-top: 12px; }
+.center { padding: 14px 18px 40px; min-width: 0; }
 
-.roster { padding: 14px 20px 40px; }
+/* panneau de personnalisation (sous l'armée, comme en jeu) */
+.custom { border: 1px solid var(--bronze); background: color-mix(in srgb, var(--panel) 92%, transparent); border-radius: 4px; margin-bottom: 16px;
+  height: 300px; display: flex; flex-direction: column; }   /* hauteur fixe : le roster ne se décale pas d'un clic à l'autre */
+.custom-scroll { flex: 1; overflow-y: auto; }
+.custom-empty { padding: 14px; }
+.custom-head { display: flex; align-items: center; gap: 12px; background: var(--band); color: #f4ead6; padding: 5px 10px; border-bottom: 1px solid var(--bronze); }
+.custom-head h2 { font-size: 15px; margin: 0; flex: 1; }
+.custom-head .act { border: 1px solid var(--gold); border-radius: 4px; background: rgba(0,0,0,.25); color: #f4ead6; padding: 3px 12px; font-weight: 700; cursor: pointer; }
+.custom-head .act:disabled { opacity: .5; cursor: not-allowed; }
+.custom-body { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; padding: 10px; }
+.custom-msg { color: var(--danger); font-size: 13px; padding: 0 10px 8px; margin: 0; }
+.pz { background: var(--panel-2); border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; align-self: start; }
+.pz h4 { margin: 0 0 4px; font-size: 14px; }
+.pz .row { display: flex; align-items: center; gap: 7px; padding: 2px 0; cursor: pointer; font-size: 14px; }
+.pz .row .lbl { flex: 1; }
+.pz .row.all { color: var(--muted); font-size: 13px; border-bottom: 1px solid rgba(140,106,59,.35); margin-bottom: 2px; }
+.pz .price { color: var(--gold); font-variant-numeric: tabular-nums; font-size: 13px; }
+.pz .price.unknown { color: var(--muted); }
+.pz input { accent-color: var(--crimson-hi); }
+/* gemme de rareté : couleur officielle du jeu (ancillary_uniqueness_groupings.col_hex) */
+.gem { flex: 0 0 auto; width: 9px; height: 9px; transform: rotate(45deg); background: var(--gem, transparent); border: 1px solid rgba(255,255,255,.55); box-shadow: 0 0 4px var(--gem, transparent); }
+
+/* roster */
 .roster h2 { font-size: 18px; margin: 0 0 10px; }
-.sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 14px 18px; }
-.section-head {
-  display: flex; justify-content: space-between; align-items: center;
-  background: var(--crimson); color: #f4ead6; border: 1px solid var(--bronze); padding: 3px 10px; margin-bottom: 6px;
-}
+.sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px 18px; }
+.section-head { display: flex; justify-content: space-between; align-items: center; background: var(--band); color: #f4ead6; border: 1px solid var(--bronze); padding: 3px 10px; margin-bottom: 6px; }
 .section-head h3 { margin: 0; font-size: 15px; }
 .section-head .n { font-size: 13px; opacity: .85; }
 .section-cards { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* composition */
+.comp-row { margin: 0 0 7px; font-size: 13.5px; }
+.comp-row .top { display: flex; justify-content: space-between; gap: 6px; }
+.comp-row .top b { font-weight: 500; }
+.comp-row .top span { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bar { height: 6px; border-radius: 3px; background: rgba(140,106,59,.25); overflow: hidden; margin-top: 2px; }
+.bar i { display: block; height: 100%; background: var(--accent); }
 .footer { color: var(--muted); font-size: 13px; padding: 0 20px 24px; }
 
+@media (max-width: 1150px) {
+  .layout { grid-template-columns: 280px minmax(0, 1fr); }
+  .side.right { grid-column: 1 / -1; position: static; max-height: none; border-left: none; border-top: 1px solid var(--bronze); min-height: 0; }
+}
 @media (max-width: 760px) {
-  .body { grid-template-columns: 1fr; }
-  .detail { position: static; border-right: none; border-bottom: 1px solid var(--bronze); min-height: 0; }
+  .layout { grid-template-columns: 1fr; }
+  .custom { height: auto; max-height: 70vh; }
+  .side { position: static; max-height: none; min-height: 0 !important; border: none !important; border-bottom: 1px solid var(--bronze) !important; }
   .sections { grid-template-columns: 1fr; }
   .race-name { min-width: 0; font-size: 21px; }
   .funds { margin-left: 0; }
@@ -197,11 +208,9 @@ button { font: inherit; color: inherit; }
     <h1 class="race-name serif" id="raceName">—</h1>
     <button class="race-arrow" id="nextRace" aria-label="Race suivante">▶</button>
   </div>
-  <label><span class="sr" hidden>Choisir une race</span>
-    <select class="race-select" id="raceSelect" aria-label="Choisir une race"></select>
-  </label>
+  <select class="race-select" id="raceSelect" aria-label="Choisir une race"></select>
   <div class="funds">
-    <div><span class="label">Fonds restants</span><br><span class="value serif" id="funds"><span class="coin"></span>0</span></div>
+    <div><span class="muted">Fonds restants</span><br><span class="value serif" id="funds"><span class="coin"></span>0</span></div>
     <button class="theme-toggle" id="themeToggle" title="Changer de thème">Thème</button>
   </div>
 </header>
@@ -209,24 +218,25 @@ button { font: inherit; color: inherit; }
 <section class="army" id="armyZone" aria-label="Armée">
   <div class="army-head">
     <h2 class="serif">Main Army</h2>
-    <div><span class="count" id="unitCount">0 / 20</span>
-      <button class="clear" id="clearArmy">Vider</button></div>
+    <div><span id="unitCount">0 / 20</span><button class="clear" id="clearArmy">Vider</button></div>
   </div>
   <div class="slots" id="slots"></div>
   <div class="army-status" id="armyStatus" aria-live="polite"></div>
-  <div class="caps" id="capsBar" aria-label="Plafonds atteints par l'armée"></div>
+  <div class="caps" id="capsBar" aria-label="Plafonds en cours"></div>
   <p class="flash" id="flash" role="status" hidden></p>
-  <p class="army-hint">Clic : afficher et personnaliser. Double-clic ou glisser-déposer : ajouter à l'armée, ou retirer (glisser hors de la barre). Le lord est le général (♛) : en choisir un autre le remplace.</p>
+  <p class="army-hint">Clic : afficher et personnaliser. Double-clic ou glisser-déposer : ajouter à l'armée, ou retirer (glisser hors de la barre). − / + sous une unité : rang d'expérience. Le lord est le général (♛) : en choisir un autre le remplace.</p>
 </section>
 
-<div class="body">
-  <aside class="detail" id="detail" aria-live="polite">
-    <p class="empty">Clique sur une carte pour l’afficher et la personnaliser.</p>
-  </aside>
-  <main class="roster">
-    <h2 class="serif">Unit Roster</h2>
-    <div class="sections" id="sections"></div>
+<div class="layout">
+  <aside class="side left" id="unitStats" aria-live="polite"></aside>
+  <main class="center">
+    <section class="custom" id="custom" aria-label="Personnalisation d'unité"></section>
+    <div class="roster">
+      <h2 class="serif">Unit Roster</h2>
+      <div class="sections" id="sections"></div>
+    </div>
   </main>
+  <aside class="side right" id="composition" aria-label="Statistiques de la composition"></aside>
 </div>
 <p class="footer" id="footer"></p>
 
@@ -234,38 +244,46 @@ button { font: inherit; color: inherit; }
 const DATA = /*__DATA__*/null;
 
 /* ---------- État ----------
-   army  : liste des unités de l'armée { card, opt, sel } (sel = clés des sorts / capacités / objets cochés)
-   focus : unité affichée dans le panneau de personnalisation
-           { kind: 'army', unit } ou { kind: 'roster', unit } (unité « brouillon » pas encore dans l'armée) */
+   army  : unités de l'armée { card, opt, sel, rank } (sel = clés des sorts / capacités / objets cochés ; rank = 0 à 9)
+   focus : unité affichée dans les panneaux { kind: 'army' | 'roster', unit } ('roster' = brouillon pas encore ajouté) */
 const state = { raceIndex: 0, army: [], focus: null };
-const VARIANT_DIMS = [['lore', 'Domaine de magie'], ['mark', 'Marque'], ['spirit', 'Esprit de la forêt'], ['other', 'Variante']];
-const DIMS = [...VARIANT_DIMS, ['mount', 'Monture']];
+const DIMS = ['lore', 'mark', 'spirit', 'other', 'mount'];
+const DIM_CAT = { lore: 'type_spell_lore', mark: 'type_mark', spirit: 'type_forest_spirit' };
 const UPGRADE_SECTIONS = [['s', 'Sorts'], ['a', 'Capacités'], ['i', 'Objets']];
-const TAB_COLORS = {   // teinte de fond des cartes selon l'onglet (quand l'image manque)
+const RARITY_FR = { common: 'commun', uncommon: 'peu commun', rare: 'rare', legendary: 'légendaire' };
+const ROLES = [   // rôles de la composition (calculés dans pvp_roster_options.role)
+  ['lord', 'Lord'], ['hero', 'Héros'], ['infantry_light', 'Infanterie légère'], ['infantry_line', 'Infanterie de ligne'],
+  ['infantry_elite', 'Infanterie d’élite'], ['ranged', 'Tir'], ['artillery', 'Artillerie'], ['cavalry', 'Cavalerie & chars'],
+  ['monster', 'Monstres'], ['war_beast', 'Bêtes de guerre'], ['other', 'Autres']
+];
+const TAB_COLORS = {
   commander: '#5a2a3a', heroes_agents: '#4a2f50', infantry: '#3e3a2c', missile_infantry: '#2f4038',
   cavalry_chariots: '#4a3424', missile_cavalry_chariots: '#3a4026', monster_beasts: '#2c3a48',
   constructs: '#3d3d3d', flying_war_machine: '#30404a', missile_monster_beasts: '#2a4340',
   artillery_war_machines: '#45392a', campaign_exclusives: '#333'
 };
 const $ = id => document.getElementById(id);
-const fmt = n => n.toLocaleString('fr-FR');
+const fmt = n => Math.round(n).toLocaleString('fr-FR');
 const race = () => DATA.races[state.raceIndex];
 const roster = () => DATA.roster[race().key] || [];
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const initials = name => name.replace(/\(.*?\)/g, '').split(/[\s-]+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w))
   .slice(0, 2).map(w => w[0].toUpperCase()).join('');
-const optionLabel = o => DIMS.map(([k]) => o[k]).filter(Boolean).join(', ');
-const choiceDims = (card, dims = DIMS) => dims.filter(([k]) => new Set(card.opts.map(o => o[k] ?? '')).size > 1);
+const optionLabel = o => DIMS.map(k => o[k]).filter(Boolean).join(', ');
+const hasChoice = (card, k) => new Set(card.opts.map(o => o[k] ?? '')).size > 1;
+const dimTitle = (card, k) => k === 'mount' ? 'Montures'
+  : k === 'other' ? (DATA.typeCats[card.opts.find(o => o.ovc)?.ovc] || 'Variant')
+  : (DATA.typeCats[DIM_CAT[k]] || k);
 
-/* ---------- Personnalisation : coûts ----------
-   Hypothèses (models/intermediate/int_character_upgrades.sql) : capacités selon la rareté, objets 200,
-   sorts au coût inconnu (comptés 0, affichés « ? »). Tout est coché par défaut. */
+/* ---------- Coûts ----------
+   Hypothèses (models/) : rang r = arrondi(prix x multiplicateur_r) + coût fixe_r ; capacités selon la rareté ;
+   objets 200 ; sorts au coût inconnu (comptés 0, affichés « ? »). Tout est coché par défaut, rang 0. */
 const upgradesOf = raceKey => (DATA.up[raceKey] || {});
-const upgrade = key => upgradesOf(race().key)[key];          // [nom, type 's'|'a'|'i', coût|null]
 const defaultSel = opt => new Set(opt.up || []);
+const rankedBase = (c, rank) => Math.round(c * DATA.xp[rank][0]) + DATA.xp[rank][1];
 const upgradesCost = (opt, sel) => [...sel].reduce((s, k) => s + ((upgradesOf(race().key)[k] || [])[2] || 0), 0);
-const unitCost = u => u.opt.c + upgradesCost(u.opt, u.sel);
-const newUnit = (card, opt) => ({ card, opt, sel: defaultSel(opt) });
+const unitCost = u => rankedBase(u.opt.c, u.rank) + upgradesCost(u.opt, u.sel);
+const newUnit = (card, opt, rank = 0) => ({ card, opt, sel: defaultSel(opt), rank });
 const spent = () => state.army.reduce((s, u) => s + unitCost(u), 0);
 const remaining = () => DATA.budget - spent();
 
@@ -302,36 +320,31 @@ function validate(raceKey, army, costOf = unitCost) {
   });
   return errors;
 }
-/* armée obtenue en ajoutant cette unité : un lord remplace le lord existant (ou prend la première place) */
 function withAdded(army, unit) {
   const next = army.slice();
-  if (unit.opt.l) {
-    const i = lordIndex(next);
-    if (i >= 0) next.splice(i, 1);
-    next.unshift(unit);
-  } else next.push(unit);
+  if (unit.opt.l) { const i = lordIndex(next); if (i >= 0) next.splice(i, 1); next.unshift(unit); } else next.push(unit);
   return next;
 }
-/* raison qui empêche l'ajout de cette unité ('' si possible) : on refuse tout ajout qui crée un nouveau problème */
-function addReason(unit) {
-  const rk = race().key, army = state.army, opt = unit.opt;
-  if (!generalOf(army) && !opt.l) return "Choisis d'abord un lord (♛).";
-  if (opt.l && !opt.g) return 'Ce lord ne peut pas être général dans cette race.';
-  const before = new Set(validate(rk, army).map(e => e.code));
-  const next = withAdded(army, unit);
-  const created = validate(rk, next).filter(e => !before.has(e.code) && e.code !== 'NO_GENERAL');
+/* problème créé par le passage de l'armée « before » à « after » ('' si aucun) */
+function newProblem(before, after) {
+  const rk = race().key, had = new Set(validate(rk, before).map(e => e.code));
+  const created = validate(rk, after).filter(e => !had.has(e.code) && e.code !== 'NO_GENERAL');
   if (!created.length) return '';
   const e = created[0];
   if (e.code === 'TOO_MANY_UNITS') return `Armée complète (${DATA.maxUnits} unités).`;
   if (e.code === 'OVER_BUDGET') return 'Fonds insuffisants.';
   if (e.code.startsWith('CAP_EXCEEDED:')) {
     const k = e.code.slice('CAP_EXCEEDED:'.length);
-    return `Plafond atteint : ${capsOf(rk).g[k][0]} (${capCounts(rk, army)[k] || 0}/${effectiveCap(rk, k, next)}).`;
+    return `Plafond atteint : ${capsOf(rk).g[k][0]} (${capCounts(rk, before)[k] || 0}/${effectiveCap(rk, k, after)}).`;
   }
   return e.text;
 }
-/* point d'entrée de test : valide une liste de clés d'unités (même format que les fichiers .army_setup), au prix de base
-   (sans personnalisation), comme army_validation.sql. Une clé inconnue de la race donne UNIT_NOT_AVAILABLE. */
+function addReason(unit) {
+  if (!generalOf(state.army) && !unit.opt.l) return "Choisis d'abord un lord (♛).";
+  if (unit.opt.l && !unit.opt.g) return 'Ce lord ne peut pas être général dans cette race.';
+  return newProblem(state.army, withAdded(state.army, unit));
+}
+/* point d'entrée de test : valide une liste de clés d'unités (format .army_setup) au prix de base, comme army_validation.sql */
 window.builderValidate = (raceKey, unitKeys) => {
   const byKey = {};
   (DATA.roster[raceKey] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
@@ -341,12 +354,13 @@ window.builderValidate = (raceKey, unitKeys) => {
   return [...codes].sort().join('|');
 };
 
-/* ---------- Ajout / retrait ---------- */
+/* ---------- Actions ---------- */
 function addUnit(unit) {
   const reason = addReason(unit);
   if (reason) { flash(reason); return false; }
-  state.army = withAdded(state.army, unit);
-  state.focus = { kind: 'army', unit };
+  const added = { ...unit, sel: new Set(unit.sel) };
+  state.army = withAdded(state.army, added);
+  state.focus = { kind: 'army', unit: added };
   renderAll();
   return true;
 }
@@ -355,8 +369,27 @@ function removeUnit(unit) {
   if (state.focus && state.focus.unit === unit) state.focus = { kind: 'roster', unit: newUnit(unit.card, unit.opt) };
   renderAll();
 }
-/* unité à ajouter depuis une carte du roster : la configuration en cours dans le panneau si c'est cette carte,
-   sinon l'option par défaut (la moins chère) avec tout coché */
+function replaceUnit(unit, changed) {   // modification d'une unité (option, rang) : refusée si elle crée un problème
+  if (state.focus.kind === 'army') {
+    const next = state.army.map(u => (u === unit ? changed : u));
+    const problem = newProblem(state.army, next);
+    if (problem && (problem.startsWith('Fonds') || problem.startsWith('Plafond'))) { flash(problem); return false; }
+    state.army = next;
+  }
+  state.focus = { kind: state.focus.kind, unit: changed };
+  renderAll();
+  return true;
+}
+function setRank(unit, rank) {
+  rank = Math.max(0, Math.min(DATA.xp.length - 1, rank));
+  const changed = { ...unit, rank };
+  const next = state.army.map(u => (u === unit ? changed : u));
+  const problem = newProblem(state.army, next);
+  if (problem && rank > unit.rank) { flash(problem); return; }
+  state.army = next;
+  if (state.focus && state.focus.unit === unit) state.focus = { kind: 'army', unit: changed };
+  renderAll();
+}
 const draftFor = card => (state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)
   ? state.focus.unit : newUnit(card, card.opts[0]);
 function flash(text) {
@@ -364,27 +397,27 @@ function flash(text) {
   clearTimeout(flash.t); flash.t = setTimeout(() => { m.hidden = true; }, 3500);
 }
 
-/* ---------- Construction d'une carte ---------- */
-function cardEl(card, { cost, inArmy = false, label = '', img = null }) {
+/* ---------- Carte d'unité ---------- */
+function cardEl(card, { cost, label = '', img = null, rank = 0 }) {
   const b = document.createElement('button');
-  b.className = 'card' + (inArmy ? ' in-army' : '') + (img ? ' has-img' : '');
+  b.className = 'card' + (img ? ' has-img' : '');
   b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
   b.draggable = true;
+  const tier = rank ? Math.ceil(rank / 3) : 0, n = rank ? ((rank - 1) % 3) + 1 : 0;
+  const chev = rank ? `<span class="chevrons" style="--chev:${['', '#c9874a', '#d8dde3', '#f2c94c'][tier]}" title="Rang ${rank}">${'<i></i>'.repeat(n)}</span>` : '';
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
-    (card.g ? '<span class="badge-gen" title="Peut être général">♛</span>' : '') +
-    (!inArmy && card.opts.length > 1 ? `<span class="badge-opt" title="${card.opts.length} options">${card.opts.length}</span>` : '') +
+    (card.g ? '<span class="badge-gen" title="Peut être général">♛</span>' : '') + chev +
     (img ? `<img class="art" src="images/${esc(img)}.png" alt="" loading="lazy" draggable="false">` : '') +
-    `<span class="mono serif">${esc(initials(card.n))}</span>` +
-    `<span class="nm">${esc(card.n)}</span>`;
-  b.title = card.n + (label ? ' (' + label + ')' : '');
+    `<span class="mono serif">${esc(initials(card.n))}</span><span class="nm">${esc(card.n)}</span>`;
+  b.title = card.n + (label ? ' (' + label + ')' : '') + (rank ? ` – rang ${rank}` : '');
   b.setAttribute('aria-label', `${card.n}${label ? ' (' + label + ')' : ''}, ${fmt(cost)}`);
   const art = b.querySelector('.art');
   if (art) art.addEventListener('error', () => { art.remove(); b.classList.remove('has-img'); });
   return b;
 }
 
-/* ---------- Rendu ---------- */
+/* ---------- Rendu : bandeau, armée ---------- */
 function renderTop() {
   $('raceName').textContent = race().name;
   $('raceSelect').value = String(state.raceIndex);
@@ -399,42 +432,56 @@ function renderArmy() {
   slots.innerHTML = '';
   const general = generalOf(state.army);
   state.army.forEach(u => {
-    const el = cardEl(u.card, { cost: unitCost(u), inArmy: true, label: optionLabel(u.opt), img: u.opt.img || u.card.img });
+    const slot = document.createElement('div'); slot.className = 'slot';
+    const el = cardEl(u.card, { cost: unitCost(u), label: optionLabel(u.opt), img: u.opt.img || u.card.img, rank: u.rank });
     if (u === general) { el.classList.add('is-general'); el.title += ' : général de l’armée'; }
     if (state.focus && state.focus.unit === u) el.classList.add('selected');
-    el.addEventListener('click', () => { state.focus = { kind: 'army', unit: u }; renderAll(); });
+    el.dataset.armyIndex = String(state.army.indexOf(u));
+    el.addEventListener('click', () => setFocus({ kind: 'army', unit: u }));
     el.addEventListener('dblclick', () => removeUnit(u));
     el.addEventListener('dragstart', e => { drag = { from: 'army', unit: u }; e.dataTransfer.setData('text/plain', 'army'); e.dataTransfer.effectAllowed = 'move'; });
     el.addEventListener('dragend', () => { drag = null; });
-    slots.appendChild(el);
+    const ctl = document.createElement('div'); ctl.className = 'rank-ctl';
+    ctl.innerHTML = `<button aria-label="Retirer un rang" ${u.rank === 0 ? 'disabled' : ''}>−</button><span title="Rang d'expérience">${u.rank}</span>` +
+      `<button aria-label="Ajouter un rang" ${u.rank >= DATA.xp.length - 1 ? 'disabled' : ''}>+</button>`;
+    const [minus, , plus] = ctl.children;
+    minus.addEventListener('click', () => setRank(u, u.rank - 1));
+    plus.addEventListener('click', () => setRank(u, u.rank + 1));
+    slot.append(el, ctl);
+    slots.appendChild(slot);
   });
   for (let i = state.army.length; i < DATA.maxUnits; i++) {
     const e = document.createElement('div'); e.className = 'slot-empty'; e.setAttribute('aria-hidden', 'true'); slots.appendChild(e);
   }
-  renderStatus();
-}
-
-function renderStatus() {
-  const rk = race().key, army = state.army;
-  const st = $('armyStatus'), bar = $('capsBar');
+  const rk = race().key, army = state.army, st = $('armyStatus'), bar = $('capsBar');
   if (!army.length) { st.innerHTML = ''; bar.innerHTML = ''; return; }
   const errors = validate(rk, army);
   st.innerHTML = errors.length
     ? `<span class="ko">Armée non valide (${errors.length} problème${errors.length > 1 ? 's' : ''})</span><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
     : '<span class="ok">✓ Armée valide</span>';
   const counts = capCounts(rk, army);
-  const chips = Object.entries(counts).map(([k, n]) => ({ k, n, cap: effectiveCap(rk, k, army) }))
-    .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k));
-  bar.innerHTML = chips.map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}" title="Plafond de groupe">` +
-    `${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('');
+  bar.innerHTML = Object.entries(counts).map(([k, n]) => ({ k, n, cap: effectiveCap(rk, k, army) }))
+    .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k))
+    .map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}">${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('');
 }
 
+/* ---------- Rendu : roster (avec alerte de plafond sur les cartes) ---------- */
+function capBadge(opt) {
+  const rk = race().key, counts = capCounts(rk, state.army);
+  let worst = null;
+  (capsOf(rk).m[opt.u] || []).forEach(k => {
+    const n = counts[k] || 0, cap = effectiveCap(rk, k, state.army);
+    // alerte seulement quand le groupe est plein ou qu'il ne reste qu'une place
+    if (n > 0 && n >= cap - 1 && (!worst || n / cap > worst.n / worst.cap)) worst = { k, n, cap };
+  });
+  return worst;
+}
 function renderRoster() {
   const box = $('sections');
   box.innerHTML = '';
   const byTab = {};
   roster().forEach(c => (byTab[c.t] ||= []).push(c));
-  Object.values(byTab).forEach(list => list.sort((a, b) => a.min - b.min || a.n.localeCompare(b.n)));   // coût croissant, comme en jeu
+  Object.values(byTab).forEach(list => list.sort((a, b) => a.min - b.min || a.n.localeCompare(b.n)));
   DATA.tabs.filter(t => byTab[t.key]).forEach(t => {
     const sec = document.createElement('section');
     const n = byTab[t.key].length;
@@ -444,10 +491,12 @@ function renderRoster() {
       const el = cardEl(card, { cost: card.min, img: card.img });
       const reasons = card.opts.map(o => addReason(newUnit(card, o)));
       if (reasons.every(Boolean)) { el.classList.add('blocked'); el.title += ' : ' + reasons[0]; }
+      const cb = capBadge(card.opts[0]);
+      if (cb) el.insertAdjacentHTML('beforeend', `<span class="badge-cap ${cb.n >= cb.cap ? 'full' : ''}" title="${esc(capsOf(race().key).g[cb.k][0])}">${cb.n}/${cb.cap}</span>`);
       if (state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card) el.classList.add('selected');
+      el.dataset.cardId = card.id;
       el.addEventListener('click', () => {
-        if (!(state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)) state.focus = { kind: 'roster', unit: newUnit(card, card.opts[0]) };
-        renderAll();
+        if (!(state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)) setFocus({ kind: 'roster', unit: newUnit(card, card.opts[0]) });
       });
       el.addEventListener('dblclick', () => addUnit(draftFor(card)));
       el.addEventListener('dragstart', e => { drag = { from: 'roster', unit: draftFor(card) }; e.dataTransfer.setData('text/plain', 'roster'); e.dataTransfer.effectAllowed = 'copy'; });
@@ -459,129 +508,156 @@ function renderRoster() {
   });
 }
 
-/* ---------- Panneau de personnalisation (clic sur une carte) ---------- */
-function renderPanel() {
-  const p = $('detail');
-  if (!state.focus) { p.innerHTML = '<p class="empty">Clique sur une carte pour l’afficher et la personnaliser. Double-clic ou glisser-déposer pour l’ajouter à l’armée ou l’en retirer.</p>'; return; }
-  const { kind, unit } = state.focus;
-  const { card, opt } = unit;
+/* ---------- Panneau de gauche : statistiques de l'unité ---------- */
+function renderUnitStats() {
+  const p = $('unitStats');
+  if (!state.focus) { p.innerHTML = '<p class="empty">Clique sur une carte pour afficher l’unité.</p>'; return; }
+  const { unit } = state.focus, { card, opt } = unit;
   const tab = DATA.tabs.find(t => t.key === card.t);
   const pic = opt.img || card.img;
-  const reason = kind === 'roster' ? addReason(unit) : '';
-  const costLine = opt.up && opt.up.length
-    ? `${fmt(unitCost(unit))} <span class="muted">(unité ${fmt(opt.c)} + personnalisation ${fmt(upgradesCost(opt, unit.sel))})</span>`
-    : fmt(unitCost(unit));
+  const tags = DATA.tags[opt.u] || [];
+  const rk = race().key, capKeys = capsOf(rk).m[opt.u] || [];
+  p.innerHTML = `
+    ${pic ? `<img class="portrait" src="images/${esc(pic)}.png" alt="" onerror="this.remove()">` : ''}
+    <h3 class="serif">${esc(opt.n)}</h3>
+    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}${opt.fly ? ' · volant' : ''}</p>
+    ${tags.length ? `<ul class="tags">${tags.map(([n, s]) => `<li class="${s.includes('negative') ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${esc(n)}</li>`).join('')}</ul>` : ''}
+    <dl class="kv">
+      <dt>Coût total</dt><dd>${fmt(unitCost(unit))}</dd>
+      <dt>Unité</dt><dd>${fmt(opt.c)}</dd>
+      <dt>Rang ${unit.rank}</dt><dd>+${fmt(rankedBase(opt.c, unit.rank) - opt.c)}</dd>
+      <dt>Personnalisation</dt><dd>+${fmt(upgradesCost(opt, unit.sel))}</dd>
+      <dt>Général</dt><dd>${opt.l && opt.g ? 'Oui' : 'Non'}</dd>
+    </dl>
+    ${capKeys.length ? `<h4 class="block-title serif">Plafonds</h4><ul class="caps-list">${capKeys.map(k => `<li>${esc(capsOf(rk).g[k][0])} : ${effectiveCap(rk, k, state.army)}</li>`).join('')}</ul>` : ''}
+    <h4 class="block-title serif">Statistiques</h4><p class="empty">Armure, moral, vitesse, attaque… : à venir.</p>
+    <p class="key">${esc(opt.u)}</p>`;
+}
 
-  // choix uniques : variantes (domaine, marque…) et monture
-  const radioGroup = (k, title) => {
-    const current = opt[k] ?? '';
-    const sameOther = o => DIMS.every(([d]) => d === k || (o[d] ?? '') === (opt[d] ?? ''));
-    const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
-    // prix d'une monture = écart avec la version à pied (même domaine, même marque…), comme dans le jeu
-    const foot = card.opts.find(o => (o.mount ?? '') === 'On foot' && sameOther(o)) || card.opts.find(o => (o.mount ?? '') === 'On foot');
-    const rows = values.map(v => {
-      const target = card.opts.find(o => (o[k] ?? '') === v && sameOther(o)) || card.opts.find(o => (o[k] ?? '') === v);
-      const delta = foot ? target.c - foot.c : 0;
-      const price = k === 'mount' && v !== 'On foot' && delta ? `<span class="price">${fmt(delta)}</span>` : '';
-      const label = k === 'mount' && v === 'On foot' ? 'Aucune (à pied)' : (v || 'Aucun');
-      return `<label class="row"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${v === current ? 'checked' : ''}>` +
-        `<span class="lbl">${esc(label)}</span>${price}</label>`;
-    }).join('');
-    return `<section class="pz"><h4 class="serif">${title}</h4>${rows}</section>`;
-  };
-  const variantHtml = choiceDims(card, VARIANT_DIMS).map(([k, t]) => radioGroup(k, t)).join('');
-  const mountHtml = choiceDims(card, [['mount', 'Montures']]).map(([k, t]) => radioGroup(k, t)).join('');
-
-  // sorts, capacités, objets : cases à cocher libres
+/* ---------- Panneau central : personnalisation (sous l'armée) ---------- */
+function renderCustom() {
+  const box = $('custom');
+  if (!state.focus) {
+    box.innerHTML = `<div class="custom-head"><h2 class="serif">Personnalisation d'unité</h2></div>
+      <p class="empty custom-empty">Clique sur une carte pour la personnaliser : domaine de magie, monture, sorts, capacités, objets.</p>`;
+    return;
+  }
+  const { kind, unit } = state.focus, { card, opt } = unit;
   const ups = upgradesOf(race().key);
+  const reason = kind === 'roster' ? addReason(unit) : '';
+
+  // choix uniques (variantes, monture) : chaque valeur = une autre option de la carte
+  const sameOther = (o, k) => DIMS.every(d => d === k || (o[d] ?? '') === (opt[d] ?? ''));
+  const targetFor = (k, v) => card.opts.find(o => (o[k] ?? '') === v && sameOther(o, k)) || card.opts.find(o => (o[k] ?? '') === v);
+  const carry = next => ({ card, opt: next, rank: unit.rank,
+    sel: new Set((next.up || []).filter(x => unit.sel.has(x) || !(opt.up || []).includes(x))) });
+  const radioGroup = k => {
+    const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
+    const foot = card.opts.find(o => (o.mount ?? '') === 'On foot' && sameOther(o, 'mount'));
+    const rows = values.map(v => {
+      const target = targetFor(k, v);
+      let price;
+      if (k === 'mount') { const d = foot ? target.c - foot.c : 0; price = v !== 'On foot' && d ? fmt(d) : ''; }
+      else price = fmt(unitCost(carry(target)));   // comme en jeu : prix total de l'unité avec cette variante
+      const label = k === 'mount' && v === 'On foot' ? 'Aucune' : (v || 'Aucune');
+      return `<label class="row"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${(opt[k] ?? '') === v ? 'checked' : ''}>` +
+        `<span class="lbl">${esc(label)}</span>${price ? `<span class="price">${price}</span>` : ''}</label>`;
+    }).join('');
+    return `<section class="pz"><h4 class="serif">${esc(dimTitle(card, k))}</h4>${rows}</section>`;
+  };
+  const variants = DIMS.filter(k => k !== 'mount' && hasChoice(card, k)).map(radioGroup).join('');
+  const mounts = hasChoice(card, 'mount') ? radioGroup('mount') : '';
   const sections = UPGRADE_SECTIONS.map(([type, title]) => {
     const keys = (opt.up || []).filter(k => ups[k] && ups[k][1] === type);
     if (!keys.length) return '';
     const all = keys.every(k => unit.sel.has(k));
     const rows = keys.map(k => {
-      const [name, , cost] = ups[k];
+      const [name, , cost, rar, hex] = ups[k];
       const price = cost == null ? '<span class="price unknown" title="Coût à déterminer">?</span>' : `<span class="price">${fmt(cost)}</span>`;
-      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${unit.sel.has(k) ? 'checked' : ''}><span class="lbl">${esc(name)}</span>${price}</label>`;
+      const gem = hex ? `<span class="gem" style="--gem:#${esc(hex)}" title="${esc(RARITY_FR[rar] || rar)}"></span>` : '<span class="gem"></span>';
+      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${unit.sel.has(k) ? 'checked' : ''}>${gem}<span class="lbl">${esc(name)}</span>${price}</label>`;
     }).join('');
     return `<section class="pz"><h4 class="serif">${title}</h4>` +
       `<label class="row all"><input type="checkbox" data-all="${type}" ${all ? 'checked' : ''}><span class="lbl">Tout sélectionner</span></label>${rows}</section>`;
   }).join('');
 
-  p.innerHTML = `
-    ${pic ? `<img class="portrait" src="images/${esc(pic)}.png" alt="" onerror="this.remove()">` : ''}
-    <h3 class="serif">${esc(card.n)}</h3>
-    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}${kind === 'army' ? ' · dans l’armée' : ''}</p>
-    <dl><dt>Coût</dt><dd>${costLine}</dd><dt>Général</dt><dd>${opt.l && opt.g ? 'Oui' : 'Non'}</dd></dl>
-    ${kind === 'roster'
-      ? `<button class="add-btn" id="panelAction" ${reason ? 'disabled' : ''}>Ajouter à l'armée</button><p class="msg">${esc(reason)}</p>`
-      : `<button class="add-btn secondary" id="panelAction">Retirer de l'armée</button>`}
-    <h3 class="pz-title serif">Personnalisation d'unité</h3>
-    ${variantHtml}${mountHtml}${sections || ((variantHtml || mountHtml) ? '' : '<p class="empty">Aucune personnalisation pour cette unité.</p>')}
-    ${capsHtml(opt)}
-    <section class="pz"><h4 class="serif">Statistiques</h4><p class="empty">À venir.</p></section>
-    <p class="key">${esc(opt.u)}</p>`;
+  box.innerHTML = `
+    <div class="custom-head"><h2 class="serif">Personnalisation d'unité · ${esc(card.n)}</h2>
+      <button class="act" id="customAction" ${reason ? 'disabled' : ''}>${kind === 'roster' ? "Ajouter à l'armée" : "Retirer de l'armée"}</button></div>
+    <div class="custom-scroll">
+      ${reason ? `<p class="custom-msg">${esc(reason)}</p>` : ''}
+      <div class="custom-body">${variants}${sections}${mounts}${(variants || sections || mounts) ? '' : '<p class="empty">Aucune personnalisation pour cette unité.</p>'}</div>
+    </div>`;
 
-  $('panelAction').addEventListener('click', () => (kind === 'roster' ? addUnit(unit) : removeUnit(unit)));
-  p.querySelectorAll('input[type=radio][data-u]').forEach(r => r.addEventListener('change', () => {
-    const next = card.opts.find(o => o.u === r.dataset.u);
-    // on garde les éléments cochés qui existent encore ; les nouveaux sont cochés par défaut
-    const keep = new Set((next.up || []).filter(k => unit.sel.has(k) || !(opt.up || []).includes(k)));
-    const changed = { card, opt: next, sel: keep };
-    if (kind === 'army') {
-      const before = new Set(validate(race().key, state.army).map(e => e.code));
-      const test = state.army.map(u => (u === unit ? changed : u));
-      const created = validate(race().key, test).filter(e => !before.has(e.code));
-      if (created.length && created.some(e => e.code === 'OVER_BUDGET' || e.code.startsWith('CAP_EXCEEDED'))) { flash(created[0].text); renderPanel(); return; }
-      state.army = test; state.focus = { kind, unit: changed };
-    } else state.focus = { kind, unit: changed };
-    renderAll();
+  $('customAction').addEventListener('click', () => (kind === 'roster' ? addUnit(unit) : removeUnit(unit)));
+  box.querySelectorAll('input[type=radio][data-u]').forEach(r => r.addEventListener('change', () => {
+    if (!replaceUnit(unit, carry(card.opts.find(o => o.u === r.dataset.u)))) renderCustom();
   }));
-  p.querySelectorAll('input[type=checkbox][data-k]').forEach(c => c.addEventListener('change', () => {
-    c.checked ? unit.sel.add(c.dataset.k) : unit.sel.delete(c.dataset.k);
-    renderAll();
+  box.querySelectorAll('input[type=checkbox][data-k]').forEach(c => c.addEventListener('change', () => {
+    const sel = new Set(unit.sel); c.checked ? sel.add(c.dataset.k) : sel.delete(c.dataset.k);
+    if (!replaceUnit(unit, { ...unit, sel })) renderCustom();
   }));
-  p.querySelectorAll('input[type=checkbox][data-all]').forEach(c => c.addEventListener('change', () => {
-    (opt.up || []).filter(k => ups[k] && ups[k][1] === c.dataset.all).forEach(k => (c.checked ? unit.sel.add(k) : unit.sel.delete(k)));
-    renderAll();
+  box.querySelectorAll('input[type=checkbox][data-all]').forEach(c => c.addEventListener('change', () => {
+    const sel = new Set(unit.sel);
+    (opt.up || []).filter(k => ups[k] && ups[k][1] === c.dataset.all).forEach(k => (c.checked ? sel.add(k) : sel.delete(k)));
+    if (!replaceUnit(unit, { ...unit, sel })) renderCustom();
   }));
 }
 
-function capsHtml(opt) {
-  const rk = race().key, keys = capsOf(rk).m[opt.u] || [];
-  if (!keys.length) return '';
-  return '<section class="pz"><h4 class="serif">Plafonds</h4><ul class="caps-list">' +
-    keys.map(k => `<li>${esc(capsOf(rk).g[k][0])} : ${effectiveCap(rk, k, state.army)}</li>`).join('') + '</ul></section>';
+/* ---------- Panneau de droite : statistiques de la composition ---------- */
+function renderComposition() {
+  const p = $('composition'), army = state.army;
+  const total = spent();
+  if (!army.length) { p.innerHTML = '<h3 class="serif">Composition</h3><p class="empty">Ajoute des unités pour voir la répartition de l’armée.</p>'; return; }
+  const by = {};
+  army.forEach(u => { const r = u.opt.role || 'other'; (by[r] ||= { n: 0, c: 0 }); by[r].n++; by[r].c += unitCost(u); });
+  const fly = army.filter(u => u.opt.fly), flyCost = fly.reduce((s, u) => s + unitCost(u), 0);
+  const row = (label, n, c) => `<div class="comp-row"><div class="top"><b>${esc(label)}</b><span>${n} · ${fmt(c)} · ${total ? Math.round(100 * c / total) : 0} %</span></div>` +
+    `<div class="bar"><i style="width:${total ? (100 * c / total).toFixed(1) : 0}%"></i></div></div>`;
+  p.innerHTML = `<h3 class="serif">Composition</h3>
+    <p class="sub">${army.length} unité${army.length > 1 ? 's' : ''} · ${fmt(total)} / ${fmt(DATA.budget)} dépensés</p>
+    <h4 class="block-title serif">Par rôle (part des fonds)</h4>
+    ${ROLES.filter(([k]) => by[k]).map(([k, label]) => row(label, by[k].n, by[k].c)).join('')}
+    <h4 class="block-title serif">Transversal</h4>
+    ${row('Volants', fly.length, flyCost)}
+    ${row('Lord & héros', (by.lord?.n || 0) + (by.hero?.n || 0), (by.lord?.c || 0) + (by.hero?.c || 0))}
+    <p class="muted">Infanterie légère &lt; 500, de ligne 500–899, d’élite ≥ 900 (prix de base).</p>`;
 }
 
-function renderAll() { renderTop(); renderArmy(); renderRoster(); renderPanel(); }
+function renderAll() { renderTop(); renderArmy(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); }
+
+/* changement d'unité affichée : on met à jour les panneaux et la surbrillance, sans reconstruire les cartes
+   (reconstruire les cartes entre les deux clics d'un double-clic l'empêcherait d'aboutir) */
+function setFocus(focus) {
+  state.focus = focus;
+  document.querySelectorAll('#sections .card').forEach(el =>
+    el.classList.toggle('selected', focus.kind === 'roster' && el.dataset.cardId === focus.unit.card.id));
+  document.querySelectorAll('#slots .card').forEach(el =>
+    el.classList.toggle('selected', focus.kind === 'army' && state.army[Number(el.dataset.armyIndex)] === focus.unit));
+  renderUnitStats(); renderCustom();
+}
 
 /* ---------- Glisser-déposer ---------- */
 let drag = null;
 function setupDragAndDrop() {
-  const armyZone = $('armyZone');
-  armyZone.addEventListener('dragover', e => { if (drag && drag.from === 'roster') { e.preventDefault(); armyZone.classList.add('drop-ok'); } });
-  armyZone.addEventListener('dragleave', () => armyZone.classList.remove('drop-ok'));
-  armyZone.addEventListener('drop', e => {
-    e.preventDefault(); armyZone.classList.remove('drop-ok');
-    if (drag && drag.from === 'roster') addUnit(drag.unit);
-    drag = null;
-  });
-  // une unité de l'armée lâchée en dehors de la barre d'armée est retirée
-  document.addEventListener('dragover', e => { if (drag && drag.from === 'army' && !armyZone.contains(e.target)) e.preventDefault(); });
-  document.addEventListener('drop', e => {
-    if (drag && drag.from === 'army' && !armyZone.contains(e.target)) { e.preventDefault(); removeUnit(drag.unit); }
-    drag = null;
-  });
+  const zone = $('armyZone');
+  zone.addEventListener('dragover', e => { if (drag && drag.from === 'roster') { e.preventDefault(); zone.classList.add('drop-ok'); } });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drop-ok'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drop-ok'); if (drag && drag.from === 'roster') addUnit(drag.unit); drag = null; });
+  document.addEventListener('dragover', e => { if (drag && drag.from === 'army' && !zone.contains(e.target)) e.preventDefault(); });
+  document.addEventListener('drop', e => { if (drag && drag.from === 'army' && !zone.contains(e.target)) { e.preventDefault(); removeUnit(drag.unit); } drag = null; });
 }
 
-/* ---------- Changement de race ---------- */
+/* ---------- Race : changement, couleur d'accent et illustration ---------- */
 function setRace(i) {
   state.raceIndex = (i + DATA.races.length) % DATA.races.length;
   state.army = []; state.focus = null;
+  const r = race(), root = document.documentElement;
+  if (r.accent) root.style.setProperty('--accent', '#' + r.accent); else root.style.removeProperty('--accent');
+  if (r.race_image) root.style.setProperty('--race-art', `url("images/races/${r.race_image}.png")`); else root.style.removeProperty('--race-art');
   renderAll();
 }
 
-/* ---------- Initialisation ---------- */
 function init() {
   const sel = $('raceSelect');
   DATA.races.forEach((r, i) => sel.add(new Option(`${r.name} (${r.nb_cards} cartes)`, String(i))));
@@ -599,7 +675,7 @@ function init() {
     root.dataset.theme = getComputedStyle(root).colorScheme === 'dark' ? 'light' : 'dark';
   });
   $('footer').textContent = `Données du dump WH3 (${DATA.patch}), budget de ${fmt(DATA.budget)} et ${DATA.maxUnits} unités maximum. ` +
-    `Personnalisation : coûts des capacités et objets supposés, coût des sorts à venir. ` +
+    `Hypothèses : coûts des rangs, des capacités et des objets ; coût des sorts à venir. ` +
     `Outil de fan non officiel, non affilié à Creative Assembly ni à Games Workshop.`;
   setupDragAndDrop();
   setRace(0);

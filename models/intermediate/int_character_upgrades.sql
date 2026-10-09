@@ -67,6 +67,13 @@ items as (
 
 texts as (
     select loc_key, resolved_text from {{ ref('stg_loc_texts') }}
+),
+
+rarity_groups as (
+    -- groupes de rareté du jeu, avec leur couleur (col_hex) ; les objets y sont rangés par uniqueness_score
+    select uniqueness_group_key, ui_state, col_hex, uniqueness_min, uniqueness_max
+    from {{ ref('stg_dump__ancillary_uniqueness_groupings') }}
+    where ui_state in ('common', 'uncommon', 'rare', 'legendary')
 )
 
 select
@@ -84,16 +91,22 @@ select
          when replace(a.uniqueness, 'wh_main_anc_group_', '') in ('common', 'uncommon', 'rare') then 'hypothèse : rareté'
          else 'inconnu (rareté ' || coalesce(replace(a.uniqueness, 'wh_main_anc_group_', ''), 'absente') || ')' end as cost_status,
     aa.source,
+    null                                                                                as item_category,
+    rg.ui_state                                                                         as rarity_state,
+    rg.col_hex                                                                          as rarity_hex,
     '{{ var("patch") }}'                                                                as patch
 from all_abilities aa
 join abilities a using (ability_key)
 left join texts t on t.loc_key = 'unit_abilities_onscreen_name_' || aa.ability_key
+left join rarity_groups rg on rg.uniqueness_group_key = a.uniqueness
 where not coalesce(a.is_hidden_in_ui, false)
 
 union all
 
 select
-    i.race_key, i.unit_key, 'item', i.ancillary_key, t.resolved_text, i.category, null,
-    i.uniqueness_score, 'hypothèse : uniqueness_score', 'objet du personnage', '{{ var("patch") }}'
+    i.race_key, i.unit_key, 'item', i.ancillary_key, t.resolved_text, rg.ui_state, null,
+    i.uniqueness_score, 'hypothèse : uniqueness_score', 'objet du personnage',
+    i.category, rg.ui_state, rg.col_hex, '{{ var("patch") }}'
 from items i
 left join texts t on t.loc_key = 'ancillaries_onscreen_name_' || i.ancillary_key
+left join rarity_groups rg on i.uniqueness_score between rg.uniqueness_min and rg.uniqueness_max

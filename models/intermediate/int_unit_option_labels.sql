@@ -57,6 +57,7 @@ variant_labels as (
             when 'type_forest_spirit' then 'forest_spirit'
             else 'other_variant'
         end as category,
+        ty.type_category_key,
         coalesce(
             nullif(tn.resolved_text, ''),
             list_last(regexp_extract_all(un.resolved_text, '\(([^)]+)\)', 1)),
@@ -73,7 +74,8 @@ variants as (
         any_value(label) filter (where category = 'lore')          as lore,
         any_value(label) filter (where category = 'mark')          as mark,
         any_value(label) filter (where category = 'forest_spirit') as forest_spirit,
-        any_value(label) filter (where category = 'other_variant') as other_variant
+        any_value(label) filter (where category = 'other_variant') as other_variant,
+        any_value(type_category_key) filter (where category = 'other_variant') as other_variant_category
     from variant_labels
     group by unit_key
 )
@@ -87,6 +89,7 @@ select
     v.mark,
     v.forest_spirit,
     v.other_variant,
+    v.other_variant_category,
     '{{ var("patch") }}' as patch
 from all_units a
 join foot f using (unit_key)
