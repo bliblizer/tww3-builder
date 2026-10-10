@@ -160,6 +160,7 @@ Limites de la V0 :
   - en dessous, le statut de l'armée et les plafonds en cours.
 - **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
+- **À droite des emplacements de l'armée** : un **résumé** avec les fonds restants (et la barre du budget), les unités / 20, les modèles et l'indice d'élite, suivis du statut de l'armée et des plafonds en cours. Sur un écran plus étroit, il passe sous les cartes.
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
   - **l'indice d'élite** : tier moyen pondéré par le coût (`main_units.tier`, de 1 à 5), calculé **sans les lords et héros**. Il est lu « Horde » sous 2,6, « Balanced » jusqu'à 3,6, « Elite » au-delà, avec une barre de répartition des fonds par tier ;
@@ -204,6 +205,9 @@ Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu, 
 | `ui/battle ui/ability_icons/` | `assets/ability_icons/` | Les icônes des sorts et capacités (`unit_abilities.icon_name`) et des domaines de magie (icône du passif du domaine, `special_ability_groups.icon_path`) |
 | `ui/campaign ui/mounts/` | `assets/mount_icons/` | Les icônes des montures (`units_custom_battle_mounts.icon_name`) |
 | `experience_1` à `experience_9` | `assets/ui_skins/` | Les chevrons des rangs d'expérience |
+| `unit_card_slot`, `unit_tier_1` à `unit_tier_5`, `icon_income_large`, `icon_entity_small` / `_large`, `unit_effect_positive` / `_negative` | `assets/ui_skins/` | Emplacement vide de l'armée, icônes de tier, pièce d'or, taille d'entité (petite ou grande) et flèches d'effet positif / négatif |
+| Icônes de statistiques (`icon_stat_armour`, `icon_stat_morale`…) | `assets/stats_icons/` | Les icônes devant chaque statistique de la fiche. Le rapprochement se fait par nom (voir `STAT_ICONS` dans `build_app.py`), avec le détail dans `exports/stat_icons.csv` |
+| Illustrations de campagne (`campaign_khorne1.png`…) | `assets/artworks/` | Le **fond de page** de chaque race (plein écran, fixe, fondu). La correspondance est dans `config/race_artworks.csv`, modifiable. Avec Pillow (`pip install pillow`), elles sont converties en JPEG d'environ 200 Ko |
 | `ui/skins/default/unit_card_*` | `assets/ui_skins/` | L'habillage des cartes : `unit_card_frame_plain`, `unit_card_selected`, `unit_card_hover`, `unit_card_semicircle`, `unit_card_semicircle_hero` (lords et héros) et `unit_card_semicircle_renown` (Régiments de Renom, `is_renown`) |
 
 Les fichiers `.png` et `.webp` sont acceptés. Sans habillage, les cartes gardent leur cadre simple.
@@ -285,6 +289,7 @@ python -m playwright install chromium
 - **Réordonner** : glisser une unité de l'armée sur une autre pour la placer devant. Le lord reste toujours en tête.
 - **Save / My armies** : favoris enregistrés **dans ce navigateur** (`localStorage`), à recharger ou supprimer.
 - **Share** : copie un **lien** qui contient l'armée (race, unités, rangs, éléments cochés, nom, notes courtes). À l'ouverture du lien, l'armée est reconstituée. Les unités absentes d'une version plus récente des données sont signalées.
+- **Game folder** (Chrome, Edge, Opera) : on choisit une fois le dossier `army_setups` du jeu. **Export** écrit alors le fichier directement dedans (avec confirmation s'il existe déjà), et **Import** affiche la liste des armées sauvegardées en jeu. Le navigateur reconfirme l'accès d'un clic à chaque nouvelle session. Sans dossier connecté, l'import ouvre un sélecteur qui retient le dernier dossier utilisé.
 - **Export .army_setup** : télécharge le fichier à charger dans le jeu. Au premier export, une **aide** explique où le copier (`%APPDATA%\The Creative Assembly\Warhammer3\army_setups`) et comment le charger en jeu. Le bouton **?** la rouvre. Si l'armée n'est pas valide, une confirmation est demandée.
   - **Contenu** : la faction est la faction principale de la race si elle autorise toutes les unités, sinon une faction commune. Pour chaque unité : général, rang, éléments cochés, et pour les lords et héros leurs capacités innées, sans celles de la monture, comme le fait le jeu.
   - **Vérification** : `scripts/test_app.py` importe puis réexporte les 5 fichiers du jeu de `tests/fixtures/`. Le contenu redevient identique (seul l'ordre des éléments peut différer, la taille est la même au fichier près).

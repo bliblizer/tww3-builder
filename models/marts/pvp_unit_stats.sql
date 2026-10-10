@@ -12,8 +12,8 @@ with units as (
 base as (
     select
         m.unit_key, m.num_men, lu.*,
-        man.hit_points  as man_hp,  man.run_speed  as man_run,  man.fly_speed  as man_fly,
-        mte.hit_points  as mount_hp, mte.run_speed as mount_run, mte.fly_speed as mount_fly,
+        man.hit_points  as man_hp,  man.run_speed  as man_run,  man.fly_speed  as man_fly,  man.size as man_size,
+        mte.hit_points  as mount_hp, mte.run_speed as mount_run, mte.fly_speed as mount_fly, mte.size as mount_size,
         arm.armour_value, sh.missile_block_chance
     from units u
     join {{ ref('stg_dump__main_units') }} m using (unit_key)
@@ -83,6 +83,8 @@ select
     nullif(b.damage_mod_missile, 0)                                      as missile_resistance,
     nullif(b.damage_mod_flame, 0)                                        as fire_resistance,
     nullif(b.damage_mod_all, 0)                                          as ward_save,
+    -- unité « grande » au sens des règles du jeu (anti-large…) : soldat ou monture de taille large / very_large
+    coalesce(b.man_size, '') in ('large', 'very_large') or coalesce(b.mount_size, '') in ('large', 'very_large') as is_large,
     -- indicateurs pour les statistiques de composition
     nullif(mu.tier, 0)                                                   as tier,   -- 1 à 5 (vide pour lords et héros)
     list_has_any(coalesce(tg.tag_keys, []), ['armour_piercing', 'armour_piercing_melee', 'armour_piercing_ranged'])

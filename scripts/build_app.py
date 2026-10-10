@@ -19,6 +19,9 @@ Images des cartes (facultatif) :
   + experience_1 à experience_9  -> assets/ui_skins/      (chevrons des rangs d'expérience)
 - ui/battle ui/ability_icons/   -> assets/ability_icons/  (icônes des sorts, capacités et domaines de magie)
 - ui/campaign ui/mounts/        -> assets/mount_icons/    (icônes des montures)
+- icônes de statistiques        -> assets/stats_icons/    (icon_stat_armour, icon_stat_morale… : voir STAT_ICONS)
+- illustrations de campagne     -> assets/artworks/       (fond de page de chaque race : config/race_artworks.csv)
+  converties en JPEG allégé si Pillow est installé (pip install pillow), sinon copiées telles quelles
 - fichiers .png ou .webp acceptés partout
 - les sous-dossiers sont acceptés : le script cherche les .png partout dans ces deux dossiers ;
 - le script copie dans docs/images/ (cartes) et docs/images/portraits/ (portraits) UNIQUEMENT les images utiles
@@ -39,9 +42,31 @@ ICON_ASSETS = os.path.join(ROOT, 'assets', 'unit_category_icons')
 SKIN_ASSETS = os.path.join(ROOT, 'assets', 'ui_skins')
 ABILITY_ICON_ASSETS = os.path.join(ROOT, 'assets', 'ability_icons')
 MOUNT_ICON_ASSETS = os.path.join(ROOT, 'assets', 'mount_icons')
-SKIN_FILES = {   # habillage des cartes : clé de l'application -> fichier du jeu (ui/skins/default/)
+SKIN_FILES = {   # habillage : clé de l'application -> fichier du jeu (ui/skins/default/)
     'frame': 'unit_card_frame_plain', 'selected': 'unit_card_selected', 'hover': 'unit_card_hover',
-    'semi': 'unit_card_semicircle', 'semiHero': 'unit_card_semicircle_hero', 'semiRenown': 'unit_card_semicircle_renown'}
+    'semi': 'unit_card_semicircle', 'semiHero': 'unit_card_semicircle_hero', 'semiRenown': 'unit_card_semicircle_renown',
+    'slot': 'unit_card_slot', 'coin': 'icon_income_large', 'entitySmall': 'icon_entity_small', 'entityLarge': 'icon_entity_large',
+    'effPos': 'unit_effect_positive', 'effNeg': 'unit_effect_negative'}
+STAT_ICON_ASSETS = os.path.join(ROOT, 'assets', 'stats_icons')
+STAT_ICONS = {   # statistique du builder -> noms possibles du fichier d'icône (noms du jeu en premier)
+    'health': ['icon_stat_health', 'icon_health', 'health'],
+    'armour': ['icon_stat_armour', 'icon_armour', 'armour'],
+    'leadership': ['icon_stat_morale', 'icon_stat_leadership', 'icon_morale', 'morale', 'leadership'],
+    'speed': ['icon_stat_speed', 'icon_speed', 'speed'],
+    'melee_attack': ['icon_stat_attack', 'icon_stat_melee_attack', 'icon_attack', 'melee_attack'],
+    'melee_defence': ['icon_stat_defence', 'icon_stat_melee_defence', 'icon_defence', 'melee_defence'],
+    'weapon_strength': ['icon_stat_damage', 'icon_stat_weapon_strength', 'icon_damage', 'weapon_strength'],
+    'charge_bonus': ['icon_stat_charge_bonus', 'icon_charge_bonus', 'charge_bonus'],
+    'ammunition': ['icon_stat_ammo', 'icon_stat_ammunition', 'icon_ammo', 'ammo'],
+    'range': ['icon_stat_range', 'icon_range', 'range'],
+    'missile_strength': ['icon_stat_ranged_damage', 'icon_stat_missile_strength', 'icon_ranged_damage', 'ranged_damage'],
+    'physical_resistance': ['icon_stat_resistance_physical', 'resistance_physical', 'icon_resistance_physical', 'physical_resistance'],
+    'spell_resistance': ['icon_stat_resistance_magic', 'resistance_magic', 'icon_resistance_magic', 'spell_resistance', 'magic_resistance'],
+    'missile_resistance': ['icon_stat_resistance_missile', 'resistance_missile', 'icon_resistance_missile', 'missile_resistance'],
+    'fire_resistance': ['icon_stat_resistance_fire', 'resistance_fire', 'icon_resistance_fire', 'fire_resistance', 'resistance_flame'],
+    'ward_save': ['icon_stat_resistance_all', 'resistance_all', 'icon_stat_ward_save', 'ward_save', 'icon_resistance_all'],
+}
+ARTWORK_ASSETS = os.path.join(ROOT, 'assets', 'artworks')
 EXTS = ('.png', '.webp')
 PLACEHOLDERS = {'placeholder', 'a_character_placeholder'}   # cartes génériques du jeu : jamais affichées
 RACE_ASSETS = os.path.join(ROOT, 'assets', 'race_images')   # contenu de ui/frontend ui/race_strip_images/ du jeu
@@ -147,6 +172,19 @@ for name in sorted({o['category_icon'] for o in options if o['category_icon']}):
         icons[name] = copy_image(icon_found[name.lower()], 'icons', name)
 skin_found = scan(SKIN_ASSETS)
 skin = {k: copy_image(skin_found[f], 'ui', f) for k, f in SKIN_FILES.items() if f in skin_found}
+tier_icons = [copy_image(skin_found[f'unit_tier_{n}'], 'ui', f'unit_tier_{n}') if f'unit_tier_{n}' in skin_found else None
+              for n in range(1, 6)]
+if any(tier_icons):
+    skin['tier'] = [None] + tier_icons   # skin.tier[tier]
+
+# icônes de statistiques : nom du jeu, sinon nom proche ; le rapprochement est écrit dans exports/stat_icons.csv
+stat_found = scan(STAT_ICON_ASSETS)
+stat_icons, stat_report = {}, []
+for stat, names in STAT_ICONS.items():
+    hit = next((n for n in names if n in stat_found), None)
+    if hit:
+        stat_icons[stat] = copy_image(stat_found[hit], 'stats', hit)
+    stat_report.append([stat, hit or '', ' / '.join(names)])
 xp_icons = [copy_image(skin_found[f'experience_{n}'], 'ui', f'experience_{n}') if f'experience_{n}' in skin_found else None
             for n in range(1, 10)]
 if any(xp_icons):
@@ -222,7 +260,7 @@ STAT_COLS = ['unit_size', 'health', 'speed', 'armour', 'shield_block_chance', 'l
              'weapon_strength', 'weapon_ap_damage', 'bonus_v_large', 'bonus_v_infantry', 'charge_bonus', 'ammunition', 'range',
              'missile_strength', 'physical_resistance', 'spell_resistance', 'missile_resistance', 'fire_resistance', 'ward_save',
              'tier', 'is_armour_piercing', 'is_anti_large', 'has_magical_attacks', 'has_flaming_attacks',
-             'is_daemonic_or_undead', 'has_shield_or_missile_resistance']
+             'is_daemonic_or_undead', 'has_shield_or_missile_resistance', 'is_large']
 def compact(v):
     if v is None: return None
     if isinstance(v, bool): return int(v)
@@ -280,6 +318,26 @@ type_cats = {r['k']: r['n'] for r in rows("""
     select replace(loc_key, 'units_custom_battle_type_categories_category_name_', '') as k, resolved_text as n
     from staging.stg_loc_texts where loc_key like 'units_custom_battle_type_categories_category_name_%'""")}
 
+# ---------- illustrations de campagne en fond de page (option A : plein écran, fixe, fondu) ----------
+art_found = scan(ARTWORK_ASSETS)
+try:
+    from PIL import Image as PILImage
+except ImportError:
+    PILImage = None
+race_art = {}
+if os.path.exists(os.path.join(ROOT, 'config', 'race_artworks.csv')):
+    for r in csv.DictReader(open(os.path.join(ROOT, 'config', 'race_artworks.csv'), encoding='utf-8')):
+        src = art_found.get((r['artwork'] or '').lower())
+        if not src:
+            continue
+        out_dir = os.path.join(IMAGES_OUT, 'artworks'); os.makedirs(out_dir, exist_ok=True)
+        if PILImage:   # JPEG allégé (1600 px, qualité 72) : quelques centaines de Ko au lieu de plusieurs Mo
+            im = PILImage.open(src).convert('RGB'); im.thumbnail((1600, 1600))
+            im.save(os.path.join(out_dir, r['race_key'] + '.jpg'), 'JPEG', quality=72, optimize=True)
+            race_art[r['race_key']] = 'artworks/' + r['race_key'] + '.jpg'
+        else:
+            race_art[r['race_key']] = copy_image(src, 'artworks', r['race_key'])
+
 # ---------- illustrations des races (facultatif) ----------
 race_found = {}
 if os.path.isdir(RACE_ASSETS):
@@ -293,11 +351,12 @@ for r in races:
     names = [(r['race_image'] or '').lower(), alt, alt.removesuffix('_large')]
     src = next((race_found[n] for n in names if n in race_found), None)
     r['race_image'] = copy_image(src, 'races', r['race_image']) if src else None
+    r['art'] = race_art.get(r['key'])
 
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
-        'details': details, 'factionRace': faction_race, 'exportInnate': export_innate}
+        'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()
@@ -313,6 +372,10 @@ a_cards = sum(1 for k, _ in available if k == 'card'); a_portraits = len(availab
 print(f"Images des cartes : {a_cards} / {n_cards} | portraits des personnages : {a_portraits} / {n_portraits} "
       f"| manquantes listées dans exports/missing_unit_cards.csv")
 n_icons = len({o['category_icon'] for o in options if o['category_icon']})
+with open(os.path.join(ROOT, 'exports', 'stat_icons.csv'), 'w', encoding='utf-8', newline='') as f:
+    w = csv.writer(f, lineterminator='\r\n'); w.writerow(['statistic', 'icon_found', 'names_searched']); w.writerows(stat_report)
+print(f"Icônes de statistiques : {len(stat_icons)} / {len(STAT_ICONS)} (détail : exports/stat_icons.csv) | "
+      f"illustrations de fond : {len(race_art)} / {len(races)}{'' if PILImage else ' (Pillow absent : images copiées sans allègement)'}")
 print(f"Icônes : sorts / capacités / domaines {len(ability_icons)} | montures {len(mount_icons)} | "
       f"chevrons d'expérience {sum(1 for x in skin.get('xp', []) if x)} / 9")
 print(f"Icônes de catégorie : {len(icons)} / {n_icons} | habillage des cartes : {sum(1 for k in skin if k in SKIN_FILES)} / {len(SKIN_FILES)} fichiers")

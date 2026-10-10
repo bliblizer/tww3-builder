@@ -26,11 +26,20 @@ body {
   font-family: "Alegreya Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.4;
 }
 /* illustration de la race en fond (si disponible), très atténuée */
+/* illustration de campagne de la race en fond (plein écran, fixe, fondue) + vignettage pour la lisibilité */
 body::before {
-  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: var(--race-art, none) center 20% / cover no-repeat; opacity: .16;
-  -webkit-mask-image: linear-gradient(#000 0%, transparent 85%); mask-image: linear-gradient(#000 0%, transparent 85%);
+  content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background: var(--race-art, none) center / cover no-repeat; opacity: .4;
 }
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 35%, transparent 0%, rgba(29,22,20,.35) 65%, rgba(29,22,20,.85) 100%);
+}
+/* panneaux légèrement transparents quand une illustration est affichée */
+body.has-art .topbar { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, rgba(42,30,26,.75)), rgba(42,30,26,.72) 60%); }
+body.has-art .army { background: rgba(51,36,31,.72); }
+body.has-art .side { background: rgba(42,30,26,.78); }
+body.has-art .custom { background: rgba(29,22,20,.6); }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .serif { font-family: "Cinzel", Georgia, "Times New Roman", serif; }
@@ -61,6 +70,7 @@ button { font: inherit; color: inherit; }
 .funds { margin-left: auto; display: flex; align-items: baseline; gap: 18px; }
 .funds .value { font-size: 24px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
 .funds .value.over { color: var(--danger); }
+.coin-img { width: 20px; height: 20px; margin-right: 6px; vertical-align: -3px; }
 .coin { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: -1px;
   background: radial-gradient(circle at 35% 35%, #ffe7a3, var(--gold) 60%, #7a5418); }
 
@@ -110,6 +120,7 @@ button { font: inherit; color: inherit; }
 .slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
 .slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 50px; }
 .slot .card { flex: none; }
+.slot-empty.skin { border: none; opacity: 1; background: var(--slot-img) center / 100% 100% no-repeat; }
 .slot-empty { flex: 0 0 50px; height: 108px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
 .rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
@@ -166,6 +177,28 @@ button { font: inherit; color: inherit; }
 .card .tier { position: absolute; top: 18px; right: 2px; z-index: 7; font-family: "Cinzel", Georgia, serif; font-size: 9.5px; font-weight: 700;
   color: #f6d58a; background: rgba(0,0,0,.65); border: 1px solid var(--bronze); border-radius: 2px; padding: 0 2px; line-height: 1.3; }
 .card .tier + .badge-opt, .card .badge-opt { right: auto; left: 2px; }
+.card img.tier-img { position: absolute; top: 17px; right: 1px; width: 17px; height: 17px; z-index: 7; pointer-events: none; }
+.tags li img { width: 15px; height: 15px; vertical-align: -2px; margin-right: 4px; }
+.tags.icons li::before { content: none; }
+.stat .lbl { display: flex; align-items: center; gap: 6px; } .stat .lbl img { width: 20px; height: 20px; }
+.size-line img { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; }
+.hp-wrap { display: flex; align-items: center; gap: 6px; } .hp-wrap img { width: 20px; height: 20px; } .hp-wrap .hp { flex: 1; }
+.tip li img { width: 13px; height: 13px; vertical-align: -2px; margin-right: 3px; } .tip ul.icons { list-style: none; padding-left: 0; }
+/* résumé de l'armée, à droite des emplacements */
+.army-row { display: grid; grid-template-columns: auto minmax(320px, 1fr); gap: 18px; align-items: start; }
+.army-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px 12px; align-content: start;
+  background: rgba(0,0,0,.18); border: 1px solid var(--bronze); border-radius: 4px; padding: 10px 12px; }
+.army-summary .kpi span { display: block; font-size: 12px; color: var(--muted); }
+.army-summary .kpi { white-space: nowrap; }
+.army-summary .kpi .coin-img { width: 17px; height: 17px; margin-right: 4px; vertical-align: -2px; }
+.army-summary .kpi b { font: 700 21px "Cinzel", Georgia, serif; color: var(--gold); font-variant-numeric: tabular-nums; }
+.army-summary .kpi b.over { color: var(--danger); }
+.army-summary .kpi small { color: var(--muted); font-size: 13px; }
+.army-summary .mini { height: 6px; background: rgba(0,0,0,.45); border-radius: 3px; overflow: hidden; margin-top: 4px; display: flex; }
+.army-summary .mini i { display: block; height: 100%; background: var(--gold); }
+.army-summary .army-status, .army-summary .caps { grid-column: 1 / -1; margin: 0; }
+.army-summary .army-status { border-top: 1px solid rgba(140,106,59,.4); padding-top: 6px; }
+@media (max-width: 1400px) { .army-row { grid-template-columns: 1fr; } }
 .card .xp-img { position: absolute; top: 18px; left: 1px; width: 20px; height: 20px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
 .card.skinned .chevrons { z-index: 6; }
 .card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
@@ -315,6 +348,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
       <button class="tb" id="shareBtn" title="Copy a link to this army">Share</button>
       <button class="tb primary" id="exportBtn" title="Download a file to load in the game">Export .army_setup</button>
       <button class="tb" id="importBtn" title="Load a .army_setup file from the game">Import</button>
+      <button class="tb" id="folderBtn" title="Connect the game's army_setups folder (Chrome, Edge)" hidden>Game folder</button>
       <button class="tb" id="pngBtn" title="Download a picture of this army">PNG</button>
       <button class="tb" id="helpBtn" title="How to use this file in the game" aria-label="Help">?</button>
       <button class="tb" id="clearArmy">Clear</button>
@@ -322,9 +356,17 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     </div>
   </div>
   <textarea class="notes" id="armyNotes" placeholder="Notes about this army (plan, matchups, deployment…)" hidden></textarea>
-  <div class="slots" id="slots"></div>
-  <div class="army-status" id="armyStatus" aria-live="polite"></div>
-  <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
+  <div class="army-row">
+    <div class="slots" id="slots"></div>
+    <div class="army-summary" id="armySummary">
+      <div class="kpi"><span>Funds remaining</span><b id="sumFunds">0</b><small id="sumBudget"></small><div class="mini"><i id="sumFundsBar"></i></div></div>
+      <div class="kpi"><span>Units</span><b id="sumUnits">0</b><small> / 20</small><div class="mini"><i id="sumUnitsBar"></i></div></div>
+      <div class="kpi"><span>Models</span><b id="sumModels">0</b></div>
+      <div class="kpi"><span>Elite index</span><b id="sumElite">–</b><small id="sumLevel"></small><div class="mini" id="sumTiers"></div></div>
+      <div class="army-status" id="armyStatus" aria-live="polite"></div>
+      <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
+    </div>
+  </div>
   <p class="flash" id="flash" role="status" hidden></p>
 </section>
 
@@ -555,7 +597,9 @@ function cardEl(card, { cost, label = '', img = null, rank = 0, opt = card.opts[
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
     chev + (opt.role !== 'lord' && opt.role !== 'hero' && statOf(opt.u, 'tier')
-      ? `<span class="tier" title="Tier ${statOf(opt.u, 'tier')}">${ROMAN[statOf(opt.u, 'tier')]}</span>` : '') +
+      ? (sk.tier && sk.tier[statOf(opt.u, 'tier')]
+          ? `<img class="tier-img" src="images/${esc(sk.tier[statOf(opt.u, 'tier')])}" alt="" title="Tier ${ROMAN[statOf(opt.u, 'tier')]}">`
+          : `<span class="tier" title="Tier ${statOf(opt.u, 'tier')}">${ROMAN[statOf(opt.u, 'tier')]}</span>`) : '') +
     (img ? `<img class="art" src="images/${esc(img)}" alt="" loading="lazy" draggable="false">` : '') + skinHtml +
     `<span class="mono serif">${esc(initials(card.n))}</span><span class="nm">${esc(card.n)}</span>`;
   b.title = card.n + (label ? ' (' + label + ')' : '') + (rank ? ` – rank ${rank}` : '');
@@ -570,7 +614,7 @@ function renderTop() {
   $('raceName').textContent = race().name;
   $('raceStrip').style.backgroundImage = race().race_image ? `url("images/${race().race_image}")` : 'none';
   const f = $('funds');
-  f.innerHTML = `<span class="coin"></span>${fmt(remaining())}`;
+  f.innerHTML = (DATA.skin.coin ? `<img class="coin-img" src="images/${esc(DATA.skin.coin)}" alt="">` : '<span class="coin"></span>') + fmt(remaining());
   f.classList.toggle('over', remaining() < 0);
   $('unitCount').textContent = `${state.army.length} / ${DATA.maxUnits}`;
 }
@@ -602,10 +646,13 @@ function renderArmy() {
     slots.appendChild(slot);
   });
   for (let i = state.army.length; i < DATA.maxUnits; i++) {
-    const e = document.createElement('div'); e.className = 'slot-empty'; e.setAttribute('aria-hidden', 'true'); slots.appendChild(e);
+    const e = document.createElement('div'); e.className = 'slot-empty' + (DATA.skin.slot ? ' skin' : ''); e.setAttribute('aria-hidden', 'true');
+    if (DATA.skin.slot) e.style.setProperty('--slot-img', `url("images/${DATA.skin.slot}")`);
+    slots.appendChild(e);
   }
+  renderSummary();
   const rk = race().key, army = state.army, st = $('armyStatus'), bar = $('capsBar');
-  if (!army.length) { st.innerHTML = ''; bar.innerHTML = ''; return; }
+  if (!army.length) { st.innerHTML = '<span class="muted">Add units to start your army.</span>'; bar.innerHTML = ''; return; }
   const errors = validate(rk, army);
   st.innerHTML = errors.length
     ? `<span class="ko">Invalid army (${errors.length} issue${errors.length > 1 ? 's' : ''})</span><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
@@ -614,6 +661,27 @@ function renderArmy() {
   bar.innerHTML = Object.entries(counts).map(([k, n]) => ({ k, n, cap: effectiveCap(rk, k, army) }))
     .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k))
     .map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}">${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('');
+}
+
+/* résumé à droite des emplacements : fonds, unités, modèles, indice d'élite (sans lords ni héros) */
+function renderSummary() {
+  const army = state.army, rem = remaining();
+  const coin = DATA.skin.coin ? `<img class="coin-img" src="images/${esc(DATA.skin.coin)}" alt="">` : '';
+  $('sumFunds').innerHTML = coin + fmt(rem); $('sumFunds').classList.toggle('over', rem < 0);
+  $('sumBudget').textContent = ` / ${fmt(DATA.budget)}`;
+  $('sumFundsBar').style.width = Math.max(0, Math.min(100, 100 * spent() / DATA.budget)) + '%';
+  $('sumUnits').textContent = army.length;
+  $('sumUnitsBar').style.width = (100 * army.length / DATA.maxUnits) + '%';
+  $('sumModels').textContent = fmt(army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0));
+  const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
+  const tc = troops.reduce((s, u) => s + unitCost(u), 0);
+  const elite = tc ? troops.reduce((s, u) => s + statOf(u.opt.u, 'tier') * unitCost(u), 0) / tc : 0;
+  $('sumElite').textContent = tc ? elite.toFixed(1) : '–';
+  $('sumLevel').textContent = !tc ? '' : elite >= 3.6 ? ' Elite' : elite >= 2.6 ? ' Balanced' : ' Horde';
+  $('sumTiers').innerHTML = [1, 2, 3, 4, 5].map(t => {
+    const c = troops.filter(u => statOf(u.opt.u, 'tier') === t).reduce((s, u) => s + unitCost(u), 0);
+    return c ? `<i class="t${t}" style="width:${(100 * c / tc).toFixed(1)}%"></i>` : '';
+  }).join('');
 }
 
 /* ---------- Rendu : roster (avec alerte de plafond sur les cartes) ---------- */
@@ -671,8 +739,9 @@ function renderUnitStats() {
   const traits = DATA.traits[opt.u] || [];
   const ups = upgradesOf(race().key);
   const pct = (c, v) => Math.min(100, 100 * v / (scale[c] || 1)).toFixed(0);
+  const icon = c => DATA.statIcons[c] ? `<img src="images/${esc(DATA.statIcons[c])}" alt="">` : '';
   const row = (label, c, extra = '') => st[c] == null ? '' :
-    `<div class="stat"><span>${label}</span><span class="v">${extra}${fmt(st[c])}</span><span class="bar"><i style="--w:${pct(c, st[c])}%"></i></span></div>`;
+    `<div class="stat"><span class="lbl">${icon(c)}${label}</span><span class="v">${extra}${fmt(st[c])}</span><span class="bar"><i style="--w:${pct(c, st[c])}%"></i></span></div>`;
   const line = (icon, text, key) => `<div class="trait"${key && DATA.details[key] ? ` data-tip="${esc(key)}" tabindex="0"` : ''}>` +
     `${icon ? `<img src="images/${esc(icon)}" alt="">` : '<span class="ico-empty"></span>'}<span>${text}</span></div>`;
   const section = (title, body) => body ? `<h4 class="block-title serif">${title}</h4>${body}` : '';
@@ -681,7 +750,7 @@ function renderUnitStats() {
   const chosen = types => [...unit.sel].filter(k => ups[k] && types.includes(ups[k][1])).map(k => line(ups[k][5], esc(ups[k][0]), k)).join('');
   const resistances = [['Physical resistance', 'physical_resistance'], ['Spell resistance', 'spell_resistance'],
     ['Missile resistance', 'missile_resistance'], ['Fire resistance', 'fire_resistance'], ['Ward save', 'ward_save']]
-    .filter(([, c]) => st[c]).map(([l, c]) => line(null, `${l}: <b>${st[c] > 0 ? '+' : ''}${st[c]}%</b>`)).join('');
+    .filter(([, c]) => st[c]).map(([l, c]) => line(DATA.statIcons[c] || null, `${l}: <b>${st[c] > 0 ? '+' : ''}${st[c]}%</b>`)).join('');
   const notes = [st.bonus_v_large ? `+${st.bonus_v_large} vs large` : '', st.bonus_v_infantry ? `+${st.bonus_v_infantry} vs infantry` : '']
     .filter(Boolean).join(' · ');
   const actions = state.focus.kind === 'army'
@@ -691,9 +760,11 @@ function renderUnitStats() {
     <h3 class="serif">${esc(opt.n)}</h3>
     ${actions}
     <p class="class-line">${opt.ic ? `<img src="images/${esc(opt.ic)}" alt="">` : ''}<span>${esc(card.grp || '')}${opt.fly ? ' · flying' : ''}</span></p>
-    ${tags.length ? `<ul class="tags">${tags.map(([n, s]) => `<li class="${s.includes('negative') ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${esc(n)}</li>`).join('')}</ul>` : ''}
-    ${st.health != null ? `<div class="hp" title="Health"><i style="--w:${pct('health', st.health)}%"></i><span>${fmt(st.health)}</span></div>` : ''}
-    ${st.unit_size != null ? `<p class="size-line">Unit size: ${fmt(st.unit_size)}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
+    ${tags.length ? `<ul class="tags${DATA.skin.effPos ? ' icons' : ''}">${tags.map(([n, s]) => {
+        const neg = s.includes('negative'), img = neg ? DATA.skin.effNeg : DATA.skin.effPos;
+        return `<li class="${neg ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(n)}</li>`; }).join('')}</ul>` : ''}
+    ${st.health != null ? `<div class="hp-wrap" title="Health">${icon('health')}<div class="hp"><i style="--w:${pct('health', st.health)}%"></i><span>${fmt(st.health)}</span></div></div>` : ''}
+    ${st.unit_size != null ? `<p class="size-line">${(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall) ? `<img src="images/${esc(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall)}" alt="" title="${st.is_large ? 'Large' : 'Small'} entity">` : ''}Unit size: ${fmt(st.unit_size)}${st.is_large ? ' · large' : ''}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
     ${row('Armour', 'armour', st.shield_block_chance ? `<small title="Missile block chance">shield ${st.shield_block_chance}%</small>` : '')}
     ${row('Leadership', 'leadership')}
     ${row('Speed', 'speed')}
@@ -1075,7 +1146,9 @@ function exportArmySetup() {
   if (!state.army.length) { flash('The army is empty.'); return; }
   const issues = validate(race().key, state.army);
   if (issues.length && !confirm(`This army is not valid in the game:\n- ${issues.map(e => e.text).join('\n- ')}\n\nDownload anyway?`)) return;
-  download(buildArmySetup(), fileBase() + '.army_setup');
+  const blob = buildArmySetup(), name = fileBase() + '.army_setup';
+  if (gameDir) { exportToFolder(blob, name).then(done => { if (!done) { download(blob, name); showHelp(true); } }); return; }
+  download(blob, name);
   let seen = false; try { seen = localStorage.getItem('tww3-builder:help-seen') === '1'; } catch {}
   if (!seen) showHelp(true);
 }
@@ -1087,6 +1160,8 @@ function showHelp(afterExport = false) {
         <span class="muted">Tip: paste <code>%APPDATA%</code> in the Windows Explorer address bar, then open <i>The Creative Assembly › Warhammer3 › army_setups</i>.</span></li>
       <li>In the game: <b>Custom Battle</b> → <b>Army Setup</b> → <b>Load</b> button, then pick your army.</li>
     </ol>
+    <p class="muted"><b>Tip:</b> in any Windows file window, paste the folder path above in the <i>File name</i> field and press Enter to jump straight there.</p>
+    ${FS_OK ? `<p class="muted"><b>Faster on Chrome / Edge:</b> click <b>Game folder</b> once and choose <code>army_setups</code>: Export will then save straight into the game, and Import will list your saved armies.</p>` : ''}
     <p class="muted">You can also do the opposite: <b>Import</b> loads a <code>.army_setup</code> file from that folder into the builder.</p>
     ${afterExport ? `<div class="modal-row"><label><input type="checkbox" id="helpSeen"> Don't show this again</label>
       <span style="flex:1"></span><button class="tb primary" id="helpOk">OK</button></div>` : ''}`);
@@ -1133,6 +1208,92 @@ async function importArmySetup(file) {
   if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
   applyDecoded({ raceIndex: ri, army, missing }, file.name.replace(/\.army_setup$/i, '').replace(/_/g, ' '), '');
   if (missing.length) flash(`${missing.length} unit(s) not playable in multiplayer were skipped.`);
+}
+
+/* ---------- Dossier du jeu connecté (Chrome, Edge, Opera : File System Access API) ----------
+   Une fois le dossier army_setups choisi, l'import liste les compositions du jeu et l'export écrit directement dedans.
+   Le droit d'accès est conservé (IndexedDB) ; le navigateur le reconfirme par un clic à chaque nouvelle session. */
+const FS_OK = 'showDirectoryPicker' in window;
+let gameDir = null;
+function idb() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open('tww3-builder', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('handles');
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function idbSet(key, value) { const db = await idb(); return new Promise(res => { const t = db.transaction('handles', 'readwrite'); value == null ? t.objectStore('handles').delete(key) : t.objectStore('handles').put(value, key); t.oncomplete = res; }); }
+async function idbGet(key) { const db = await idb(); return new Promise(res => { const r = db.transaction('handles').objectStore('handles').get(key); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); }); }
+async function hasAccess(handle, ask) {
+  const opts = { mode: 'readwrite' };
+  if ((await handle.queryPermission(opts)) === 'granted') return true;
+  return ask && (await handle.requestPermission(opts)) === 'granted';
+}
+async function initGameFolder() {
+  if (!FS_OK) return;
+  $('folderBtn').hidden = false;
+  try { gameDir = await idbGet('army_setups'); } catch { gameDir = null; }
+  renderFolderBtn();
+}
+function renderFolderBtn() {
+  $('folderBtn').textContent = gameDir ? 'Game folder ✓' : 'Game folder';
+  $('folderBtn').title = gameDir ? `Connected: ${gameDir.name}` : "Connect the game's army_setups folder (Chrome, Edge)";
+}
+async function connectGameFolder() {
+  try {
+    const dir = await window.showDirectoryPicker({ id: 'army-setups', mode: 'readwrite' });
+    if (dir.name !== 'army_setups' && !confirm(`The selected folder is “${dir.name}”, not “army_setups”. Use it anyway?`)) return;
+    gameDir = dir; await idbSet('army_setups', dir); renderFolderBtn();
+    flash('Game folder connected: Import lists your saved armies, Export writes directly into it.', true);
+  } catch { /* fenêtre fermée */ }
+}
+function folderMenu() {
+  if (!gameDir) { showFolderHelp(); return; }
+  openModal(`<h3 class="serif">Game folder</h3><p>Connected to <code>${esc(gameDir.name)}</code>.</p>
+    <p class="muted">Import lists the armies saved in this folder; Export writes the file straight into it.</p>
+    <div class="modal-row"><button class="tb" id="fChange">Change folder</button><button class="tb" id="fOff">Disconnect</button></div>`);
+  $('fChange').addEventListener('click', () => { closeModal(); connectGameFolder(); });
+  $('fOff').addEventListener('click', async () => { gameDir = null; await idbSet('army_setups', null); renderFolderBtn(); closeModal(); });
+}
+function showFolderHelp() {
+  openModal(`<h3 class="serif">Connect the game folder</h3>
+    <p>Pick the game's <b>army_setups</b> folder once. Then <b>Import</b> lists your saved armies and <b>Export</b> saves straight into the game.</p>
+    <p class="muted">In the folder picker, paste this path in the address bar:<br><code>${SETUP_DIR}</code></p>
+    <div class="modal-row"><span style="flex:1"></span><button class="tb primary" id="fGo">Choose the folder</button></div>`);
+  $('fGo').addEventListener('click', () => { closeModal(); connectGameFolder(); });
+}
+async function importFromFolder() {
+  if (!(await hasAccess(gameDir, true))) { flash('Access to the game folder was not granted.'); return false; }
+  const files = [];
+  for await (const [name, h] of gameDir.entries()) if (h.kind === 'file' && /\.army_setup$/i.test(name)) files.push({ name, h, t: (await h.getFile()).lastModified });
+  files.sort((a, b) => b.t - a.t);
+  openModal(`<h3 class="serif">Armies saved in the game</h3>
+    ${files.length ? files.map((f, i) => `<div class="fav" data-i="${i}"><div class="info"><b>${esc(f.name.replace(/\.army_setup$/i, ''))}</b>
+      <span>${new Date(f.t).toLocaleString('en-GB')}</span></div><button class="tb primary">Load</button></div>`).join('')
+      : '<p class="empty">No .army_setup file in this folder.</p>'}
+    <div class="modal-row"><button class="tb" id="otherFile">Other file…</button></div>`);
+  $('modalBody').querySelectorAll('.fav button').forEach(b => b.addEventListener('click', async () => {
+    const f = files[Number(b.closest('.fav').dataset.i)]; closeModal(); importArmySetup(await f.h.getFile());
+  }));
+  $('otherFile').addEventListener('click', () => { closeModal(); pickFile(); });
+  return true;
+}
+async function pickFile() {
+  if ('showOpenFilePicker' in window) {   // le navigateur retient le dernier dossier utilisé pour cet identifiant
+    try {
+      const [h] = await window.showOpenFilePicker({ id: 'army-setups-import', types: [{ description: 'Army setup', accept: { 'application/octet-stream': ['.army_setup'] } }] });
+      importArmySetup(await h.getFile());
+    } catch { /* fenêtre fermée */ }
+  } else $('importFile').click();
+}
+async function exportToFolder(blob, fileName) {
+  if (!(await hasAccess(gameDir, true))) return false;
+  let exists = true; try { await gameDir.getFileHandle(fileName); } catch { exists = false; }
+  if (exists && !confirm(`“${fileName}” already exists in the game folder. Replace it?`)) return true;
+  const h = await gameDir.getFileHandle(fileName, { create: true }), w = await h.createWritable();
+  await w.write(blob); await w.close();
+  flash(`Saved in the game folder: “${fileName.replace(/\.army_setup$/, '')}” is ready to load in Custom Battle.`, true);
+  return true;
 }
 
 /* ---------- Image PNG de l'armée (Discord, Reddit…) ---------- */
@@ -1193,9 +1354,11 @@ function tipHtml(key) {
   const meta = [passive ? '<span><b>Passive</b></span>' : '', mana ? `<span>Mana <b>${mana}</b></span>` : '',
     cooldown ? `<span>Cooldown <b>${Math.round(cooldown)}s</b></span>` : '', duration ? `<span>Duration <b>${Math.round(duration)}s</b></span>` : '',
     uses ? `<span>Uses <b>${uses}</b></span>` : ''].filter(Boolean).join('');
-  const lines = (effects || '').split(' | ').filter(Boolean).map(l =>
-    `<li class="${/^-|Inflicts/.test(l) ? 'neg' : /^\+|Gains/.test(l) ? 'pos' : ''}">${esc(l)}</li>`).join('');
-  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${desc ? `<p class="desc">${esc(desc)}</p>` : ''}${lines ? `<ul>${lines}</ul>` : ''}`;
+  const lines = (effects || '').split(' | ').filter(Boolean).map(l => {
+    const cls = /^-|Inflicts/.test(l) ? 'neg' : /^\+|Gains/.test(l) ? 'pos' : '';
+    const img = cls === 'neg' ? DATA.skin.effNeg : cls === 'pos' ? DATA.skin.effPos : null;
+    return `<li class="${cls}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(l)}</li>`; }).join('');
+  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${desc ? `<p class="desc">${esc(desc)}</p>` : ''}${lines ? `<ul${DATA.skin.effPos ? ' class="icons"' : ''}>${lines}</ul>` : ''}`;
 }
 function setupTooltips() {
   const tip = $('tip');
@@ -1236,7 +1399,9 @@ function setupTools() {
       $('shareInput').value = link; $('shareInput').select(); }
   });
   $('exportBtn').addEventListener('click', exportArmySetup);
-  $('importBtn').addEventListener('click', () => $('importFile').click());
+  $('importBtn').addEventListener('click', async () => { if (!(gameDir && await importFromFolder())) pickFile(); });
+  $('folderBtn').addEventListener('click', folderMenu);
+  initGameFolder();
   $('importFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) importArmySetup(f); e.target.value = ''; });
   $('pngBtn').addEventListener('click', exportPng);
   $('helpBtn').addEventListener('click', () => showHelp(false));
@@ -1260,7 +1425,8 @@ function setRace(i, { keepArmy = false, record = true } = {}) {
   state.focus = null;
   const r = race(), root = document.documentElement;
   if (r.accent) root.style.setProperty('--accent', '#' + r.accent); else root.style.removeProperty('--accent');
-  if (r.race_image) root.style.setProperty('--race-art', `url("images/${r.race_image}")`); else root.style.removeProperty('--race-art');
+  if (r.art) root.style.setProperty('--race-art', `url("images/${r.art}")`); else root.style.removeProperty('--race-art');
+  document.body.classList.toggle('has-art', !!r.art);
   renderAll();
 }
 
