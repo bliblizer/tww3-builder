@@ -117,10 +117,13 @@ button { font: inherit; color: inherit; }
 .tip ul { margin: 0; padding-left: 16px; } .tip li { margin: 1px 0; }
 .tip li.pos { color: #8bd34a; } .tip li.neg { color: #ff7a6a; }
 [data-tip] { cursor: help; }
-.slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 50px; }
+.slots { display: grid; grid-template-columns: repeat(20, 60px); justify-content: space-between; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+/* cartes de l'armée au format du jeu (60 x 130) ; le roster garde des cartes plus petites */
+.slots .card { --cw: 60px; --ch: 130px; }
 .slot .card { flex: none; }
 .slot-empty.skin { border: none; opacity: 1; background: var(--slot-img) center / 100% 100% no-repeat; }
+.slots .slot-empty { width: 60px; height: 130px; }
 .slot-empty { flex: 0 0 50px; height: 108px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
 .rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
@@ -140,7 +143,8 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Cartes d'unité ---------- */
 .card {
-  flex: 0 0 50px; width: 50px; height: 108px; padding: 0; position: relative; cursor: pointer;
+  --cw: 50px; --ch: 108px;
+  flex: 0 0 var(--cw); width: var(--cw); height: var(--ch); padding: 0; position: relative; cursor: pointer;
   border: 1px solid var(--bronze); border-radius: 4px; overflow: hidden; text-align: center;
   background: var(--card-bg, #4a2c2a); color: var(--card-ink); box-shadow: 0 2px 4px var(--shadow);
   display: flex; flex-direction: column;
@@ -164,13 +168,13 @@ button { font: inherit; color: inherit; }
 .card.blocked { filter: grayscale(.85) brightness(.6); }
 /* habillage du jeu (ui/skins/default) quand il est fourni : cadre, demi-cercle et icône de catégorie, sélection, survol */
 .card.skinned { border: none; border-radius: 0; box-shadow: none; overflow: visible; background: var(--card-bg, #4a2c2a); }
-.card.skinned .art { position: absolute; inset: 0; width: 50px; height: 108px; }
-.card.skinned .ov { position: absolute; top: 0; left: 0; width: 50px; height: 108px; pointer-events: none; z-index: 3; }
+.card.skinned .art { position: absolute; inset: 0; width: var(--cw); height: var(--ch); }
+.card.skinned .ov { position: absolute; top: 0; left: 0; width: var(--cw); height: var(--ch); pointer-events: none; z-index: 3; }
 .card.skinned .ov-selected, .card.skinned .ov-hover { display: none; }
 .card.skinned.selected { outline: none; }
 .card.skinned.selected .ov-selected, .card.skinned:hover .ov-hover { display: block; }
-.card.skinned .semi { position: absolute; bottom: 0; left: 2px; width: 46px; z-index: 4; pointer-events: none; }
-.card.skinned .cat-icon { position: absolute; bottom: 0; left: 15px; width: 19px; height: 19px; z-index: 5; pointer-events: none; }
+.card.skinned .semi { position: absolute; bottom: 0; left: 2px; width: calc(var(--cw) - 4px); z-index: 4; pointer-events: none; }
+.card.skinned .cat-icon { position: absolute; bottom: 0; left: calc(var(--cw) * .3); width: calc(var(--cw) * .38); height: calc(var(--cw) * .38); z-index: 5; pointer-events: none; }
 .card.skinned .cost { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 6; background: rgba(0,0,0,.55); }
 .card.skinned .badge-opt { top: 18px; z-index: 6; }
 /* tier du jeu (I à V) en haut à droite, unités hors lords et héros */
@@ -185,20 +189,41 @@ button { font: inherit; color: inherit; }
 .hp-wrap { display: flex; align-items: center; gap: 6px; } .hp-wrap img { width: 20px; height: 20px; } .hp-wrap .hp { flex: 1; }
 .tip li img { width: 13px; height: 13px; vertical-align: -2px; margin-right: 3px; } .tip ul.icons { list-style: none; padding-left: 0; }
 /* résumé de l'armée, à droite des emplacements */
-.army-row { display: grid; grid-template-columns: auto minmax(320px, 1fr); gap: 18px; align-items: start; }
-.army-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px 12px; align-content: start;
-  background: rgba(0,0,0,.18); border: 1px solid var(--bronze); border-radius: 4px; padding: 10px 12px; }
-.army-summary .kpi span { display: block; font-size: 12px; color: var(--muted); }
-.army-summary .kpi { white-space: nowrap; }
-.army-summary .kpi .coin-img { width: 17px; height: 17px; margin-right: 4px; vertical-align: -2px; }
-.army-summary .kpi b { font: 700 21px "Cinzel", Georgia, serif; color: var(--gold); font-variant-numeric: tabular-nums; }
-.army-summary .kpi b.over { color: var(--danger); }
-.army-summary .kpi small { color: var(--muted); font-size: 13px; }
-.army-summary .mini { height: 6px; background: rgba(0,0,0,.45); border-radius: 3px; overflow: hidden; margin-top: 4px; display: flex; }
-.army-summary .mini i { display: block; height: 100%; background: var(--gold); }
-.army-summary .army-status, .army-summary .caps { grid-column: 1 / -1; margin: 0; }
-.army-summary .army-status { border-top: 1px solid rgba(140,106,59,.4); padding-top: 6px; }
-@media (max-width: 1400px) { .army-row { grid-template-columns: 1fr; } }
+.army-row { display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 16px; align-items: start; }
+.army-row .caps { margin-top: 8px; }
+@media (max-width: 1880px) { .army-row { grid-template-columns: 1fr; } .matchup { max-width: 760px; } }
+/* statut de l'armée : badge dans la barre de l'armée */
+.status-badge { border-radius: 4px; padding: 2px 9px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid; }
+.status-badge.ok { background: #2f5a24; border-color: #7fc77f; color: #d9f5cf; }
+.status-badge.ko { background: #6b1d17; border-color: var(--danger); color: #ffd9d3; }
+.status-badge.empty { background: rgba(0,0,0,.2); border-color: rgba(244,234,214,.45); color: #f4ead6; font-weight: 500; cursor: default; }
+.top-kpis { margin-left: auto; display: flex; align-items: flex-end; gap: 26px; }
+.top-kpis .k span { display: block; color: var(--muted); font-size: 13px; text-align: right; }
+.top-kpis .k b { font: 700 24px "Cinzel", Georgia, serif; color: var(--gold); font-variant-numeric: tabular-nums; }
+.top-kpis .k b.over { color: var(--danger); }
+.top-kpis .k small { color: var(--muted); }
+/* bloc matchup : sélecteur, graphique en toile d'araignée, points clés repliables */
+.matchup { background: rgba(0,0,0,.22); border: 1px solid var(--bronze); border-radius: 4px; padding: 10px 12px;
+  display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 10px; }
+.matchup h4 { margin: 0 0 6px; font: 700 14px "Cinzel", Georgia, serif; }
+.matchup select { width: 100%; background: #140f0d; color: var(--text); border: 1px solid var(--bronze); border-radius: 3px; padding: 5px 8px; font: inherit; font-weight: 700; }
+.radar { width: 270px; height: 235px; display: block; }
+.radar .g { fill: none; stroke: rgba(140,106,59,.45); stroke-width: 1; }
+.radar text { fill: var(--muted); font-size: 11px; font-family: "Alegreya Sans", system-ui, sans-serif; }
+.radar .me { fill: color-mix(in srgb, var(--gold) 28%, transparent); stroke: var(--gold); stroke-width: 2; }
+.radar .en { fill: rgba(91,143,214,.18); stroke: #5b8fd6; stroke-width: 1.5; stroke-dasharray: 4 3; }
+.radar-legend { font-size: 12px; color: var(--muted); } .radar-legend i { display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 8px; vertical-align: -1px; }
+.keypoints summary { cursor: pointer; font: 700 14px "Cinzel", Georgia, serif; margin-bottom: 6px; }
+.keypoints .kp { font-size: 13px; padding: 5px 7px; margin-bottom: 5px; border-left: 3px solid var(--bronze); background: rgba(0,0,0,.2); }
+.keypoints .kp.warn { border-color: var(--danger); } .keypoints .kp.good { border-color: var(--ok); }
+/* compositions modèles */
+.tpl { border: 1px solid rgba(140,106,59,.5); border-radius: 4px; padding: 8px 10px; margin-bottom: 8px; background: var(--panel-2); }
+.tpl .head { display: flex; align-items: center; gap: 8px; } .tpl .head b { flex: 1; font-size: 15px; }
+.tpl .arch { font: 700 11px "Cinzel", Georgia, serif; border: 1px solid var(--gold); color: var(--gold); border-radius: 3px; padding: 0 5px; }
+.tpl .meta { font-size: 12.5px; color: var(--muted); margin: 4px 0; } .tpl .meta b { color: var(--text); font-weight: 500; }
+.tpl .vs { font-size: 12.5px; } .tpl .vs .s { color: var(--ok); } .tpl .vs .w { color: var(--danger); }
+.tpl-filters { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.tpl-filters button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
 .card .xp-img { position: absolute; top: 18px; left: 1px; width: 20px; height: 20px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
 .card.skinned .chevrons { z-index: 6; }
 .card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
@@ -330,8 +355,10 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     </button>
     <ul class="race-list" id="raceList" role="listbox" aria-label="Races" hidden></ul>
   </div>
-  <div class="funds">
-    <div><span class="muted">Funds remaining</span><br><span class="value serif" id="funds"><span class="coin"></span>0</span></div>
+  <button class="tb" id="templatesBtn" title="Example armies for this race">Example armies</button>
+  <div class="top-kpis">
+    <div class="k"><span>Models</span><b id="topModels">0</b></div>
+    <div class="k"><span>Funds remaining</span><b id="funds">0</b><small id="topBudget"></small></div>
   </div>
 </header>
 
@@ -340,6 +367,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     <input class="army-name" id="armyName" placeholder="Main Army" maxlength="60" aria-label="Army name">
     <div class="toolbar">
       <span class="count" id="unitCount">0 / 20</span>
+      <button class="status-badge empty" id="armyStatus" aria-live="polite">Empty army</button>
       <button class="tb" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
       <button class="tb" id="redoBtn" title="Redo (Ctrl+Y)" aria-label="Redo">↷</button>
       <button class="tb" id="notesBtn" aria-expanded="false">Notes</button>
@@ -357,14 +385,18 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   </div>
   <textarea class="notes" id="armyNotes" placeholder="Notes about this army (plan, matchups, deployment…)" hidden></textarea>
   <div class="army-row">
-    <div class="slots" id="slots"></div>
-    <div class="army-summary" id="armySummary">
-      <div class="kpi"><span>Funds remaining</span><b id="sumFunds">0</b><small id="sumBudget"></small><div class="mini"><i id="sumFundsBar"></i></div></div>
-      <div class="kpi"><span>Units</span><b id="sumUnits">0</b><small> / 20</small><div class="mini"><i id="sumUnitsBar"></i></div></div>
-      <div class="kpi"><span>Models</span><b id="sumModels">0</b></div>
-      <div class="kpi"><span>Elite index</span><b id="sumElite">–</b><small id="sumLevel"></small><div class="mini" id="sumTiers"></div></div>
-      <div class="army-status" id="armyStatus" aria-live="polite"></div>
+    <div>
+      <div class="slots" id="slots"></div>
       <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
+    </div>
+    <div class="matchup" id="matchup">
+      <div>
+        <h4>Matchup</h4>
+        <select id="enemySelect" aria-label="Opponent race"></select>
+        <div id="radar"></div>
+        <div class="radar-legend"><i style="background:var(--gold)"></i>Your army<i style="background:#5b8fd6"></i><span id="enemyLegend">Opponent roster</span></div>
+      </div>
+      <details class="keypoints" id="keypoints" open><summary>Key points</summary><div id="kpList"></div></details>
     </div>
   </div>
   <p class="flash" id="flash" role="status" hidden></p>
@@ -393,7 +425,7 @@ const DATA = /*__DATA__*/null;
 /* ---------- État ----------
    army  : unités de l'armée { card, opt, sel, rank } (sel = clés des sorts / capacités / objets cochés ; rank = 0 à 9)
    focus : unité affichée dans les panneaux { kind: 'army' | 'roster', unit } ('roster' = brouillon pas encore ajouté) */
-const state = { raceIndex: 0, army: [], focus: null, name: '', notes: '' };
+const state = { raceIndex: 0, army: [], focus: null, name: '', notes: '', enemy: '' };
 const DIMS = ['lore', 'mark', 'spirit', 'other', 'mount'];
 const DIM_CAT = { lore: 'type_spell_lore', mark: 'type_mark', spirit: 'type_forest_spirit' };
 const UPGRADE_SECTIONS = [['s', 'Spells'], ['a', 'Abilities'], ['i', 'Items']];
@@ -616,6 +648,8 @@ function renderTop() {
   const f = $('funds');
   f.innerHTML = (DATA.skin.coin ? `<img class="coin-img" src="images/${esc(DATA.skin.coin)}" alt="">` : '<span class="coin"></span>') + fmt(remaining());
   f.classList.toggle('over', remaining() < 0);
+  $('topBudget').textContent = ` / ${fmt(DATA.budget)}`;
+  $('topModels').textContent = fmt(state.army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0));
   $('unitCount').textContent = `${state.army.length} / ${DATA.maxUnits}`;
 }
 
@@ -650,38 +684,129 @@ function renderArmy() {
     if (DATA.skin.slot) e.style.setProperty('--slot-img', `url("images/${DATA.skin.slot}")`);
     slots.appendChild(e);
   }
-  renderSummary();
   const rk = race().key, army = state.army, st = $('armyStatus'), bar = $('capsBar');
-  if (!army.length) { st.innerHTML = '<span class="muted">Add units to start your army.</span>'; bar.innerHTML = ''; return; }
+  renderMatchup();
+  if (!army.length) { st.className = 'status-badge empty'; st.textContent = 'Empty army'; st.title = ''; bar.innerHTML = ''; return; }
   const errors = validate(rk, army);
-  st.innerHTML = errors.length
-    ? `<span class="ko">Invalid army (${errors.length} issue${errors.length > 1 ? 's' : ''})</span><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`
-    : '<span class="ok">✓ Valid army</span>';
+  st.className = 'status-badge ' + (errors.length ? 'ko' : 'ok');
+  st.textContent = errors.length ? `✕ ${errors.length} issue${errors.length > 1 ? 's' : ''}` : '✓ Valid army';
+  st.title = errors.map(e => e.text).join('\n');
+  st.onclick = errors.length ? () => openModal(`<h3 class="serif">Army issues</h3><ul>${errors.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`) : null;
   const counts = capCounts(rk, army);
   bar.innerHTML = Object.entries(counts).map(([k, n]) => ({ k, n, cap: effectiveCap(rk, k, army) }))
     .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k))
     .map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}">${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('');
 }
 
-/* résumé à droite des emplacements : fonds, unités, modèles, indice d'élite (sans lords ni héros) */
-function renderSummary() {
-  const army = state.army, rem = remaining();
-  const coin = DATA.skin.coin ? `<img class="coin-img" src="images/${esc(DATA.skin.coin)}" alt="">` : '';
-  $('sumFunds').innerHTML = coin + fmt(rem); $('sumFunds').classList.toggle('over', rem < 0);
-  $('sumBudget').textContent = ` / ${fmt(DATA.budget)}`;
-  $('sumFundsBar').style.width = Math.max(0, Math.min(100, 100 * spent() / DATA.budget)) + '%';
-  $('sumUnits').textContent = army.length;
-  $('sumUnitsBar').style.width = (100 * army.length / DATA.maxUnits) + '%';
-  $('sumModels').textContent = fmt(army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0));
+/* ---------- Matchup : ton armée face au profil moyen du roster adverse ----------
+   Chaque axe va de 0 à 100. Ton armée : part des fonds (hors lords et héros pour l'indice d'élite) ;
+   adversaire : part des cartes de son roster PvP (1 carte = 1 voix, hors lords et héros), calculée dans build_app.py. */
+const AXES = ['Anti-large', 'Armour-piercing', 'Ranged', 'Mobility', 'Durability', 'Magic', 'Flying', 'Elite'];
+const clamp = v => Math.max(0, Math.min(100, v));
+const speedScore = v => clamp((v - 25) / 55 * 100);
+const hpScore = v => clamp(v / 15000 * 100);
+const tierScore = v => clamp((v - 1) / 4 * 100);
+function armyProfile(army) {
+  const total = army.reduce((s, u) => s + unitCost(u), 0) || 1;
+  const share = f => 100 * army.filter(f).reduce((s, u) => s + unitCost(u), 0) / total;
   const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
   const tc = troops.reduce((s, u) => s + unitCost(u), 0);
-  const elite = tc ? troops.reduce((s, u) => s + statOf(u.opt.u, 'tier') * unitCost(u), 0) / tc : 0;
-  $('sumElite').textContent = tc ? elite.toFixed(1) : '–';
-  $('sumLevel').textContent = !tc ? '' : elite >= 3.6 ? ' Elite' : elite >= 2.6 ? ' Balanced' : ' Horde';
-  $('sumTiers').innerHTML = [1, 2, 3, 4, 5].map(t => {
-    const c = troops.filter(u => statOf(u.opt.u, 'tier') === t).reduce((s, u) => s + unitCost(u), 0);
-    return c ? `<i class="t${t}" style="width:${(100 * c / tc).toFixed(1)}%"></i>` : '';
-  }).join('');
+  const hp = army.reduce((s, u) => s + (statOf(u.opt.u, 'health') || 0), 0);
+  return {
+    anti_large: share(u => statOf(u.opt.u, 'is_anti_large')), ap: share(u => statOf(u.opt.u, 'is_armour_piercing')),
+    ranged: share(u => !isChar(u.opt) && statOf(u.opt.u, 'range') != null), flying: share(u => u.opt.fly),
+    magic: share(u => statOf(u.opt.u, 'has_magical_attacks') || [...u.sel].some(k => (upgradesOf(race().key)[k] || [])[1] === 's')),
+    shields: share(u => statOf(u.opt.u, 'has_shield_or_missile_resistance')),
+    speed: army.reduce((s, u) => s + (statOf(u.opt.u, 'speed') || 0) * unitCost(u), 0) / total,
+    hp_per_1000: hp * 1000 / total,
+    tier: tc ? troops.reduce((s, u) => s + statOf(u.opt.u, 'tier') * unitCost(u), 0) / tc : 1,
+  };
+}
+const axisValues = p => [p.anti_large, p.ap, p.ranged, speedScore(p.speed), hpScore(p.hp_per_1000), p.magic, p.flying, tierScore(p.tier)].map(v => clamp(v || 0));
+function radarSvg(mine, enemy) {
+  const cx = 145, cy = 125, R = 92, n = AXES.length;
+  const pt = (i, v) => { const a = -Math.PI / 2 + 2 * Math.PI * i / n; return [cx + R * v / 100 * Math.cos(a), cy + R * v / 100 * Math.sin(a)]; };
+  const poly = (vals, cls) => `<polygon class="${cls}" points="${vals.map((v, i) => pt(i, v).map(x => x.toFixed(1)).join(',')).join(' ')}"/>`;
+  const grid = [25, 50, 75, 100].map(l => poly(AXES.map(() => l), 'g')).join('');
+  const spokes = AXES.map((_, i) => { const [x, y] = pt(i, 100); return `<line class="g" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join('');
+  const labels = AXES.map((a, i) => { const [x, y] = pt(i, 118); const anchor = Math.abs(x - cx) < 10 ? 'middle' : x > cx ? 'start' : 'end';
+    return `<text x="${x.toFixed(1)}" y="${(y + 4).toFixed(1)}" text-anchor="${anchor}">${a}</text>`; }).join('');
+  return `<svg class="radar" viewBox="-30 -4 350 262" role="img" aria-label="Army profile radar">${grid}${spokes}${enemy ? poly(enemy, 'en') : ''}${mine ? poly(mine, 'me') : ''}${labels}</svg>`;
+}
+function keyPoints(m, e, enemyName) {
+  const pts = [], r = Math.round;
+  if (e.armoured >= 40) pts.push(m.ap < 30
+    ? ['warn', `<b>Armour</b> — ${r(e.armoured)}% of the ${enemyName} roster is heavily armoured; only ${r(m.ap)}% of your funds are armour-piercing.`]
+    : ['good', `<b>Armour</b> — ${r(e.armoured)}% of their roster is heavily armoured; your armour-piercing (${r(m.ap)}%) answers it.`]);
+  if (e.large_units >= 40) pts.push(m.anti_large < 25
+    ? ['warn', `<b>Large targets</b> — ${r(e.large_units)}% of their units are large; your anti-large is ${r(m.anti_large)}% of your funds.`]
+    : ['good', `<b>Large targets</b> — ${r(e.large_units)}% large units on their side, covered by your anti-large (${r(m.anti_large)}%).`]);
+  else if (e.large_units < 20 && m.anti_large > 30) pts.push(['', `<b>Large targets</b> — few large units on their side (${r(e.large_units)}%): your anti-large investment (${r(m.anti_large)}%) could be reduced.`]);
+  if (e.ranged >= 35) pts.push(m.shields < 25 && speedScore(m.speed) < 50
+    ? ['warn', `<b>Ranged</b> — ${r(e.ranged)}% of their roster shoots; you have few shields or missile resistance (${r(m.shields)}%) and little speed to close in.`]
+    : ['good', `<b>Ranged</b> — ${r(e.ranged)}% of their roster shoots; your shields / speed give you answers.`]);
+  if (e.flying >= 15 && m.ranged + m.flying < 20) pts.push(['warn', `<b>Flying</b> — ${r(e.flying)}% of their roster can fly; you have little to catch flyers (ranged ${r(m.ranged)}%, flying ${r(m.flying)}%).`]);
+  if (e.ethereal >= 5 && m.magic < 15) pts.push(['warn', `<b>Ethereal</b> — they can field ethereal units; only ${r(m.magic)}% of your funds deal magical damage.`]);
+  const ds = m.speed - e.speed;
+  if (ds >= 8) pts.push(['good', `<b>Mobility</b> — you are faster on average (${r(m.speed)} vs ${r(e.speed)}): flanking and kiting are on your side.`]);
+  else if (ds <= -8) pts.push(['warn', `<b>Mobility</b> — they are faster on average (${r(e.speed)} vs ${r(m.speed)}): expect flanks, keep a reserve.`]);
+  return pts;
+}
+function renderMatchup() {
+  const sel = $('enemySelect');
+  if (!sel.options.length) {
+    sel.add(new Option('Choose an opponent…', ''));
+    DATA.races.forEach(r => sel.add(new Option('vs ' + r.name, r.key)));
+    sel.addEventListener('change', () => { state.enemy = sel.value; renderMatchup(); });
+  }
+  sel.value = state.enemy || '';
+  const army = state.army, ep = state.enemy && DATA.raceProfiles[state.enemy];
+  const enemyName = state.enemy ? (DATA.races.find(r => r.key === state.enemy) || {}).name : '';
+  const mp = army.length ? armyProfile(army) : null;
+  $('radar').innerHTML = radarSvg(mp ? axisValues(mp) : null, ep ? axisValues(ep) : null);
+  $('enemyLegend').textContent = enemyName ? `${enemyName} roster` : 'Opponent roster';
+  const list = !mp ? '<p class="empty">Add units to see your army profile.</p>'
+    : !ep ? '<p class="empty">Choose an opponent to compare your army with their roster.</p>'
+    : (keyPoints(mp, ep, enemyName).map(([c, t]) => `<div class="kp ${c}">${t}</div>`).join('') || '<p class="empty">No major imbalance against this roster.</p>');
+  $('kpList').innerHTML = list;
+}
+
+/* ---------- Compositions modèles (config/army_templates.csv) ---------- */
+function showTemplates(filter = '') {
+  const rk = race().key, all = (DATA.templates || []).filter(t => t.race === rk);
+  const archs = [...new Set(all.map(t => t.arch))];
+  const raceName = k => (DATA.races.find(r => r.key === k) || {}).name || k;
+  const stars = (n, label) => `<span title="${label} ${n}/5">${'★'.repeat(n)}${'☆'.repeat(Math.max(0, 5 - n))}</span>`;
+  const list = all.filter(t => !filter || t.arch === filter);
+  openModal(`<h3 class="serif">Example armies · ${esc(race().name)}</h3>
+    ${archs.length > 1 ? `<div class="tpl-filters"><button class="tb" data-f="" aria-pressed="${!filter}">All</button>${archs.map(a =>
+      `<button class="tb" data-f="${esc(a)}" aria-pressed="${filter === a}">${esc(a)}</button>`).join('')}</div>` : ''}
+    ${list.length ? list.map((t, i) => `<div class="tpl"><div class="head"><span class="arch">${esc(t.arch)}</span><b>${esc(t.name)}</b>
+        <button class="tb primary" data-i="${all.indexOf(t)}">Load</button></div>
+      <div class="meta">Difficulty ${stars(t.diff, 'Difficulty')} · Adaptability ${stars(t.adapt, 'Adaptability')}</div>
+      ${t.strong.length || t.weak.length ? `<div class="vs">${t.strong.length ? `<span class="s">Strong vs ${t.strong.map(raceName).map(esc).join(', ')}</span>` : ''}
+        ${t.weak.length ? ` · <span class="w">Weak vs ${t.weak.map(raceName).map(esc).join(', ')}</span>` : ''}</div>` : ''}
+      ${t.desc ? `<p class="muted" style="margin:4px 0 0">${esc(t.desc)}</p>` : ''}</div>`).join('')
+      : '<p class="empty">No example army for this race yet.</p>'}`);
+  $('modalBody').querySelectorAll('.tpl-filters button').forEach(b => b.addEventListener('click', () => showTemplates(b.dataset.f)));
+  $('modalBody').querySelectorAll('.tpl button[data-i]').forEach(b => b.addEventListener('click', () => { closeModal(); loadTemplate(all[Number(b.dataset.i)]); }));
+}
+function loadTemplate(t) {
+  const ri = DATA.races.findIndex(r => r.key === t.race);
+  let d;
+  if (t.code) d = decodeArmy(t.race, t.code);
+  else {   // composition issue d'un fichier .army_setup
+    const byKey = {};
+    (DATA.roster[t.race] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
+    const army = [], missing = [];
+    t.units.forEach(([u, rank, items]) => {
+      const hit = byKey[u]; if (!hit) { missing.push(u); return; }
+      army.push({ card: hit.card, opt: hit.opt, sel: new Set(items.filter(k => (hit.opt.up || []).includes(k))), rank: canRank(hit.opt) ? rank : 0 });
+    });
+    const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+    d = { raceIndex: ri, army, missing };
+  }
+  if (d) applyDecoded(d, t.name, t.desc || '');
 }
 
 /* ---------- Rendu : roster (avec alerte de plafond sur les cartes) ---------- */
@@ -1405,6 +1530,7 @@ function setupTools() {
   $('importFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) importArmySetup(f); e.target.value = ''; });
   $('pngBtn').addEventListener('click', exportPng);
   $('helpBtn').addEventListener('click', () => showHelp(false));
+  $('templatesBtn').addEventListener('click', () => showTemplates());
   $('modalClose').addEventListener('click', closeModal);
   $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
   document.addEventListener('keydown', e => {

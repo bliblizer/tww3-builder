@@ -160,7 +160,12 @@ Limites de la V0 :
   - en dessous, le statut de l'armée et les plafonds en cours.
 - **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
-- **À droite des emplacements de l'armée** : un **résumé** avec les fonds restants (et la barre du budget), les unités / 20, les modèles et l'indice d'élite, suivis du statut de l'armée et des plafonds en cours. Sur un écran plus étroit, il passe sous les cartes.
+- **En haut de page** : le nombre de **modèles** et les **fonds restants**. Le bouton **Example armies** ouvre les compositions modèles de la race.
+- **Barre de l'armée** : le statut est un **badge** (« ✓ Valid army », ou « ✕ n issues » dont le détail s'ouvre au clic). Les cartes de l'armée sont au format du jeu (60 × 130), sur une rangée de 20, avec les plafonds en cours sous les cartes.
+- **Bloc Matchup**, à droite des emplacements (dessous sur un écran plus étroit) :
+  - **le choix d'une race adverse** ;
+  - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py` ;
+  - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
   - **l'indice d'élite** : tier moyen pondéré par le coût (`main_units.tier`, de 1 à 5), calculé **sans les lords et héros**. Il est lu « Horde » sous 2,6, « Balanced » jusqu'à 3,6, « Elite » au-delà, avec une barre de répartition des fonds par tier ;
@@ -280,6 +285,21 @@ python -m playwright install chromium
 - Les rangs d'expérience ne modifient pas encore les statistiques affichées.
 
 **Affichage :** comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
+
+## Compositions modèles (« Example armies »)
+
+Elles sont définies dans `config/army_templates.csv`, une ligne par composition :
+
+| Colonne | Contenu |
+|---|---|
+| `race_key` | Race (clé de `pvp_races`, ex. `wh_main_sc_chs_chaos`) |
+| `name`, `archetype` | Nom et archétype (Blob, Balanced, Kite, Rush…) : libres, chaque race a les siens |
+| `difficulty`, `adaptability` | Note de 1 à 5 (difficulté à jouer, capacité d'adaptation), affichée en étoiles |
+| `strong_vs`, `weak_vs` | Races contre lesquelles la composition est forte ou faible, clés séparées par `|` |
+| `description` | Texte libre (plus tard : lien vers une fiche tactique) |
+| `army` | Le **lien de partage** du builder (bouton Share), ou `file:<nom>.army_setup`, un fichier placé dans `config/army_templates/` (par exemple sauvegardé en jeu) |
+
+Pour en ajouter une, monte l'armée dans le builder, clique sur Share, colle le lien dans la colonne `army`, puis lance `python scripts/build_app.py`. Le résumé indique le nombre de compositions et les lignes à corriger. Une composition d'exemple (Warriors of Chaos) est fournie pour montrer le format : remplace-la par les tiennes.
 
 ## Outils de l'armée (barre au-dessus de l'armée)
 

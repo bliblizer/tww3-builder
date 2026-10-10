@@ -29,7 +29,7 @@ Images des cartes (facultatif) :
 - à relancer après chaque ajout d'images dans assets/ ;
 - sans image, l'application affiche des cartes de couleur avec les initiales.
 """
-import csv, json, math, os, re, shutil, sys
+import csv, json, math, os, re, shutil, struct, sys
 import duckdb
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -305,6 +305,61 @@ for r in rows("""
     order by 1, 2"""):
     export_innate.setdefault(r['unit_key'], []).append(r['ability_key'])
 
+# ---------- profil moyen du roster de chaque race (matchup) ----------
+# 1 carte = 1 voix (son option la moins chère), hors lords et héros ; parts en %
+race_profiles = {}
+for r in rows("""
+    with opt as (
+      select o.race_key, o.card_id, o.unit_key, o.multiplayer_cost, o.is_flying,
+             row_number() over (partition by o.race_key, o.card_id order by o.multiplayer_cost, o.unit_key) as rn
+      from marts.pvp_roster_options o where o.role not in ('lord', 'hero')),
+    base as (
+      select o.race_key, o.multiplayer_cost as c, o.is_flying, s.*,
+             exists (select 1 from marts.pvp_unit_tags t where t.unit_key = o.unit_key and t.bullet_point_key = 'ethereal') as ethereal
+      from opt o join marts.pvp_unit_stats s using (unit_key) where rn = 1)
+    select race_key,
+      100 * avg((armour >= 80)::int) as armoured, 100 * avg(is_large::int) as large_units, 100 * avg(("range" is not null)::int) as ranged,
+      100 * avg(is_flying::int) as flying, avg(speed) as speed, avg(health * 1000.0 / c) as hp_per_1000,
+      100 * avg(has_magical_attacks::int) as magic, 100 * avg(is_armour_piercing::int) as ap, 100 * avg(is_anti_large::int) as anti_large,
+      100 * avg(ethereal::int) as ethereal, 100 * avg(has_shield_or_missile_resistance::int) as shields, avg(tier) as tier
+    from base group by race_key"""):
+    rk = r.pop('race_key')
+    race_profiles[rk] = {k: round(float(v), 1) for k, v in r.items() if v is not None}
+
+# ---------- compositions modèles (config/army_templates.csv) ----------
+# colonne army : lien de partage du builder (…#v=1&r=…&a=…) ou file:<fichier .army_setup dans config/army_templates/>
+def parse_setup(path):
+    d = open(path, 'rb').read(); p = 0
+    def take(n):
+        nonlocal p; b = d[p:p + n]; p += n; return b
+    u16 = lambda: struct.unpack('<H', take(2))[0]; u32 = lambda: struct.unpack('<I', take(4))[0]
+    st = lambda: take(u16()).decode('utf-8')
+    u32(); faction = st(); st(); take(1); units = []
+    for _ in range(u32()):
+        key = st().split(':')[0]; block = take(15)
+        items = [(take(1)[0], st())[1] for _ in range(u32())]; st()
+        units.append([key, block[7], items])
+    return faction, units
+templates, template_issues = [], []
+tpl_file = os.path.join(ROOT, 'config', 'army_templates.csv')
+if os.path.exists(tpl_file):
+    for i, t in enumerate(csv.DictReader(open(tpl_file, encoding='utf-8'))):
+        entry = {'race': t['race_key'], 'name': t['name'], 'arch': t['archetype'], 'diff': int(t['difficulty'] or 0),
+                 'adapt': int(t['adaptability'] or 0), 'strong': [x for x in (t['strong_vs'] or '').split('|') if x],
+                 'weak': [x for x in (t['weak_vs'] or '').split('|') if x], 'desc': t['description']}
+        army = (t['army'] or '').strip()
+        if army.startswith('file:'):
+            path = os.path.join(ROOT, 'config', 'army_templates', army[5:])
+            if not os.path.exists(path):
+                template_issues.append(f"ligne {i + 2} : fichier introuvable {army[5:]}"); continue
+            entry['units'] = parse_setup(path)[1]
+        elif '#' in army and 'a=' in army:
+            from urllib.parse import parse_qs
+            q = parse_qs(army.split('#', 1)[1]); entry['code'] = q.get('a', [''])[0]
+        else:
+            template_issues.append(f"ligne {i + 2} : colonne army vide ou invalide"); continue
+        templates.append(entry)
+
 # faction -> race (import des fichiers .army_setup)
 faction_race = {r['f']: r['r'] for r in rows("""select faction_key as f, race_key as r from intermediate.int_faction_race
                                                 where race_key in (select race_key from marts.pvp_races)""")}
@@ -356,7 +411,8 @@ for r in races:
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
-        'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons}
+        'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
+        'raceProfiles': race_profiles, 'templates': templates}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()
@@ -372,6 +428,7 @@ a_cards = sum(1 for k, _ in available if k == 'card'); a_portraits = len(availab
 print(f"Images des cartes : {a_cards} / {n_cards} | portraits des personnages : {a_portraits} / {n_portraits} "
       f"| manquantes listées dans exports/missing_unit_cards.csv")
 n_icons = len({o['category_icon'] for o in options if o['category_icon']})
+print(f"Compositions modèles : {len(templates)}" + (" | à corriger : " + " ; ".join(template_issues) if template_issues else ""))
 with open(os.path.join(ROOT, 'exports', 'stat_icons.csv'), 'w', encoding='utf-8', newline='') as f:
     w = csv.writer(f, lineterminator='\r\n'); w.writerow(['statistic', 'icon_found', 'names_searched']); w.writerows(stat_report)
 print(f"Icônes de statistiques : {len(stat_icons)} / {len(STAT_ICONS)} (détail : exports/stat_icons.csv) | "

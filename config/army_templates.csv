@@ -1,0 +1,2 @@
+race_key,name,archetype,difficulty,adaptability,strong_vs,weak_vs,description,army
+wh_main_sc_chs_chaos,Example – replace me,Balanced,2,3,,,"Example template built from a test army: replace it with your own compositions (see README).",file:example_warriors_of_chaos.army_setup
