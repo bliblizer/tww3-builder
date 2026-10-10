@@ -46,7 +46,8 @@ SKIN_FILES = {   # habillage : clé de l'application -> fichier du jeu (ui/skins
     'frame': 'unit_card_frame_plain', 'selected': 'unit_card_selected', 'hover': 'unit_card_hover',
     'semi': 'unit_card_semicircle', 'semiHero': 'unit_card_semicircle_hero', 'semiRenown': 'unit_card_semicircle_renown',
     'slot': 'unit_card_slot', 'coin': 'icon_income_large', 'entitySmall': 'icon_entity_small', 'entityLarge': 'icon_entity_large',
-    'effPos': 'unit_effect_positive', 'effNeg': 'unit_effect_negative'}
+    'effPos': 'unit_effect_positive', 'effNeg': 'unit_effect_negative',
+    'icoSave': 'icon_quick_save', 'icoDelete': 'icon_delete', 'icoLoad': 'icon_load', 'icoMenu': 'icon_menu', 'icoPlayer': 'icon_player'}
 STAT_ICON_ASSETS = os.path.join(ROOT, 'assets', 'stats_icons')
 STAT_ICONS = {   # statistique du builder -> noms possibles du fichier d'icône (noms du jeu en premier)
     'health': ['icon_stat_health', 'icon_health', 'health'],

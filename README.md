@@ -161,8 +161,18 @@ Limites de la V0 :
 - **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
 - **En haut de page** : le nombre de **modèles** et les **fonds restants**. Le bouton **Example armies** ouvre les compositions modèles de la race.
-- **Barre de l'armée** : le statut est un **badge** (« ✓ Valid army », ou « ✕ n issues » dont le détail s'ouvre au clic). Les cartes de l'armée sont au format du jeu (60 × 130), sur une rangée de 20, avec les plafonds en cours sous les cartes.
-- **Bloc Matchup**, à droite des emplacements (dessous sur un écran plus étroit) :
+- **Barre de l'armée** :
+  - le nom de l'armée, puis le compteur « n / 20 units ». Le compteur passe **en rouge avec un « ! »** si l'armée n'est pas valide ; la raison s'affiche au survol et le détail s'ouvre au clic ;
+  - la barre d'outils en **icônes du jeu** (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`, ou des libellés texte à défaut) : **Export to game**, Import, Save, My armies, Share, **Caps** (volet des plafonds en cours, avec le nombre de groupes pleins), Clear et **More** ;
+  - le menu **More** contient Undo / Redo (aussi Ctrl+Z / Ctrl+Y), Notes, l'image PNG, le dossier du jeu, l'aide, et les **réglages d'affichage**, mémorisés dans le navigateur : icônes de tier sur les cartes (**désactivées par défaut**), noms des unités sur les cartes, intensité de l'illustration de fond.
+- **Les 20 emplacements occupent toute la largeur** : les cartes de l'armée s'agrandissent avec l'écran, jusqu'à 86 px de large, au ratio du jeu. Dessous, le **budget par rôle** (lord et héros, infanterie, tir, cavalerie, monstres…) et les fonds restants.
+- **Roster** :
+  - des **filtres rapides** : Anti-large, Armour-piercing, Ranged, Flying, Magic dmg, Fire dmg, puis grandes et petites entités. Les filtres se combinent, et grandes / petites s'excluent. Chaque filtre affiche son nombre de cartes ; les cartes qui ne correspondent pas sont **estompées**, ce qui garde la disposition du jeu, et chaque section indique « n / total » ;
+  - un badge **« ×n »** sur les cartes déjà présentes dans l'armée ;
+  - un **aperçu rapide au survol** : classe, tier, coût, PV, armure, attaque et défense, puissance d'arme, vitesse, tir, forces et faiblesses, avec les icônes du jeu.
+- **Panneaux latéraux repliables** (◀ / ▶) pour agrandir le roster. Leur état est mémorisé.
+- **Notifications** discrètes en bas à droite : enregistrement, lien copié, avertissements.
+- **Panneau de droite à onglets « Composition | Matchup »**. L'onglet Matchup contient :
   - **le choix d'une race adverse** ;
   - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py` ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
