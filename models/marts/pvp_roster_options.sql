@@ -22,7 +22,7 @@ portraits as (
     -- portrait du personnage (permissions de bataille : general_portrait) ; sert d'image quand la carte du jeu est
     -- « placeholder » (le jeu construit alors la carte d'un personnage à partir de son portrait, dans ui/portraits/units)
     select unit_key,
-           any_value(regexp_extract(replace(general_portrait, '\\', '/'), '([^/]+)\.png$', 1)) as portrait_image
+           any_value(regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_image
     from {{ ref('stg_dump__units_custom_battle_permissions') }}
     where general_portrait is not null
     group by unit_key
@@ -34,12 +34,35 @@ category_icons as (
     -- sinon l'icône du sous-groupe d'interface de l'unité (ui_unit_groupings.icon)
     select m.unit_key,
            m.is_renown,
-           coalesce(nullif(regexp_extract(replace(a.small_icon, '\\', '/'), '([^/]+)\.png$', 1), ''), g.icon) as category_icon
+           coalesce(nullif(regexp_extract(replace(a.small_icon, chr(92), '/'), '([^/]+)\.png$', 1), ''), g.icon) as category_icon
     from {{ ref('stg_dump__main_units') }} m
     left join {{ ref('stg_dump__ui_unit_groupings') }} g using (ui_group_key)
     left join (select distinct c.unit_key, any_value(st.small_icon) over (partition by c.unit_key) as small_icon
                from {{ ref('int_character_agent_subtypes') }} c
                join {{ ref('stg_dump__agent_subtypes') }} st using (agent_subtype_key)) a using (unit_key)
+),
+
+lore_groups as (
+    -- domaine de magie de l'option : son icône (passif du domaine) et sa couleur, comme dans le panneau du jeu
+    select m.unit_key,
+           -- groupe retenu : celui dont l'icône est le passif du domaine (« lore_passive »), sinon le premier
+           arg_max(regexp_extract(replace(g.icon_path, chr(92), '/'), '([^/]+)\.png$', 1),
+                   (g.icon_path ilike '%lore_passive%')::int * 1000 - g.sort_order)                     as lore_icon,
+           arg_max(g.colour_hex, (g.icon_path ilike '%lore_passive%')::int * 1000 - g.sort_order)     as lore_colour
+    from {{ ref('stg_dump__main_units') }} m
+    join {{ ref('stg_dump__special_ability_groups_to_units_junctions') }} j
+      on j.unit_key = m.unit_key or j.unit_key = m.land_unit_key
+    join {{ ref('stg_dump__special_ability_groups') }} g using (ability_group_key)
+    where g.show_lore_icon
+    group by m.unit_key
+),
+
+mount_icons as (
+    -- icône de la monture (ui/campaign ui/mounts/<icône>)
+    select mounted_unit_key as unit_key,
+           any_value(regexp_extract(replace(icon_name, chr(92), '/'), '([^/]+)\.png$', 1)) as mount_icon
+    from {{ ref('stg_dump__units_custom_battle_mounts') }}
+    group by mounted_unit_key
 ),
 
 cards_with_mounts as (
@@ -82,6 +105,9 @@ select
     img.unit_card,
     pt.portrait_image,
     ci.category_icon,
+    lg.lore_icon,
+    lg.lore_colour,
+    mi.mount_icon,
     coalesce(ci.is_renown, false)                                      as is_renown,   -- Régiment de Renom (bandeau de carte dédié)
     -- image à afficher : la carte du jeu, sauf carte générique « placeholder » -> portrait du personnage
     case when img.unit_card in ('placeholder', 'a_character_placeholder') then 'portrait' else 'card' end as image_source,
@@ -92,3 +118,5 @@ left join {{ ref('int_unit_card_images') }} img using (unit_key)
 left join flying f using (unit_key)
 left join portraits pt using (unit_key)
 left join category_icons ci using (unit_key)
+left join lore_groups lg using (unit_key)
+left join mount_icons mi using (unit_key)

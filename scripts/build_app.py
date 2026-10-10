@@ -16,6 +16,9 @@ Images des cartes (facultatif) :
                                                              et les morceaux de Daemon Prince du dossier dae_prince/)
 - ui/common ui/unit_category_icons/ -> assets/unit_category_icons/ (icône de catégorie en bas de carte)
 - ui/skins/default/unit_card_*  -> assets/ui_skins/      (cadre, sélection, survol et demi-cercles des cartes)
+  + experience_1 à experience_9  -> assets/ui_skins/      (chevrons des rangs d'expérience)
+- ui/battle ui/ability_icons/   -> assets/ability_icons/  (icônes des sorts, capacités et domaines de magie)
+- ui/campaign ui/mounts/        -> assets/mount_icons/    (icônes des montures)
 - fichiers .png ou .webp acceptés partout
 - les sous-dossiers sont acceptés : le script cherche les .png partout dans ces deux dossiers ;
 - le script copie dans docs/images/ (cartes) et docs/images/portraits/ (portraits) UNIQUEMENT les images utiles
@@ -34,6 +37,8 @@ ASSETS = os.path.join(ROOT, 'assets', 'unit_cards')
 PORTRAIT_ASSETS = os.path.join(ROOT, 'assets', 'portraits_units')
 ICON_ASSETS = os.path.join(ROOT, 'assets', 'unit_category_icons')
 SKIN_ASSETS = os.path.join(ROOT, 'assets', 'ui_skins')
+ABILITY_ICON_ASSETS = os.path.join(ROOT, 'assets', 'ability_icons')
+MOUNT_ICON_ASSETS = os.path.join(ROOT, 'assets', 'mount_icons')
 SKIN_FILES = {   # habillage des cartes : clé de l'application -> fichier du jeu (ui/skins/default/)
     'frame': 'unit_card_frame_plain', 'selected': 'unit_card_selected', 'hover': 'unit_card_hover',
     'semi': 'unit_card_semicircle', 'semiHero': 'unit_card_semicircle_hero', 'semiRenown': 'unit_card_semicircle_renown'}
@@ -75,7 +80,7 @@ cards = rows("""
 options = rows("""
     select race_key, card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, other_variant_category, mount,
            can_be_general, is_lord, role, is_flying, multiplayer_cost, unit_card, portrait_image, image_source,
-           category_icon, is_renown
+           category_icon, is_renown, lore_icon, lore_colour, mount_icon
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
 
@@ -141,16 +146,32 @@ for name in sorted({o['category_icon'] for o in options if o['category_icon']}):
         icons[name] = copy_image(icon_found[name.lower()], 'icons', name)
 skin_found = scan(SKIN_ASSETS)
 skin = {k: copy_image(skin_found[f], 'ui', f) for k, f in SKIN_FILES.items() if f in skin_found}
+xp_icons = [copy_image(skin_found[f'experience_{n}'], 'ui', f'experience_{n}') if f'experience_{n}' in skin_found else None
+            for n in range(1, 10)]
+if any(xp_icons):
+    skin['xp'] = [None] + xp_icons   # skin.xp[rang]
+
+# icônes des sorts / capacités / domaines (ability_icons) et des montures (mount_icons)
+ability_found, mount_found = scan(ABILITY_ICON_ASSETS), scan(MOUNT_ICON_ASSETS)
+ability_icons, mount_icons = {}, {}
+def ability_icon(name):
+    if not name or name.lower() not in ability_found: return None
+    if name not in ability_icons: ability_icons[name] = copy_image(ability_found[name.lower()], 'abilities', name)
+    return ability_icons[name]
+def mount_icon(name):
+    if not name or name.lower() not in mount_found: return None
+    if name not in mount_icons: mount_icons[name] = copy_image(mount_found[name.lower()], 'mounts', name)
+    return mount_icons[name]
 
 # ---------- personnalisation : sorts, capacités, objets (dictionnaire par race + liste de clés par option) ----------
 TYPE = {'spell': 's', 'ability': 'a', 'item': 'i'}
 up_dict, up_by_option = {}, {}
 for r in rows("""
-    select race_key, unit_key, upgrade_type, upgrade_key, upgrade_name, cost, rarity_state, rarity_hex
+    select race_key, unit_key, upgrade_type, upgrade_key, upgrade_name, cost, rarity_state, rarity_hex, icon_name
     from marts.pvp_character_upgrades
     order by race_key, unit_key, case upgrade_type when 'spell' then 1 when 'ability' then 2 else 3 end, upgrade_name"""):
     up_dict.setdefault(r['race_key'], {})[r['upgrade_key']] = [r['upgrade_name'], TYPE[r['upgrade_type']], r['cost'],
-                                                               r['rarity_state'], r['rarity_hex']]
+                                                               r['rarity_state'], r['rarity_hex'], ability_icon(r['icon_name'])]
     up_by_option.setdefault((r['race_key'], r['unit_key']), []).append(r['upgrade_key'])
 
 opts_by_card = {}
@@ -159,6 +180,7 @@ for o in options:
         'u': o['unit_key'], 'n': o['unit_name'], 'c': o['multiplayer_cost'], 'g': o['can_be_general'], 'l': o['is_lord'],
         'role': o['role'], 'fly': o['is_flying'], 'ovc': o['other_variant_category'],
         'ic': icons.get(o['category_icon']), 'rn': o['is_renown'],
+        'li': ability_icon(o['lore_icon']), 'lc': o['lore_colour'], 'mi': mount_icon(o['mount_icon']),
         'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount'],
         'img': img(o['image_source'], o['unit_card'], o['portrait_image']), 'race': o['race_key']})
 
@@ -211,7 +233,8 @@ if os.path.isdir(RACE_ASSETS):
             if ext.lower() in EXTS:
                 race_found.setdefault(stem.lower(), os.path.join(dirpath, name))
 for r in races:
-    src = race_found.get((r['race_image'] or '').lower())
+    key = (r['race_image'] or '').lower()   # <faction>_large (race_strip_images) ou <faction> (bannières)
+    src = race_found.get(key) or race_found.get(key.removesuffix('_large'))
     r['race_image'] = copy_image(src, 'races', r['race_image']) if src else None
 
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
@@ -231,4 +254,6 @@ a_cards = sum(1 for k, _ in available if k == 'card'); a_portraits = len(availab
 print(f"Images des cartes : {a_cards} / {n_cards} | portraits des personnages : {a_portraits} / {n_portraits} "
       f"| manquantes listées dans exports/missing_unit_cards.csv")
 n_icons = len({o['category_icon'] for o in options if o['category_icon']})
-print(f"Icônes de catégorie : {len(icons)} / {n_icons} | habillage des cartes : {len(skin)} / {len(SKIN_FILES)} fichiers ({', '.join(sorted(skin)) or 'aucun'})")
+print(f"Icônes : sorts / capacités / domaines {len(ability_icons)} | montures {len(mount_icons)} | "
+      f"chevrons d'expérience {sum(1 for x in skin.get('xp', []) if x)} / 9")
+print(f"Icônes de catégorie : {len(icons)} / {n_icons} | habillage des cartes : {sum(1 for k in skin if k in SKIN_FILES)} / {len(SKIN_FILES)} fichiers")

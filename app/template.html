@@ -43,11 +43,21 @@ button { font: inherit; color: inherit; }
   background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, var(--panel)), var(--panel) 60%);
   border-bottom: 2px solid var(--accent);
 }
-.race-picker { display: flex; align-items: center; gap: 8px; }
-.race-arrow { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bronze); background: var(--band); cursor: pointer; color: #f4ead6; }
-.race-arrow:hover { filter: brightness(1.2); }
-.race-name { font-size: 26px; font-weight: 700; min-width: 260px; text-align: center; margin: 0; }
-.race-select { background: var(--panel-2); color: var(--text); border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; font: inherit; }
+.race-picker { position: relative; width: 340px; max-width: 100%; }
+/* menu des races : chaque race est représentée par son illustration du jeu (fondue à gauche) */
+.race-btn, .race-opt { position: relative; display: block; width: 100%; height: 56px; padding: 0; border: 1px solid var(--bronze);
+  background: #140f0d; color: var(--text); cursor: pointer; text-align: left; overflow: hidden; }
+.race-btn { border-radius: 4px; }
+.race-strip { position: absolute; inset: 0; background-size: cover; background-position: right center; opacity: .85;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 18%, #000 55%); mask-image: linear-gradient(90deg, transparent 0%, transparent 18%, #000 55%); }
+.race-label { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 19px; font-weight: 700; text-shadow: 0 1px 3px #000; }
+.race-btn .caret { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; text-shadow: 0 0 3px #000; }
+.race-list { position: absolute; z-index: 50; top: 60px; left: 0; right: 0; max-height: 70vh; overflow-y: auto; margin: 0; padding: 0; list-style: none;
+  background: var(--panel); border: 1px solid var(--bronze); border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.6); }
+.race-list[hidden] { display: none; }
+.race-opt { border: none; border-top: 1px solid rgba(140,106,59,.4); }
+.race-opt:hover .race-strip, .race-opt.active .race-strip, .race-btn:hover .race-strip { opacity: 1; }
+.race-opt[aria-selected="true"] { outline: 2px solid var(--gold); outline-offset: -2px; }
 .funds { margin-left: auto; display: flex; align-items: baseline; gap: 18px; }
 .funds .value { font-size: 24px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
 .funds .value.over { color: var(--danger); }
@@ -94,7 +104,6 @@ button { font: inherit; color: inherit; }
 .card .art { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
 .card.has-img .mono, .card.has-img .nm { display: none; }
 .card.has-img .cost { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
-.card .badge-gen { position: absolute; top: 20px; left: 3px; font-size: 11px; color: #f6d58a; z-index: 1; text-shadow: 0 0 3px #000; }
 .card .badge-opt { position: absolute; top: 20px; right: 3px; font-size: 10px; background: rgba(0,0,0,.6); border-radius: 3px; padding: 0 3px; z-index: 1; }
 .card .badge-cap { position: absolute; bottom: 3px; right: 3px; font-size: 10px; font-weight: 700; border-radius: 3px; padding: 0 3px; z-index: 2;
   background: rgba(0,0,0,.75); color: var(--gold); border: 1px solid currentColor; }
@@ -114,7 +123,8 @@ button { font: inherit; color: inherit; }
 .card.skinned .semi { position: absolute; bottom: 0; left: 2px; z-index: 4; pointer-events: none; }
 .card.skinned .cat-icon { position: absolute; bottom: 0; left: 19px; width: 22px; height: 22px; z-index: 5; pointer-events: none; }
 .card.skinned .cost { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 6; background: rgba(0,0,0,.55); }
-.card.skinned .badge-gen, .card.skinned .badge-opt { top: 21px; z-index: 6; }
+.card.skinned .badge-opt { top: 21px; z-index: 6; }
+.card .xp-img { position: absolute; top: 21px; left: 1px; width: 24px; height: 24px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
 .card.skinned .chevrons { z-index: 6; }
 .card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
 .card.skinned .badge-cap { bottom: 26px; z-index: 7; }
@@ -162,8 +172,12 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .pz .price { color: var(--gold); font-variant-numeric: tabular-nums; font-size: 13px; }
 .pz .price.unknown { color: var(--muted); }
 .pz input { accent-color: var(--crimson-hi); }
-/* gemme de rareté : couleur officielle du jeu (ancillary_uniqueness_groupings.col_hex) */
-.gem { flex: 0 0 auto; width: 9px; height: 9px; transform: rotate(45deg); background: var(--gem, transparent); border: 1px solid rgba(255,255,255,.55); box-shadow: 0 0 4px var(--gem, transparent); }
+/* icônes du jeu dans le panneau (sorts, capacités, domaines, montures) */
+.pz .ico { flex: 0 0 26px; width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.pz .ico.empty { display: inline-block; background: rgba(140,106,59,.25); }
+/* domaine de magie : bandeau teinté de sa couleur, comme dans le jeu */
+.pz .row.lore { padding: 3px 6px; margin: 2px -4px; border-radius: 3px;
+  background: linear-gradient(90deg, rgba(0,0,0,.25), color-mix(in srgb, var(--lore, #555) 45%, transparent)); }
 
 /* roster */
 .roster h2 { font-size: 18px; margin: 0 0 10px; }
@@ -191,7 +205,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   .custom { height: auto; max-height: 70vh; }
   .side { position: static; max-height: none; min-height: 0 !important; border: none !important; border-bottom: 1px solid var(--bronze) !important; }
   .sections { grid-template-columns: 1fr; }
-  .race-name { min-width: 0; font-size: 21px; }
+  .race-picker { width: 100%; }
   .funds { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -201,11 +215,11 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 
 <header class="topbar">
   <div class="race-picker">
-    <button class="race-arrow" id="prevRace" aria-label="Previous race">◀</button>
-    <h1 class="race-name serif" id="raceName">—</h1>
-    <button class="race-arrow" id="nextRace" aria-label="Next race">▶</button>
+    <button class="race-btn" id="raceButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select race">
+      <span class="race-strip" id="raceStrip"></span><span class="race-label serif" id="raceName">—</span><span class="caret">▾</span>
+    </button>
+    <ul class="race-list" id="raceList" role="listbox" aria-label="Races" hidden></ul>
   </div>
-  <select class="race-select" id="raceSelect" aria-label="Select race"></select>
   <div class="funds">
     <div><span class="muted">Funds remaining</span><br><span class="value serif" id="funds"><span class="coin"></span>0</span></div>
   </div>
@@ -220,7 +234,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   <div class="army-status" id="armyStatus" aria-live="polite"></div>
   <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
   <p class="flash" id="flash" role="status" hidden></p>
-  <p class="army-hint">Click: inspect and customise. Double-click or drag &amp; drop: add to the army, or remove (drag out of the bar). − / + under a unit: experience rank. The lord is the general (♛): picking another lord replaces it.</p>
+  <p class="army-hint">Click: inspect and customise. Double-click or drag &amp; drop: add to the army, or remove (drag out of the bar). − / + under a unit: experience rank. The lord is the general: picking another lord replaces it.</p>
 </section>
 
 <div class="layout">
@@ -287,7 +301,11 @@ function upgradesCost(sel, raceKey = race().key) {
   spells.sort((a, b) => b - a);
   return other + Math.floor(spells.reduce((s, c, k) => s + c * (1 - SPELL_STEP * k), 0));
 }
-const unitCost = u => rankedBase(u.opt.c, u.rank) + upgradesCost(u.sel);
+/* expérience : achetable seulement pour les unités de base. Lords et héros : jamais. Régiments de Renom : rang 9
+   fixe, déjà compris dans leur prix de base (aucun surcoût). */
+const canRank = opt => !opt.rn && opt.role !== 'lord' && opt.role !== 'hero';
+const shownRank = u => (u.opt.rn ? 9 : canRank(u.opt) ? u.rank : 0);
+const unitCost = u => (canRank(u.opt) ? rankedBase(u.opt.c, u.rank) : u.opt.c) + upgradesCost(u.sel);
 const newUnit = (card, opt, rank = 0) => ({ card, opt, sel: defaultSel(), rank });
 const spent = () => state.army.reduce((s, u) => s + unitCost(u), 0);
 const remaining = () => DATA.budget - spent();
@@ -313,7 +331,7 @@ function capCounts(raceKey, army) {
 }
 function validate(raceKey, army, costOf = unitCost) {
   const errors = [];
-  if (!generalOf(army)) errors.push({ code: 'NO_GENERAL', text: 'The first unit must be a lord who can lead the army (♛).' });
+  if (!generalOf(army)) errors.push({ code: 'NO_GENERAL', text: 'The first unit must be a lord who can lead the army.' });
   if (army.filter(u => u.opt.l).length > 1) errors.push({ code: 'MULTIPLE_LORDS', text: 'An army can only have one lord.' });
   if (army.length > DATA.maxUnits) errors.push({ code: 'TOO_MANY_UNITS', text: `Too many units (${army.length}/${DATA.maxUnits}).` });
   const cost = army.reduce((s, u) => s + costOf(u), 0);
@@ -430,10 +448,12 @@ function cardEl(card, { cost, label = '', img = null, rank = 0, opt = card.opts[
   b.style.setProperty('--card-bg', TAB_COLORS[card.t] || '#4a2c2a');
   b.draggable = true;
   const tier = rank ? Math.ceil(rank / 3) : 0, n = rank ? ((rank - 1) % 3) + 1 : 0;
-  const chev = rank ? `<span class="chevrons" style="--chev:${['', '#c9874a', '#d8dde3', '#f2c94c'][tier]}" title="Rank ${rank}">${'<i></i>'.repeat(n)}</span>` : '';
+  const xpImg = rank && sk.xp && sk.xp[rank];
+  const chev = !rank ? '' : xpImg ? `<img class="xp-img" src="images/${esc(xpImg)}" alt="" title="Rank ${rank}" draggable="false">`
+    : `<span class="chevrons" style="--chev:${['', '#c9874a', '#d8dde3', '#f2c94c'][tier]}" title="Rank ${rank}">${'<i></i>'.repeat(n)}</span>`;
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
-    (card.g ? '<span class="badge-gen" title="Can lead the army">♛</span>' : '') + chev +
+    chev +
     (img ? `<img class="art" src="images/${esc(img)}" alt="" loading="lazy" draggable="false">` : '') + skinHtml +
     `<span class="mono serif">${esc(initials(card.n))}</span><span class="nm">${esc(card.n)}</span>`;
   b.title = card.n + (label ? ' (' + label + ')' : '') + (rank ? ` – rank ${rank}` : '');
@@ -446,7 +466,7 @@ function cardEl(card, { cost, label = '', img = null, rank = 0, opt = card.opts[
 /* ---------- Rendu : bandeau, armée ---------- */
 function renderTop() {
   $('raceName').textContent = race().name;
-  $('raceSelect').value = String(state.raceIndex);
+  $('raceStrip').style.backgroundImage = race().race_image ? `url("images/${race().race_image}")` : 'none';
   const f = $('funds');
   f.innerHTML = `<span class="coin"></span>${fmt(remaining())}`;
   f.classList.toggle('over', remaining() < 0);
@@ -459,20 +479,23 @@ function renderArmy() {
   const general = generalOf(state.army);
   state.army.forEach((u, i) => {
     const slot = document.createElement('div'); slot.className = 'slot';
-    const el = cardEl(u.card, { cost: unitCost(u), label: optionLabel(u.opt), img: u.opt.img || u.card.img, rank: u.rank, opt: u.opt });
+    const el = cardEl(u.card, { cost: unitCost(u), label: optionLabel(u.opt), img: u.opt.img || u.card.img, rank: shownRank(u), opt: u.opt });
     if (u === general) { el.classList.add('is-general'); el.title += ' – army general'; }
     if (state.focus && state.focus.unit === u) el.classList.add('selected');
     el.dataset.armyIndex = String(i);
     bindClicks(el, () => setFocus({ kind: 'army', unit: u }), () => removeUnit(u));
     el.addEventListener('dragstart', e => { drag = { from: 'army', unit: u }; e.dataTransfer.setData('text/plain', 'army'); e.dataTransfer.effectAllowed = 'move'; });
     el.addEventListener('dragend', () => { drag = null; });
-    const ctl = document.createElement('div'); ctl.className = 'rank-ctl';
-    ctl.innerHTML = `<button aria-label="Remove a rank" ${u.rank === 0 ? 'disabled' : ''}>−</button><span title="Experience rank">${u.rank}</span>` +
-      `<button aria-label="Add a rank" ${u.rank >= DATA.xp.length - 1 ? 'disabled' : ''}>+</button>`;
-    const [minus, , plus] = ctl.children;
-    minus.addEventListener('click', () => setRank(u, u.rank - 1));
-    plus.addEventListener('click', () => setRank(u, u.rank + 1));
-    slot.append(el, ctl);
+    slot.append(el);
+    if (canRank(u.opt)) {   // boutons d'expérience : unités de base uniquement
+      const ctl = document.createElement('div'); ctl.className = 'rank-ctl';
+      ctl.innerHTML = `<button aria-label="Remove a rank" ${u.rank === 0 ? 'disabled' : ''}>−</button><span title="Experience rank">${u.rank}</span>` +
+        `<button aria-label="Add a rank" ${u.rank >= DATA.xp.length - 1 ? 'disabled' : ''}>+</button>`;
+      const [minus, , plus] = ctl.children;
+      minus.addEventListener('click', () => setRank(u, u.rank - 1));
+      plus.addEventListener('click', () => setRank(u, u.rank + 1));
+      slot.append(ctl);
+    }
     slots.appendChild(slot);
   });
   for (let i = state.army.length; i < DATA.maxUnits; i++) {
@@ -549,7 +572,7 @@ function renderUnitStats() {
     <dl class="kv">
       <dt>Total cost</dt><dd>${fmt(unitCost(unit))}</dd>
       <dt>Unit</dt><dd>${fmt(opt.c)}</dd>
-      <dt>Rank ${unit.rank}</dt><dd>+${fmt(rankedBase(opt.c, unit.rank) - opt.c)}</dd>
+      <dt>Rank ${shownRank(unit)}</dt><dd>${opt.rn ? 'included' : canRank(opt) ? '+' + fmt(rankedBase(opt.c, unit.rank) - opt.c) : 'n/a'}</dd>
       <dt>Customisation</dt><dd>+${fmt(upgradesCost(unit.sel))}</dd>
       <dt>Can lead</dt><dd>${opt.l && opt.g ? 'Yes' : 'No'}</dd>
     </dl>
@@ -581,8 +604,12 @@ function renderCustom() {
       if (k === 'mount') { const d = foot ? target.c - foot.c : 0; price = v !== 'On foot' && d ? fmt(d) : ''; }
       else price = fmt(unitCost(carry(target)));   // comme en jeu : prix total de l'unité avec cette variante
       const label = k === 'mount' && v === 'On foot' ? 'None' : (v || 'None');
-      return `<label class="row"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${(opt[k] ?? '') === v ? 'checked' : ''}>` +
-        `<span class="lbl">${esc(label)}</span>${price ? `<span class="price">${price}</span>` : ''}</label>`;
+      const icon = k === 'lore' ? target.li : k === 'mount' && v !== 'On foot' ? target.mi : null;
+      const iconHtml = (k === 'lore' || k === 'mount')
+        ? (icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>') : '';
+      const loreStyle = k === 'lore' && target.lc ? ` lore" style="--lore:#${esc(target.lc)}` : '';
+      return `<label class="row${loreStyle}"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${(opt[k] ?? '') === v ? 'checked' : ''}>` +
+        `${iconHtml}<span class="lbl">${esc(label)}</span>${price ? `<span class="price">${price}</span>` : ''}</label>`;
     }).join('');
     return `<section class="pz"><h4 class="serif">${esc(dimTitle(card, k))}</h4>${rows}</section>`;
   };
@@ -594,12 +621,12 @@ function renderCustom() {
     if (!keys.length) return '';
     const all = keys.every(k => unit.sel.has(k));
     const rows = keys.map(k => {
-      const [name, , , rar, hex] = ups[k];
+      const [name, , , , , icon] = ups[k];
       const checked = unit.sel.has(k);
       // comme en jeu : le prix n'est affiché que sur les éléments non cochés (surcoût de leur ajout)
       const price = checked ? '' : `<span class="price">${fmt(upgradesCost(new Set([...unit.sel, k])) - current)}</span>`;
-      const gem = hex ? `<span class="gem" style="--gem:#${esc(hex)}" title="${esc(rar)}"></span>` : '<span class="gem"></span>';
-      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${checked ? 'checked' : ''}>${gem}<span class="lbl">${esc(name)}</span>${price}</label>`;
+      const iconHtml = type === 'i' ? '' : icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>';
+      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${checked ? 'checked' : ''}>${iconHtml}<span class="lbl">${esc(name)}</span>${price}</label>`;
     }).join('');
     return `<section class="pz"><h4 class="serif">${title}</h4>` +
       `<label class="row all"><input type="checkbox" data-all="${type}" ${all ? 'checked' : ''}><span class="lbl">Select All</span></label>${rows}</section>`;
@@ -681,18 +708,35 @@ function setRace(i) {
   renderAll();
 }
 
-function init() {
-  const sel = $('raceSelect');
-  DATA.races.forEach((r, i) => sel.add(new Option(r.name, String(i))));
-  sel.addEventListener('change', e => setRace(Number(e.target.value)));
-  $('prevRace').addEventListener('click', () => setRace(state.raceIndex - 1));
-  $('nextRace').addEventListener('click', () => setRace(state.raceIndex + 1));
-  $('clearArmy').addEventListener('click', () => { state.army = []; state.focus = null; renderAll(); });
-  document.addEventListener('keydown', e => {
-    if (e.target.closest('select, input')) return;
-    if (e.key === 'ArrowLeft' && e.altKey) setRace(state.raceIndex - 1);
-    if (e.key === 'ArrowRight' && e.altKey) setRace(state.raceIndex + 1);
+/* menu déroulant des races (liste personnalisée : une illustration par race) — clavier : ↑ ↓ Entrée Échap */
+function setupRacePicker() {
+  const btn = $('raceButton'), list = $('raceList');
+  let active = 0;
+  list.innerHTML = DATA.races.map((r, i) =>
+    `<li role="option" class="race-opt" data-i="${i}" id="race-opt-${i}">` +
+    `<span class="race-strip" style="background-image:${r.race_image ? `url('images/${esc(r.race_image)}')` : 'none'}"></span>` +
+    `<span class="race-label serif">${esc(r.name)}</span></li>`).join('');
+  const items = [...list.children];
+  const highlight = i => { active = (i + items.length) % items.length; items.forEach((el, j) => el.classList.toggle('active', j === active));
+    items[active].scrollIntoView({ block: 'nearest' }); list.setAttribute('aria-activedescendant', items[active].id); };
+  const open = () => { list.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    items.forEach((el, j) => el.setAttribute('aria-selected', String(j === state.raceIndex))); highlight(state.raceIndex); list.tabIndex = -1; list.focus(); };
+  const close = (focusBtn = true) => { list.hidden = true; btn.setAttribute('aria-expanded', 'false'); if (focusBtn) btn.focus(); };
+  const choose = i => { close(); if (i !== state.raceIndex) setRace(i); };
+  btn.addEventListener('click', () => (list.hidden ? open() : close()));
+  items.forEach((el, i) => el.addEventListener('click', () => choose(i)));
+  list.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown') { e.preventDefault(); highlight(active + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); highlight(active - 1); }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(active); }
+    else if (e.key === 'Escape' || e.key === 'Tab') close(e.key === 'Escape');
   });
+  document.addEventListener('click', e => { if (!list.hidden && !e.target.closest('.race-picker')) close(false); });
+}
+
+function init() {
+  setupRacePicker();
+  $('clearArmy').addEventListener('click', () => { state.army = []; state.focus = null; renderAll(); });
   $('footer').textContent = `Data: Total War: WARHAMMER III game files (${DATA.patch.replace('patch_', 'patch ')}), ` +
     `budget ${fmt(DATA.budget)}, up to ${DATA.maxUnits} units. Experience rank costs are estimates. ` +
     `Unofficial fan-made tool, not affiliated with Creative Assembly or Games Workshop.`;

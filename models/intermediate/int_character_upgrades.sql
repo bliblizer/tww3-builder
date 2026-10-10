@@ -22,7 +22,7 @@ with chars as (
 ),
 
 abilities as (
-    select a.ability_key, a.is_hidden_in_ui, a.is_unit_upgrade, a.uniqueness, coalesce(s.mana_cost, 0) as mana_cost
+    select a.ability_key, a.is_hidden_in_ui, a.is_unit_upgrade, a.uniqueness, a.icon_name, coalesce(s.mana_cost, 0) as mana_cost
     from {{ ref('stg_dump__unit_abilities') }} a
     left join {{ ref('stg_dump__unit_special_abilities') }} s using (ability_key)
 ),
@@ -124,6 +124,7 @@ select
     null                                                                                as item_category,
     rg.ui_state                                                                         as rarity_state,
     rg.col_hex                                                                          as rarity_hex,
+    a.icon_name                                                                         as icon_name,   -- ui/battle ui/ability_icons/<icon_name>
     '{{ var("patch") }}'                                                                as patch
 from all_abilities aa
 join abilities a using (ability_key)
@@ -137,7 +138,7 @@ select
     i.race_key, i.unit_key, 'item', i.ancillary_key, t.resolved_text, rg.ui_state, null,
     case rg.ui_state when 'common' then 100 when 'uncommon' then 150 when 'rare' then 200 when 'legendary' then 200 end,
     case when rg.ui_state is null then 'inconnu (rareté absente)' else 'rareté (vérifié en jeu)' end, 'liste d''objets du personnage',
-    i.category, rg.ui_state, rg.col_hex, '{{ var("patch") }}'
+    i.category, rg.ui_state, rg.col_hex, null, '{{ var("patch") }}'
 from items i
 left join texts t on t.loc_key = 'ancillaries_onscreen_name_' || i.ancillary_key
 left join rarity_groups rg on i.uniqueness_score between rg.uniqueness_min and rg.uniqueness_max

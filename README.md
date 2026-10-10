@@ -145,7 +145,12 @@ Limites de la V0 :
 
 ### Mise en page (inspirée de l'écran du jeu)
 
-**Le site est en anglais**, avec un thème sombre unique. Le menu des races n'affiche que leur nom.
+**Le site est en anglais**, avec un thème sombre unique.
+- **Menu des races** : une liste déroulante où chaque race est représentée par son illustration du jeu, fondue à gauche sous son nom. Il se pilote aussi au clavier (↑ ↓ Entrée Échap).
+- **Panneau de personnalisation** :
+  - les domaines de magie ont leur icône et un bandeau teinté de leur couleur (`special_ability_groups.colour_hex`) ;
+  - les montures, les sorts et les capacités ont leur icône ;
+  - il n'y a pas de marqueur de rareté ni de couronne de général.
 
 
 - **En haut** : la race, avec sa **couleur d'accent** et son **illustration en fond** (voir plus bas), puis les fonds restants.
@@ -180,8 +185,11 @@ Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu, 
 |---|---|---|
 | `ui/units/icons/` | `assets/unit_cards/` | Les cartes d'unités : `<unit_card>.png` (1 140 images utiles) |
 | `ui/portraits/units/` | `assets/portraits_units/` | Les **personnages** dont la carte du jeu est générique (`placeholder`, 693 options). Le jeu construit leur carte à partir de leur portrait (`units_custom_battle_permissions.general_portrait`), soit 210 portraits utiles |
-| `ui/frontend ui/race_strip_images/` | `assets/race_images/` | Les illustrations de fond des races |
+| `ui/frontend ui/race_strip_images/` (ou bannières `<faction>.png`) | `assets/race_images/` | Les illustrations des races : menu de sélection et fond de page |
 | `ui/common ui/unit_category_icons/` | `assets/unit_category_icons/` | L'icône de catégorie en bas de chaque carte (`pvp_roster_options.category_icon` : icône du type de personnage, par exemple le domaine de magie, sinon celle du sous-groupe d'interface ; 425 icônes utiles) |
+| `ui/battle ui/ability_icons/` | `assets/ability_icons/` | Les icônes des sorts et capacités (`unit_abilities.icon_name`) et des domaines de magie (icône du passif du domaine, `special_ability_groups.icon_path`) |
+| `ui/campaign ui/mounts/` | `assets/mount_icons/` | Les icônes des montures (`units_custom_battle_mounts.icon_name`) |
+| `experience_1` à `experience_9` | `assets/ui_skins/` | Les chevrons des rangs d'expérience |
 | `ui/skins/default/unit_card_*` | `assets/ui_skins/` | L'habillage des cartes : `unit_card_frame_plain`, `unit_card_selected`, `unit_card_hover`, `unit_card_semicircle`, `unit_card_semicircle_hero` (lords et héros) et `unit_card_semicircle_renown` (Régiments de Renom, `is_renown`) |
 
 Les fichiers `.png` et `.webp` sont acceptés. Sans habillage, les cartes gardent leur cadre simple.
@@ -251,6 +259,8 @@ python -m playwright install chromium
 - **Capacités et objets cochés** : grille de rareté, common 100, uncommon 150, rare 200, legendary 200 *(vérifié)*. Un élément coché est payant, et son prix est simplement masqué dans le panneau du jeu.
 - **Sorts cochés** : arrondi inférieur de la somme des prix de rareté de chaque sort × (1 − 0,047 × k). Les sorts sont classés du plus cher au moins cher, avec k = 0, 1, 2… C'est une formule empirique, **à ±1 près sur les 8 relevés**.
 - **Rangs d'expérience** : `arrondi(prix × multiplicateur) + coût fixe`. C'est une hypothèse, non vérifiée.
+  - **Seules les unités de base** peuvent gagner des rangs. Les lords et héros n'en ont pas *(règle du jeu)*.
+  - Les **Régiments de Renom** sont au **rang 9 fixe**, déjà compris dans leur prix de base : chevrons du rang 9, sans bouton ni surcoût *(règle du jeu)*.
 - **Par défaut** : **rien n'est coché**. Le prix affiché dans le roster est donc le prix de base. *(Choix du projet. Le roster du jeu affiche, lui, les prix avec tout coché.)*
 
 **Tests :**
