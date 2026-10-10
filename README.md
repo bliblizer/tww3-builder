@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=244 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
+Le résultat attendu est `Done. PASS=259 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -276,6 +276,22 @@ python -m playwright install chromium
 - Les rangs d'expérience ne modifient pas encore les statistiques affichées.
 
 **Affichage :** comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
+
+## Outils de l'armée (barre au-dessus de l'armée)
+
+- **Nom de l'armée** (champ à gauche) et **Notes** (zone de texte libre) : ils sont repris par l'enregistrement, le lien de partage, l'export et l'image.
+- **↶ / ↷ Annuler et rétablir** (Ctrl+Z, Ctrl+Y ou Ctrl+Maj+Z). Toutes les actions sont concernées : ajout, retrait, personnalisation, rang, ordre, nom, notes, changement de race, import.
+- **Dupliquer** une unité avec sa personnalisation et son rang : bouton « Duplicate » dans la fiche, ou Ctrl+D sur l'unité sélectionnée. Un lord ne peut pas être dupliqué.
+- **Réordonner** : glisser une unité de l'armée sur une autre pour la placer devant. Le lord reste toujours en tête.
+- **Save / My armies** : favoris enregistrés **dans ce navigateur** (`localStorage`), à recharger ou supprimer.
+- **Share** : copie un **lien** qui contient l'armée (race, unités, rangs, éléments cochés, nom, notes courtes). À l'ouverture du lien, l'armée est reconstituée. Les unités absentes d'une version plus récente des données sont signalées.
+- **Export .army_setup** : télécharge le fichier à charger dans le jeu. Au premier export, une **aide** explique où le copier (`%APPDATA%\The Creative Assembly\Warhammer3\army_setups`) et comment le charger en jeu. Le bouton **?** la rouvre. Si l'armée n'est pas valide, une confirmation est demandée.
+  - **Contenu** : la faction est la faction principale de la race si elle autorise toutes les unités, sinon une faction commune. Pour chaque unité : général, rang, éléments cochés, et pour les lords et héros leurs capacités innées, sans celles de la monture, comme le fait le jeu.
+  - **Vérification** : `scripts/test_app.py` importe puis réexporte les 5 fichiers du jeu de `tests/fixtures/`. Le contenu redevient identique (seul l'ordre des éléments peut différer, la taille est la même au fichier près).
+- **Import** : charge un `.army_setup` du jeu. La race est déduite de la faction, et les unités non jouables en PvP sont ignorées et signalées.
+- **PNG** : télécharge une image de l'armée (nom, race, coût, unités, modèles, indice d'élite, cartes avec coût, tier et rang), prête pour Discord ou Reddit.
+
+**Info-bulles des sorts, capacités et objets** (`pvp_ability_details`) : au survol d'une ligne du panneau de personnalisation ou de la fiche d'unité, on voit le nom, passif ou non, mana, recharge, durée, nombre d'utilisations, la description du jeu et **les effets**. Les effets sont calculés à partir des phases de la capacité : effets chiffrés sur les statistiques (« +10 Melee Attack »), attributs donnés (« Gains: Immune to Psychology ») et lignes d'effet propres au jeu.
 
 ## Personnalisation des personnages (sorts, capacités, objets)
 

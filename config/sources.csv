@@ -66,3 +66,11 @@ db/unit_attributes_tables/data__.tsv,statistiques,Attributs d unités,confirmé
 db/unit_attributes_to_groups_junctions_tables/data__.tsv,statistiques,Attributs de chaque groupe d attributs (land_units.attribute_group),confirmé
 text/db/unit_attributes__.loc.tsv,textes,Noms des attributs d unités,confirmé
 text/db/ui_text_replacements__.loc.tsv,textes,Textes de remplacement référencés par les renvois tr (ex. Vanguard Deployment),confirmé
+db/special_ability_to_special_ability_phase_junctions_tables/data__.tsv,capacites,Capacité -> phases d effet,confirmé
+db/special_ability_phases_tables/data__.tsv,capacites,Phases d effet des capacités (durée, soins, dégâts…),confirmé
+db/special_ability_phase_stat_effects_tables/data__.tsv,capacites,Effets chiffrés des phases sur les statistiques,confirmé
+db/special_ability_phase_attribute_effects_tables/data__.tsv,capacites,Attributs donnés par les phases,confirmé
+db/special_ability_phases_to_additional_ui_effects_junctions_tables/data__.tsv,capacites,Lignes d effet affichées dans l info-bulle du jeu,confirmé
+db/unit_stat_localisations_tables/data__.tsv,capacites,Statistiques -> clé de texte,confirmé
+text/db/unit_stat_localisations__.loc.tsv,textes,Noms des statistiques,confirmé
+text/db/unit_abilities_additional_ui_effects__.loc.tsv,textes,Lignes d effet des info-bulles de capacités,confirmé

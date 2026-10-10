@@ -68,7 +68,8 @@ tabs = rows("""
     left join staging.stg_loc_texts x on x.loc_key = 'ui_unit_group_parents_onscreen_name_' || t.tab_key
     order by t.tab_order, t.tab_key""")
 
-races = rows("""select race_key as key, race_name as name, nb_cards, accent_hex as accent, race_image, race_image_alt
+races = rows("""select race_key as key, race_name as name, nb_cards, accent_hex as accent, race_image, race_image_alt,
+                       main_faction_key as faction
                 from marts.pvp_races order by race_name""")
 
 cards = rows("""
@@ -80,7 +81,7 @@ cards = rows("""
 options = rows("""
     select race_key, card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, other_variant_category, mount,
            can_be_general, is_lord, role, is_flying, multiplayer_cost, unit_card, portrait_image, image_source,
-           category_icon, is_renown, lore_icon, lore_colour, mount_icon
+           category_icon, is_renown, lore_icon, lore_colour, mount_icon, faction_keys
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
 
@@ -181,6 +182,7 @@ for o in options:
         'role': o['role'], 'fly': o['is_flying'], 'ovc': o['other_variant_category'],
         'ic': icons.get(o['category_icon']), 'rn': o['is_renown'],
         'li': ability_icon(o['lore_icon']), 'lc': o['lore_colour'], 'mi': mount_icon(o['mount_icon']),
+        'fk': (o['faction_keys'] or '').split(' | '),
         'lore': o['lore'], 'mark': o['mark'], 'spirit': o['forest_spirit'], 'other': o['other_variant'], 'mount': o['mount'],
         'img': img(o['image_source'], o['unit_card'], o['portrait_image']), 'race': o['race_key']})
 
@@ -232,9 +234,42 @@ def p95(col):   # échelle des barres : 95e centile (les valeurs extrêmes rempl
 stat_scale = {c: p95(c) for c in ['health', 'armour', 'leadership', 'speed', 'melee_attack', 'melee_defence', 'weapon_strength',
                                   'charge_bonus', 'ammunition', 'range', 'missile_strength']}
 traits = {}
-for r in rows("select unit_key, kind, trait_name, icon_name from marts.pvp_unit_traits order by unit_key, kind, trait_name"):
+for r in rows("select unit_key, kind, trait_key, trait_name, icon_name from marts.pvp_unit_traits order by unit_key, kind, trait_name"):
     # 'p' = capacité innée (Passive Abilities), 't' = attribut (Unit Attributes)
-    traits.setdefault(r['unit_key'], []).append(['p' if r['kind'] == 'ability' else 't', r['trait_name'], ability_icon(r['icon_name'])])
+    traits.setdefault(r['unit_key'], []).append(['p' if r['kind'] == 'ability' else 't', r['trait_name'], ability_icon(r['icon_name']),
+                                                 r['trait_key']])
+
+# info-bulles : [nom, description, mana, recharge, durée, utilisations, passif (0/1), effets « a | b »]
+details = {r['key']: [r['name'], r['description'], compact(r['mana_cost']), compact(r['cooldown']), compact(r['duration']),
+                      compact(r['uses']), int(bool(r['is_passive'])), r['effects']]
+           for r in rows("select * from marts.pvp_ability_details")}
+
+# capacités innées écrites dans un fichier .army_setup : le jeu ne les enregistre que pour les lords et héros,
+# et pas celles de leur monture (vérifié sur les fichiers du jeu : Neferata sur Zombie Dragon, Necromancer sur Corpse Cart).
+# Règle : si l'option a une version à pied, on garde les capacités innées que cette version possède aussi ;
+# sinon on retire celles dont la clé désigne une monture (« mount_ »).
+export_innate = {}
+for r in rows("""
+    with innate as (
+        select m.unit_key, j.ability_key
+        from staging.stg_dump__main_units m
+        join staging.stg_dump__land_units_to_unit_abilites_junctions j using (land_unit_key)
+        join staging.stg_dump__unit_abilities a using (ability_key)
+        where not a.is_unit_upgrade
+    )
+    select distinct o.unit_key, i.ability_key
+    from (select distinct unit_key from marts.pvp_roster_options) o
+    join innate i using (unit_key)
+    left join intermediate.int_unit_option_labels l on l.unit_key = o.unit_key
+    where case when l.foot_unit_key is not null and l.foot_unit_key <> o.unit_key
+               then exists (select 1 from innate f where f.unit_key = l.foot_unit_key and f.ability_key = i.ability_key)
+               else i.ability_key not like '%mount\\_%' escape '\\' end
+    order by 1, 2"""):
+    export_innate.setdefault(r['unit_key'], []).append(r['ability_key'])
+
+# faction -> race (import des fichiers .army_setup)
+faction_race = {r['f']: r['r'] for r in rows("""select faction_key as f, race_key as r from intermediate.int_faction_race
+                                                where race_key in (select race_key from marts.pvp_races)""")}
 
 # ---------- forces / faiblesses, rangs d'expérience, catégories de variantes ----------
 tags = {}
@@ -261,7 +296,8 @@ for r in races:
 
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
-        'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits}
+        'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
+        'details': details, 'factionRace': faction_race, 'exportInnate': export_innate}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()

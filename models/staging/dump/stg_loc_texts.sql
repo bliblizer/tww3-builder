@@ -35,6 +35,10 @@ with recursive all_loc as (
     select loc_key, text, 'unit_attributes' as loc_table from {{ ref('stg_dump_loc__unit_attributes') }}
     union all
     select loc_key, text, 'ui_text_replacements' as loc_table from {{ ref('stg_dump_loc__ui_text_replacements') }}
+    union all
+    select loc_key, text, 'unit_stat_localisations' as loc_table from {{ ref('stg_dump_loc__unit_stat_localisations') }}
+    union all
+    select loc_key, text, 'unit_abilities_additional_ui_effects' as loc_table from {{ ref('stg_dump_loc__unit_abilities_additional_ui_effects') }}
 ),
 
 ref_targets as (

@@ -61,6 +61,11 @@ RENAME = {  # renommages vers des clés homogènes (par table)
  'projectiles_explosions': {'key': 'explosion_key'},
  'unit_attributes': {'key': 'attribute_key'},
  'unit_attributes_to_groups_junctions': {'attribute': 'attribute_key'},
+ 'special_ability_to_special_ability_phase_junctions': {'special_ability': 'ability_key', 'phase': 'phase_key'},
+ 'special_ability_phases': {'id': 'phase_key'},
+ 'special_ability_phase_stat_effects': {'phase': 'phase_key', 'stat': 'stat_key'},
+ 'special_ability_phase_attribute_effects': {'attribute': 'attribute_key', 'phase': 'phase_key'},
+ 'special_ability_phases_to_additional_ui_effects_junctions': {'effect': 'ui_effect_key', 'special_ability_phase': 'phase_key'},
  'unit_variants': {'faction': 'faction_key', 'unit': 'land_unit_key', 'name': 'variant_name', 'variant': 'variant_key'},
 }
 PK = {  # clé primaire attendue (testée unique + non nulle si les données le confirment)

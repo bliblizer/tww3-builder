@@ -131,3 +131,9 @@ models:
 
   - name: pvp_unit_traits
     description: "Capacités innées et attributs (Vanguard Deployment, Hide (forest)…) de chaque unité jouable."
+
+  - name: pvp_ability_details
+    description: "Info-bulles des sorts, capacités et objets : description, mana, recharge, durée, utilisations, effets (lignes séparées par « | »)."
+    data_tests:
+      - unique:
+          column_name: "key || '|' || kind"

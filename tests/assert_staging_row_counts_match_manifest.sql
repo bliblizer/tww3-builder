@@ -131,6 +131,22 @@ with staged as (
     select 'text/db/unit_attributes__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_attributes') }}
     union all
     select 'text/db/ui_text_replacements__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__ui_text_replacements') }}
+    union all
+    select 'db/special_ability_to_special_ability_phase_junctions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__special_ability_to_special_ability_phase_junctions') }}
+    union all
+    select 'db/special_ability_phases_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__special_ability_phases') }}
+    union all
+    select 'db/special_ability_phase_stat_effects_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__special_ability_phase_stat_effects') }}
+    union all
+    select 'db/special_ability_phase_attribute_effects_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__special_ability_phase_attribute_effects') }}
+    union all
+    select 'db/special_ability_phases_to_additional_ui_effects_junctions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__special_ability_phases_to_additional_ui_effects_junctions') }}
+    union all
+    select 'db/unit_stat_localisations_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_stat_localisations') }}
+    union all
+    select 'text/db/unit_stat_localisations__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_stat_localisations') }}
+    union all
+    select 'text/db/unit_abilities_additional_ui_effects__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_abilities_additional_ui_effects') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

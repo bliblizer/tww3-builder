@@ -334,3 +334,29 @@ models:
           column_name: "loc_key"
       - not_null:
           column_name: "loc_key"
+  - name: stg_dump__special_ability_to_special_ability_phase_junctions
+    description: "Capacité -> phases d effet (source : db/special_ability_to_special_ability_phase_junctions_tables/data__.tsv)"
+  - name: stg_dump__special_ability_phases
+    description: "Phases d effet des capacités (durée (source : db/special_ability_phases_tables/data__.tsv)"
+  - name: stg_dump__special_ability_phase_stat_effects
+    description: "Effets chiffrés des phases sur les statistiques (source : db/special_ability_phase_stat_effects_tables/data__.tsv)"
+  - name: stg_dump__special_ability_phase_attribute_effects
+    description: "Attributs donnés par les phases (source : db/special_ability_phase_attribute_effects_tables/data__.tsv)"
+  - name: stg_dump__special_ability_phases_to_additional_ui_effects_junctions
+    description: "Lignes d effet affichées dans l info-bulle du jeu (source : db/special_ability_phases_to_additional_ui_effects_junctions_tables/data__.tsv)"
+  - name: stg_dump__unit_stat_localisations
+    description: "Statistiques -> clé de texte (source : db/unit_stat_localisations_tables/data__.tsv)"
+  - name: stg_dump_loc__unit_stat_localisations
+    description: "Noms des statistiques (source : text/db/unit_stat_localisations__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__unit_abilities_additional_ui_effects
+    description: "Lignes d effet des info-bulles de capacités (source : text/db/unit_abilities_additional_ui_effects__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"

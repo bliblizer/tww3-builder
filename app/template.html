@@ -65,11 +65,48 @@ button { font: inherit; color: inherit; }
   background: radial-gradient(circle at 35% 35%, #ffe7a3, var(--gold) 60%, #7a5418); }
 
 /* ---------- Armée ---------- */
-.army { padding: 12px 20px 14px; background: linear-gradient(var(--band), var(--band)) top / 100% 34px no-repeat, color-mix(in srgb, var(--panel-2) 92%, transparent); border-bottom: 1px solid var(--bronze); }
+.army { padding: 12px 20px 14px; background: color-mix(in srgb, var(--panel-2) 92%, transparent); border-bottom: 1px solid var(--bronze); }
 .army.drop-ok { box-shadow: inset 0 0 0 2px var(--gold); }
-.army-head { display: flex; align-items: center; justify-content: space-between; height: 22px; margin-bottom: 14px; color: #f4ead6; }
-.army-head h2 { font-size: 16px; margin: 0; }
-.army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; margin-left: 8px; }
+.army-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px;
+  margin: -12px -20px 12px; padding: 6px 20px; background: var(--band); color: #f4ead6; }
+.army-name { flex: 1 1 220px; max-width: 360px; font: 700 16px "Cinzel", Georgia, serif; color: #f4ead6; background: rgba(0,0,0,.2);
+  border: 1px solid transparent; border-radius: 3px; padding: 2px 6px; }
+.army-name:hover, .army-name:focus { border-color: rgba(244,234,214,.5); outline: none; }
+.army-name::placeholder { color: rgba(244,234,214,.6); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.toolbar .count { margin-right: 6px; font-variant-numeric: tabular-nums; }
+.tb { background: rgba(0,0,0,.2); border: 1px solid rgba(244,234,214,.45); color: #f4ead6; border-radius: 4px; padding: 2px 9px; cursor: pointer; font-size: 13.5px; }
+.tb:hover:not(:disabled) { background: rgba(0,0,0,.4); }
+.tb:disabled { opacity: .4; cursor: default; }
+.tb.primary { border-color: var(--gold); }
+.notes { width: 100%; min-height: 64px; margin: 0 0 10px; resize: vertical; background: var(--panel); color: var(--text);
+  border: 1px solid var(--bronze); border-radius: 4px; padding: 6px 8px; font: inherit; font-size: 14px; }
+.notes[hidden] { display: none; }
+.slot.drop-before .card { box-shadow: -4px 0 0 var(--gold); }
+/* fenêtre (aide, favoris) */
+.modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.6); padding: 16px; }
+.modal[hidden] { display: none; }
+.modal-box { position: relative; width: min(560px, 100%); max-height: 85vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--bronze);
+  border-radius: 6px; padding: 18px 20px; box-shadow: 0 12px 40px rgba(0,0,0,.6); }
+.modal-box h3 { margin: 0 0 10px; font-size: 18px; }
+.modal-box ol { padding-left: 20px; } .modal-box li { margin-bottom: 6px; }
+.modal-box code { background: rgba(0,0,0,.35); padding: 1px 5px; border-radius: 3px; font-size: 13px; word-break: break-all; }
+.modal-close { position: absolute; top: 8px; right: 10px; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; }
+.fav { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(140,106,59,.35); }
+.fav .info { flex: 1; min-width: 0; } .fav .info b { display: block; } .fav .info span { font-size: 12.5px; color: var(--muted); }
+.modal-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.modal-row input[type=text] { flex: 1; min-width: 0; background: var(--panel-2); color: var(--text); border: 1px solid var(--bronze); border-radius: 3px; padding: 5px 7px; font: inherit; }
+/* info-bulle des sorts, capacités et objets */
+.tip { position: fixed; z-index: 120; max-width: 330px; pointer-events: none; background: #1b1310; border: 1px solid var(--bronze);
+  border-radius: 4px; padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,.6); font-size: 13.5px; }
+.tip[hidden] { display: none; }
+.tip h5 { margin: 0 0 4px; font: 700 15px "Cinzel", Georgia, serif; color: var(--gold); }
+.tip .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: 12.5px; margin-bottom: 6px; }
+.tip .meta b { color: var(--text); font-weight: 500; }
+.tip .desc { font-style: italic; color: #d8cbb2; margin: 0 0 6px; }
+.tip ul { margin: 0; padding-left: 16px; } .tip li { margin: 1px 0; }
+.tip li.pos { color: #8bd34a; } .tip li.neg { color: #ff7a6a; }
+[data-tip] { cursor: help; }
 .slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
 .slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 50px; }
 .slot .card { flex: none; }
@@ -87,6 +124,7 @@ button { font: inherit; color: inherit; }
 .cap-chip.full { border-color: var(--gold); color: var(--gold); }
 .cap-chip.over { border-color: var(--danger); color: var(--danger); font-weight: 700; }
 .flash { margin: 8px 0 0; color: var(--danger); font-weight: 700; font-size: 14px; }
+.flash.ok { color: var(--ok); }
 .army-hint { color: var(--muted); margin: 8px 0 0; font-size: 13.5px; }
 
 /* ---------- Cartes d'unité ---------- */
@@ -266,9 +304,24 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 
 <section class="army" id="armyZone" aria-label="Army">
   <div class="army-head">
-    <h2 class="serif">Main Army</h2>
-    <div><span id="unitCount">0 / 20</span><button class="clear" id="clearArmy">Clear</button></div>
+    <input class="army-name" id="armyName" placeholder="Main Army" maxlength="60" aria-label="Army name">
+    <div class="toolbar">
+      <span class="count" id="unitCount">0 / 20</span>
+      <button class="tb" id="undoBtn" title="Undo (Ctrl+Z)" aria-label="Undo">↶</button>
+      <button class="tb" id="redoBtn" title="Redo (Ctrl+Y)" aria-label="Redo">↷</button>
+      <button class="tb" id="notesBtn" aria-expanded="false">Notes</button>
+      <button class="tb" id="saveBtn" title="Save to this browser">Save</button>
+      <button class="tb" id="armiesBtn">My armies</button>
+      <button class="tb" id="shareBtn" title="Copy a link to this army">Share</button>
+      <button class="tb primary" id="exportBtn" title="Download a file to load in the game">Export .army_setup</button>
+      <button class="tb" id="importBtn" title="Load a .army_setup file from the game">Import</button>
+      <button class="tb" id="pngBtn" title="Download a picture of this army">PNG</button>
+      <button class="tb" id="helpBtn" title="How to use this file in the game" aria-label="Help">?</button>
+      <button class="tb" id="clearArmy">Clear</button>
+      <input type="file" id="importFile" accept=".army_setup" hidden>
+    </div>
   </div>
+  <textarea class="notes" id="armyNotes" placeholder="Notes about this army (plan, matchups, deployment…)" hidden></textarea>
   <div class="slots" id="slots"></div>
   <div class="army-status" id="armyStatus" aria-live="polite"></div>
   <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
@@ -288,13 +341,17 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   <aside class="side right" id="composition" aria-label="Army composition statistics"></aside>
 </div>
 
+<div class="modal" id="modal" hidden><div class="modal-box" role="dialog" aria-modal="true">
+  <button class="modal-close" id="modalClose" aria-label="Close">×</button><div id="modalBody"></div></div></div>
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
 <script>
 const DATA = /*__DATA__*/null;
 
 /* ---------- État ----------
    army  : unités de l'armée { card, opt, sel, rank } (sel = clés des sorts / capacités / objets cochés ; rank = 0 à 9)
    focus : unité affichée dans les panneaux { kind: 'army' | 'roster', unit } ('roster' = brouillon pas encore ajouté) */
-const state = { raceIndex: 0, army: [], focus: null };
+const state = { raceIndex: 0, army: [], focus: null, name: '', notes: '' };
 const DIMS = ['lore', 'mark', 'spirit', 'other', 'mount'];
 const DIM_CAT = { lore: 'type_spell_lore', mark: 'type_mark', spirit: 'type_forest_spirit' };
 const UPGRADE_SECTIONS = [['s', 'Spells'], ['a', 'Abilities'], ['i', 'Items']];
@@ -426,12 +483,14 @@ function addUnit(unit) {
   const reason = addReason(unit);
   if (reason) { flash(reason); return false; }
   const added = { ...unit, sel: new Set(unit.sel) };
+  commit();
   state.army = withAdded(state.army, added);
   state.focus = { kind: 'army', unit: added };
   renderAll();
   return true;
 }
 function removeUnit(unit) {
+  commit();
   state.army = state.army.filter(u => u !== unit);
   if (state.focus && state.focus.unit === unit) state.focus = { kind: 'roster', unit: newUnit(unit.card, unit.opt) };
   renderAll();
@@ -441,6 +500,7 @@ function replaceUnit(unit, changed) {   // modification d'une unité (option, s�
     const next = state.army.map(u => (u === unit ? changed : u));
     const p = newProblem(state.army, next);
     if (p && (p.kind === 'funds' || p.kind === 'cap')) { flash(p.text); return false; }
+    commit();
     state.army = next;
   }
   state.focus = { kind: state.focus.kind, unit: changed };
@@ -453,14 +513,15 @@ function setRank(unit, rank) {
   const next = state.army.map(u => (u === unit ? changed : u));
   const p = newProblem(state.army, next);
   if (p && rank > unit.rank) { flash(p.text); return; }
+  commit();
   state.army = next;
   if (state.focus && state.focus.unit === unit) state.focus = { kind: 'army', unit: changed };
   renderAll();
 }
 const draftFor = card => (state.focus && state.focus.kind === 'roster' && state.focus.unit.card === card)
   ? state.focus.unit : newUnit(card, card.opts[0]);
-function flash(text) {
-  const m = $('flash'); m.textContent = text; m.hidden = false;
+function flash(text, ok = false) {   // ok = message de réussite (vert), sinon avertissement (rouge)
+  const m = $('flash'); m.textContent = text; m.hidden = false; m.classList.toggle('ok', ok);
   clearTimeout(flash.t); flash.t = setTimeout(() => { m.hidden = true; }, 3500);
 }
 /* clic simple / double-clic sur une carte : le clic simple attend CLICK_DELAY pour ne pas déplacer la page
@@ -524,6 +585,7 @@ function renderArmy() {
     if (u === general) { el.classList.add('is-general'); el.title += ' – army general'; }
     if (state.focus && state.focus.unit === u) el.classList.add('selected');
     el.dataset.armyIndex = String(i);
+    slot.dataset.armyIndex = String(i);
     bindClicks(el, () => setFocus({ kind: 'army', unit: u }), () => removeUnit(u));
     el.addEventListener('dragstart', e => { drag = { from: 'army', unit: u }; e.dataTransfer.setData('text/plain', 'army'); e.dataTransfer.effectAllowed = 'move'; });
     el.addEventListener('dragend', () => { drag = null; });
@@ -611,18 +673,23 @@ function renderUnitStats() {
   const pct = (c, v) => Math.min(100, 100 * v / (scale[c] || 1)).toFixed(0);
   const row = (label, c, extra = '') => st[c] == null ? '' :
     `<div class="stat"><span>${label}</span><span class="v">${extra}${fmt(st[c])}</span><span class="bar"><i style="--w:${pct(c, st[c])}%"></i></span></div>`;
-  const line = (icon, text) => `<div class="trait">${icon ? `<img src="images/${esc(icon)}" alt="">` : '<span class="ico-empty"></span>'}<span>${text}</span></div>`;
+  const line = (icon, text, key) => `<div class="trait"${key && DATA.details[key] ? ` data-tip="${esc(key)}" tabindex="0"` : ''}>` +
+    `${icon ? `<img src="images/${esc(icon)}" alt="">` : '<span class="ico-empty"></span>'}<span>${text}</span></div>`;
   const section = (title, body) => body ? `<h4 class="block-title serif">${title}</h4>${body}` : '';
-  const traitList = kind => traits.filter(t => t[0] === kind).map(t => line(t[2], esc(t[1]))).join('');
+  const traitList = kind => traits.filter(t => t[0] === kind).map(t => line(t[2], esc(t[1]), kind === 'p' ? t[3] : null)).join('');
   // pour un personnage : capacités, objets et sorts cochés dans la personnalisation, comme dans la fiche du jeu
-  const chosen = types => [...unit.sel].filter(k => ups[k] && types.includes(ups[k][1])).map(k => line(ups[k][5], esc(ups[k][0]))).join('');
+  const chosen = types => [...unit.sel].filter(k => ups[k] && types.includes(ups[k][1])).map(k => line(ups[k][5], esc(ups[k][0]), k)).join('');
   const resistances = [['Physical resistance', 'physical_resistance'], ['Spell resistance', 'spell_resistance'],
     ['Missile resistance', 'missile_resistance'], ['Fire resistance', 'fire_resistance'], ['Ward save', 'ward_save']]
     .filter(([, c]) => st[c]).map(([l, c]) => line(null, `${l}: <b>${st[c] > 0 ? '+' : ''}${st[c]}%</b>`)).join('');
   const notes = [st.bonus_v_large ? `+${st.bonus_v_large} vs large` : '', st.bonus_v_infantry ? `+${st.bonus_v_infantry} vs infantry` : '']
     .filter(Boolean).join(' · ');
+  const actions = state.focus.kind === 'army'
+    ? `<div class="modal-row" style="margin:0 0 10px"><button class="tb" id="dupBtn" title="Duplicate (Ctrl+D)">Duplicate</button><button class="tb" id="remBtn">Remove</button></div>`
+    : `<div class="modal-row" style="margin:0 0 10px"><button class="tb primary" id="addBtn2">Add to army</button></div>`;
   p.innerHTML = `
     <h3 class="serif">${esc(opt.n)}</h3>
+    ${actions}
     <p class="class-line">${opt.ic ? `<img src="images/${esc(opt.ic)}" alt="">` : ''}<span>${esc(card.grp || '')}${opt.fly ? ' · flying' : ''}</span></p>
     ${tags.length ? `<ul class="tags">${tags.map(([n, s]) => `<li class="${s.includes('negative') ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${esc(n)}</li>`).join('')}</ul>` : ''}
     ${st.health != null ? `<div class="hp" title="Health"><i style="--w:${pct('health', st.health)}%"></i><span>${fmt(st.health)}</span></div>` : ''}
@@ -643,6 +710,10 @@ function renderUnitStats() {
     ${section('Spells', chosen(['s']))}
     ${section('Unit Attributes', traitList('t'))}
     ${section('Resistances', resistances)}`;
+  if (state.focus.kind === 'army') {
+    $('dupBtn').addEventListener('click', () => duplicateUnit(unit));
+    $('remBtn').addEventListener('click', () => removeUnit(unit));
+  } else $('addBtn2').addEventListener('click', () => addUnit(unit));
 }
 
 /* ---------- Panneau de personnalisation (sous l'armée) : affiché seulement pour une unité personnalisable ---------- */
@@ -690,7 +761,7 @@ function renderCustom() {
       // comme en jeu : le prix n'est affiché que sur les éléments non cochés (surcoût de leur ajout)
       const price = checked ? '' : `<span class="price">${fmt(upgradesCost(new Set([...unit.sel, k])) - current)}</span>`;
       const iconHtml = type === 'i' ? '' : icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>';
-      return `<label class="row"><input type="checkbox" data-k="${esc(k)}" ${checked ? 'checked' : ''}>${iconHtml}<span class="lbl">${esc(name)}</span>${price}</label>`;
+      return `<label class="row"${DATA.details[k] ? ` data-tip="${esc(k)}"` : ''}><input type="checkbox" data-k="${esc(k)}" ${checked ? 'checked' : ''}>${iconHtml}<span class="lbl">${esc(name)}</span>${price}</label>`;
     }).join('');
     return `<section class="pz"><h4 class="serif">${title}</h4>` +
       `<label class="row all"><input type="checkbox" data-all="${type}" ${all ? 'checked' : ''}><span class="lbl">Select All</span></label>${rows}</section>`;
@@ -800,7 +871,7 @@ function renderComposition() {
     <p class="muted" style="margin-top:8px">Infantry: tier I = trash, II = line, III+ = elite. Lords and heroes are left out of the elite index.</p>`;
 }
 
-function renderAll() { renderTop(); renderArmy(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); }
+function renderAll() { renderTop(); renderArmy(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); renderTools(); }
 
 /* changement d'unité affichée : panneaux et surbrillance mis à jour sans reconstruire les cartes */
 function setFocus(focus) {
@@ -818,15 +889,375 @@ function setupDragAndDrop() {
   const zone = $('armyZone');
   zone.addEventListener('dragover', e => { if (drag && drag.from === 'roster') { e.preventDefault(); zone.classList.add('drop-ok'); } });
   zone.addEventListener('dragleave', () => zone.classList.remove('drop-ok'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drop-ok'); if (drag && drag.from === 'roster') addUnit(drag.unit); drag = null; });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drop-ok');
+    if (drag && drag.from === 'roster') addUnit(drag.unit);
+    else if (drag && drag.from === 'army') {   // réordonner : on dépose avant l'unité visée (le lord reste en tête)
+      const slot = e.target.closest('.slot');
+      const target = slot ? Number(slot.dataset.armyIndex) : state.army.length;
+      moveUnit(drag.unit, target);
+    }
+    drag = null; document.querySelectorAll('.slot.drop-before').forEach(x => x.classList.remove('drop-before'));
+  });
+  zone.addEventListener('dragover', e => {
+    if (!(drag && drag.from === 'army')) return;
+    e.preventDefault();
+    document.querySelectorAll('.slot.drop-before').forEach(x => x.classList.remove('drop-before'));
+    const slot = e.target.closest('.slot'); if (slot) slot.classList.add('drop-before');
+  });
   document.addEventListener('dragover', e => { if (drag && drag.from === 'army' && !zone.contains(e.target)) e.preventDefault(); });
   document.addEventListener('drop', e => { if (drag && drag.from === 'army' && !zone.contains(e.target)) { e.preventDefault(); removeUnit(drag.unit); } drag = null; });
 }
 
+/* ---------- Historique : annuler / rétablir (Ctrl+Z / Ctrl+Y) ----------
+   Les unités sont immuables (chaque modification crée un nouvel objet) : un instantané = une copie de la liste. */
+const history = { past: [], future: [] };
+const snapshot = () => ({ raceIndex: state.raceIndex, army: state.army.slice(), name: state.name, notes: state.notes });
+function commit() { history.past.push(snapshot()); if (history.past.length > 100) history.past.shift(); history.future = []; }
+function restore(snap) {
+  const raceChanged = snap.raceIndex !== state.raceIndex;
+  state.army = snap.army.slice(); state.name = snap.name; state.notes = snap.notes; state.focus = null;
+  if (raceChanged) setRace(snap.raceIndex, { keepArmy: true, record: false }); else renderAll();
+}
+function undo() { if (!history.past.length) return; history.future.push(snapshot()); restore(history.past.pop()); }
+function redo() { if (!history.future.length) return; history.past.push(snapshot()); restore(history.future.pop()); }
+
+/* ---------- Dupliquer et réordonner ---------- */
+function duplicateUnit(unit) {
+  if (unit.opt.l) { flash('An army can only have one lord.'); return; }
+  const copy = { ...unit, sel: new Set(unit.sel) };
+  const p = newProblem(state.army, [...state.army, copy]);
+  if (p) { flash(p.text); return; }
+  commit();
+  const i = state.army.indexOf(unit);
+  state.army = [...state.army.slice(0, i + 1), copy, ...state.army.slice(i + 1)];
+  state.focus = { kind: 'army', unit: copy };
+  renderAll();
+}
+function moveUnit(unit, target) {
+  const from = state.army.indexOf(unit);
+  if (from < 0) return;
+  const lordFirst = generalOf(state.army) ? 1 : 0;
+  if (unit.opt.l) return;                                   // le lord reste en tête
+  let to = Math.max(lordFirst, target > from ? target - 1 : target);
+  if (to === from) return;
+  commit();
+  const next = state.army.slice(); next.splice(from, 1); next.splice(Math.min(to, next.length), 0, unit);
+  state.army = next;
+  renderAll();
+}
+
+/* ---------- Codage compact d'une armée (lien de partage, favoris) ----------
+   race ~ puis par unité : clé d'unité ~ rang ~ masque hexadécimal des éléments cochés (dans l'ordre de opt.up) */
+function encodeArmy() {
+  const units = state.army.map(u => {
+    const up = u.opt.up || [];
+    let mask = 0n; up.forEach((k, i) => { if (u.sel.has(k)) mask |= 1n << BigInt(i); });
+    return [u.opt.u, u.rank || 0, mask.toString(16)].join('~');
+  });
+  return { r: race().key, n: state.name, m: state.notes, a: units.join(',') };
+}
+function decodeArmy(raceKey, unitsText) {
+  const ri = DATA.races.findIndex(r => r.key === raceKey);
+  if (ri < 0) return null;
+  const byKey = {};
+  (DATA.roster[raceKey] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
+  const army = [], missing = [];
+  (unitsText || '').split(',').filter(Boolean).forEach(part => {
+    const [u, rank, mask] = part.split('~');
+    const hit = byKey[u];
+    if (!hit) { missing.push(u); return; }
+    const m = BigInt('0x' + (mask || '0')), up = hit.opt.up || [];
+    const sel = new Set(up.filter((k, i) => (m >> BigInt(i)) & 1n));
+    army.push({ card: hit.card, opt: hit.opt, sel, rank: canRank(hit.opt) ? Math.min(9, Number(rank) || 0) : 0 });
+  });
+  const lord = army.findIndex(u => u.opt.l);   // le lord en tête
+  if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+  return { raceIndex: ri, army, missing };
+}
+function applyDecoded(d, name = '', notes = '') {
+  commit();
+  state.name = name; state.notes = notes; state.army = d.army; state.focus = null;
+  setRace(d.raceIndex, { keepArmy: true, record: false });
+  if (d.missing.length) flash(`${d.missing.length} unit(s) not available in this version were skipped.`);
+}
+function loadFromHash() {
+  if (!location.hash.includes('a=')) return false;
+  const p = new URLSearchParams(location.hash.slice(1));
+  const d = decodeArmy(p.get('r'), p.get('a'));
+  if (!d) return false;
+  state.name = p.get('n') || ''; state.notes = p.get('m') || ''; state.army = d.army;
+  setRace(d.raceIndex, { keepArmy: true, record: false });
+  if (d.missing.length) flash(`${d.missing.length} unit(s) from the link are not available and were skipped.`);
+  return true;
+}
+function shareLink() {
+  const e = encodeArmy();
+  const p = new URLSearchParams({ v: '1', r: e.r, a: e.a });
+  if (e.n) p.set('n', e.n);
+  if (e.m && e.m.length <= 500) p.set('m', e.m);
+  return location.href.split('#')[0] + '#' + p.toString();
+}
+
+/* ---------- Favoris (dans ce navigateur) ---------- */
+const FAV_KEY = 'tww3-builder:armies';
+const readFavs = () => { try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; } };
+const writeFavs = list => { try { localStorage.setItem(FAV_KEY, JSON.stringify(list)); return true; } catch { return false; } };
+function saveFavourite() {
+  if (!state.army.length) { flash('The army is empty.'); return; }
+  const e = encodeArmy();
+  const name = state.name.trim() || `${race().name} – ${new Date().toLocaleDateString('en-GB')}`;
+  const list = readFavs().filter(f => !(f.name === name && f.r === e.r));
+  list.unshift({ id: Date.now(), name, r: e.r, a: e.a, m: e.m, cost: spent(), units: state.army.length, saved: new Date().toISOString() });
+  const saved = writeFavs(list);
+  flash(saved ? `Saved “${name}” in this browser.` : 'Could not save in this browser.', saved);
+}
+function showFavourites() {
+  const list = readFavs();
+  const raceName = k => (DATA.races.find(r => r.key === k) || {}).name || k;
+  openModal(`<h3 class="serif">My armies</h3>
+    <p class="muted">Saved in this browser only. Use Share for a link you can keep anywhere.</p>
+    ${list.length ? list.map(f => `<div class="fav" data-id="${f.id}"><div class="info"><b>${esc(f.name)}</b>
+      <span>${esc(raceName(f.r))} · ${f.units} units · ${fmt(f.cost)} · ${new Date(f.saved).toLocaleDateString('en-GB')}</span></div>
+      <button class="tb primary" data-act="load">Load</button><button class="tb" data-act="del" aria-label="Delete">✕</button></div>`).join('')
+      : '<p class="empty">No saved army yet: build one, give it a name, then click Save.</p>'}`);
+  $('modalBody').querySelectorAll('.fav button').forEach(b => b.addEventListener('click', () => {
+    const id = Number(b.closest('.fav').dataset.id), fav = readFavs().find(f => f.id === id);
+    if (b.dataset.act === 'del') { writeFavs(readFavs().filter(f => f.id !== id)); showFavourites(); return; }
+    const d = decodeArmy(fav.r, fav.a);
+    if (d) { closeModal(); applyDecoded(d, fav.name, fav.m || ''); }
+  }));
+}
+
+/* ---------- Fenêtre ---------- */
+function openModal(html) { $('modalBody').innerHTML = html; $('modal').hidden = false; $('modalClose').focus(); }
+function closeModal() { $('modal').hidden = true; }
+
+/* ---------- Export / import .army_setup (format du jeu, version 8) ----------
+   en-tête : u32 version, texte faction, texte mode, u8 drapeau, u32 nombre d'unités
+   unité   : texte « clé:faction:général », 15 octets (octet 7 = rang), u32 nombre d'éléments,
+             éléments (u8 type : 0 = sort / capacité, 2 = objet ; texte clé), texte final « none »
+   fin     : 9 octets nuls ; texte = u16 longueur + UTF-8 */
+const SETUP_DIR = '%APPDATA%\\The Creative Assembly\\Warhammer3\\army_setups';
+function chooseFaction() {
+  // une faction de la race qui autorise toutes les unités ; de préférence la faction principale de la race
+  const main = race().faction, all = state.army.map(u => u.opt.fk || []);
+  if (all.every(l => l.includes(main))) return main;
+  const common = (all[0] || []).filter(f => all.every(l => l.includes(f)));
+  return common[0] || main;
+}
+function buildArmySetup() {
+  const faction = chooseFaction(), enc = new TextEncoder(), parts = [];
+  const u8 = v => parts.push(Uint8Array.of(v));
+  const u32 = v => { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, v, true); parts.push(b); };
+  const str = t => { const b = enc.encode(t), h = new Uint8Array(2); new DataView(h.buffer).setUint16(0, b.length, true); parts.push(h, b); };
+  u32(8); str(faction); str('conquest'); u8(0); u32(state.army.length);
+  const ups = upgradesOf(race().key), general = generalOf(state.army);
+  state.army.forEach(u => {
+    str(`${u.opt.u}:${faction}:${u === general ? 1 : 0}`);
+    const block = new Uint8Array(15); block[7] = canRank(u.opt) ? u.rank : 0; parts.push(block);
+    // capacités innées : le jeu ne les enregistre que pour les lords et héros (sans celles de la monture)
+    const innate = isChar(u.opt) ? (DATA.exportInnate[u.opt.u] || []).map(k => [0, k]) : [];
+    const chosen = [...u.sel].filter(k => ups[k]).map(k => [ups[k][1] === 'i' ? 2 : 0, k]);
+    const items = [...innate, ...chosen];
+    u32(items.length); items.forEach(([t, k]) => { u8(t); str(k); });
+    str('none');
+  });
+  parts.push(new Uint8Array(9));
+  return new Blob(parts, { type: 'application/octet-stream' });
+}
+function download(blob, fileName) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+const fileBase = () => (state.name.trim() || race().name).replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '_') || 'army';
+function exportArmySetup() {
+  if (!state.army.length) { flash('The army is empty.'); return; }
+  const issues = validate(race().key, state.army);
+  if (issues.length && !confirm(`This army is not valid in the game:\n- ${issues.map(e => e.text).join('\n- ')}\n\nDownload anyway?`)) return;
+  download(buildArmySetup(), fileBase() + '.army_setup');
+  let seen = false; try { seen = localStorage.getItem('tww3-builder:help-seen') === '1'; } catch {}
+  if (!seen) showHelp(true);
+}
+function showHelp(afterExport = false) {
+  openModal(`<h3 class="serif">${afterExport ? 'Your army file is ready' : 'Use your army in the game'}</h3>
+    <ol>
+      <li>Find the downloaded <code>.army_setup</code> file (usually in your <b>Downloads</b> folder).</li>
+      <li>Copy it into the game's army folder:<br><code>${SETUP_DIR}</code><br>
+        <span class="muted">Tip: paste <code>%APPDATA%</code> in the Windows Explorer address bar, then open <i>The Creative Assembly › Warhammer3 › army_setups</i>.</span></li>
+      <li>In the game: <b>Custom Battle</b> → <b>Army Setup</b> → <b>Load</b> button, then pick your army.</li>
+    </ol>
+    <p class="muted">You can also do the opposite: <b>Import</b> loads a <code>.army_setup</code> file from that folder into the builder.</p>
+    ${afterExport ? `<div class="modal-row"><label><input type="checkbox" id="helpSeen"> Don't show this again</label>
+      <span style="flex:1"></span><button class="tb primary" id="helpOk">OK</button></div>` : ''}`);
+  if (afterExport) {
+    $('helpOk').addEventListener('click', () => {
+      if ($('helpSeen').checked) { try { localStorage.setItem('tww3-builder:help-seen', '1'); } catch {} }
+      closeModal();
+    });
+  }
+}
+function parseArmySetup(buffer) {
+  const dv = new DataView(buffer), dec = new TextDecoder();
+  let p = 0;
+  const u8 = () => dv.getUint8(p++), u32 = () => { const v = dv.getUint32(p, true); p += 4; return v; };
+  const str = () => { const n = dv.getUint16(p, true); p += 2; const t = dec.decode(new Uint8Array(buffer, p, n)); p += n; return t; };
+  const head = { version: u32(), faction: str(), mode: str(), flag: u8() };
+  const units = [];
+  for (let i = 0, n = u32(); i < n; i++) {
+    const [unitKey, faction, general] = str().split(':');
+    const block = new Uint8Array(buffer, p, 15); p += 15;
+    const items = []; for (let j = 0, m = u32(); j < m; j++) { const type = u8(); items.push({ type, key: str() }); }
+    str();
+    units.push({ unitKey, faction, general: general === '1', rank: block[7], items });
+  }
+  return { head, units };
+}
+async function importArmySetup(file) {
+  let data;
+  try { data = parseArmySetup(await file.arrayBuffer()); }
+  catch { flash('This file could not be read as a .army_setup file.'); return; }
+  const raceKey = DATA.factionRace[data.head.faction];
+  const ri = DATA.races.findIndex(r => r.key === raceKey);
+  if (ri < 0) { flash(`Unknown faction in this file: ${data.head.faction}.`); return; }
+  const byKey = {};
+  (DATA.roster[raceKey] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
+  const army = [], missing = [];
+  data.units.forEach(x => {
+    const hit = byKey[x.unitKey];
+    if (!hit) { missing.push(x.unitKey); return; }
+    const sel = new Set(x.items.map(i => i.key).filter(k => (hit.opt.up || []).includes(k)));
+    army.push({ card: hit.card, opt: hit.opt, sel, rank: canRank(hit.opt) ? Math.min(9, x.rank) : 0 });
+  });
+  const lord = army.findIndex(u => u.opt.l);
+  if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+  applyDecoded({ raceIndex: ri, army, missing }, file.name.replace(/\.army_setup$/i, '').replace(/_/g, ' '), '');
+  if (missing.length) flash(`${missing.length} unit(s) not playable in multiplayer were skipped.`);
+}
+
+/* ---------- Image PNG de l'armée (Discord, Reddit…) ---------- */
+function loadImage(src) {
+  return new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
+}
+async function drawArmyPng(withImages) {
+  const army = state.army, perRow = 10, cw = 60, ch = 130, gap = 8, pad = 24, headH = 92;
+  const rows = Math.max(1, Math.ceil(army.length / perRow));
+  const W = pad * 2 + perRow * cw + (perRow - 1) * gap, H = headH + rows * (ch + gap) + pad + 18, k = 2;
+  const cv = document.createElement('canvas'); cv.width = W * k; cv.height = H * k;
+  const g = cv.getContext('2d'); g.scale(k, k);
+  const css = getComputedStyle(document.documentElement), accent = css.getPropertyValue('--accent').trim() || '#a3261e';
+  g.fillStyle = '#1d1614'; g.fillRect(0, 0, W, H);
+  g.fillStyle = accent; g.fillRect(0, 0, W, 4);
+  g.fillStyle = '#e2b65a'; g.font = '700 22px Cinzel, Georgia, serif'; g.textBaseline = 'top';
+  g.fillText(state.name.trim() || 'Main Army', pad, 18);
+  const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
+  const tc = troops.reduce((s, u) => s + unitCost(u), 0);
+  const elite = tc ? troops.reduce((s, u) => s + statOf(u.opt.u, 'tier') * unitCost(u), 0) / tc : 0;
+  const models = army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0);
+  g.fillStyle = '#eadfc8'; g.font = '500 15px "Alegreya Sans", system-ui, sans-serif';
+  g.fillText(`${race().name}  ·  ${fmt(spent())} / ${fmt(DATA.budget)}  ·  ${army.length} units  ·  ${fmt(models)} models  ·  elite index ${elite.toFixed(1)}`, pad, 50);
+  const sk = DATA.skin || {};
+  const frame = withImages && sk.frame ? await loadImage('images/' + sk.frame) : null;
+  for (let i = 0; i < army.length; i++) {
+    const u = army[i], x = pad + (i % perRow) * (cw + gap), y = headH + Math.floor(i / perRow) * (ch + gap);
+    g.fillStyle = TAB_COLORS[u.card.t] || '#4a2c2a'; g.fillRect(x, y, cw, ch);
+    const src = u.opt.img || u.card.img, im = withImages && src ? await loadImage('images/' + src) : null;
+    if (im) g.drawImage(im, x, y, cw, ch);
+    else { g.fillStyle = '#f4ead6'; g.font = '700 18px Cinzel, Georgia, serif'; g.textAlign = 'center'; g.fillText(initials(u.card.n), x + cw / 2, y + 52); g.textAlign = 'left'; }
+    if (frame) g.drawImage(frame, x, y, cw, ch); else { g.strokeStyle = '#8c6a3b'; g.strokeRect(x + .5, y + .5, cw - 1, ch - 1); }
+    g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(x + 2, y + 2, cw - 4, 16);
+    g.fillStyle = '#f6d58a'; g.font = '700 12px system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(fmt(unitCost(u)), x + cw / 2, y + 4);
+    const tier = !isChar(u.opt) && statOf(u.opt.u, 'tier'), rk = shownRank(u);
+    g.font = '700 10px Cinzel, Georgia, serif'; g.textAlign = 'right';
+    if (tier) g.fillText(ROMAN[tier], x + cw - 4, y + 21);
+    g.textAlign = 'left'; if (rk) g.fillText('★' + rk, x + 4, y + 21);
+    g.textAlign = 'left';
+  }
+  g.fillStyle = '#a8977d'; g.font = '12px system-ui, sans-serif';
+  g.fillText('Total War: WARHAMMER III army builder · unofficial fan-made tool', pad, H - 20);
+  return new Promise((res, rej) => { try { cv.toBlob(b => (b ? res(b) : rej(new Error('empty'))), 'image/png'); } catch (e) { rej(e); } });
+}
+async function exportPng() {
+  if (!state.army.length) { flash('The army is empty.'); return; }
+  let blob;
+  try { blob = await drawArmyPng(true); }
+  catch { blob = await drawArmyPng(false); }   // images locales refusées par le navigateur : version sans images
+  download(blob, fileBase() + '.png');
+}
+
+/* ---------- Info-bulles des sorts, capacités et objets ---------- */
+function tipHtml(key) {
+  const d = DATA.details[key];
+  if (!d) return '';
+  const [name, desc, mana, cooldown, duration, uses, passive, effects] = d;
+  const meta = [passive ? '<span><b>Passive</b></span>' : '', mana ? `<span>Mana <b>${mana}</b></span>` : '',
+    cooldown ? `<span>Cooldown <b>${Math.round(cooldown)}s</b></span>` : '', duration ? `<span>Duration <b>${Math.round(duration)}s</b></span>` : '',
+    uses ? `<span>Uses <b>${uses}</b></span>` : ''].filter(Boolean).join('');
+  const lines = (effects || '').split(' | ').filter(Boolean).map(l =>
+    `<li class="${/^-|Inflicts/.test(l) ? 'neg' : /^\+|Gains/.test(l) ? 'pos' : ''}">${esc(l)}</li>`).join('');
+  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${desc ? `<p class="desc">${esc(desc)}</p>` : ''}${lines ? `<ul>${lines}</ul>` : ''}`;
+}
+function setupTooltips() {
+  const tip = $('tip');
+  const show = (el, x, y) => {
+    const html = tipHtml(el.dataset.tip); if (!html) return;
+    tip.innerHTML = html; tip.hidden = false;
+    const r = tip.getBoundingClientRect();
+    tip.style.left = Math.min(window.innerWidth - r.width - 8, x + 14) + 'px';
+    tip.style.top = (y + r.height + 20 > window.innerHeight ? Math.max(8, y - r.height - 10) : y + 16) + 'px';
+  };
+  document.addEventListener('mouseover', e => { const el = e.target.closest('[data-tip]'); if (el) show(el, e.clientX, e.clientY); });
+  document.addEventListener('mousemove', e => { if (!tip.hidden && e.target.closest('[data-tip]')) show(e.target.closest('[data-tip]'), e.clientX, e.clientY); });
+  document.addEventListener('mouseout', e => { if (e.target.closest('[data-tip]')) tip.hidden = true; });
+  document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if (el) { const r = el.getBoundingClientRect(); show(el, r.left, r.bottom); } });
+  document.addEventListener('focusout', () => { tip.hidden = true; });
+}
+
+/* ---------- Barre d'outils ---------- */
+function renderTools() {
+  $('undoBtn').disabled = !history.past.length; $('redoBtn').disabled = !history.future.length;
+  if (document.activeElement !== $('armyName')) $('armyName').value = state.name;
+  if (document.activeElement !== $('armyNotes')) $('armyNotes').value = state.notes;
+  ['saveBtn', 'shareBtn', 'exportBtn', 'pngBtn'].forEach(id => { $(id).disabled = !state.army.length; });
+}
+function setupTools() {
+  $('undoBtn').addEventListener('click', undo); $('redoBtn').addEventListener('click', redo);
+  $('armyName').addEventListener('change', e => { commit(); state.name = e.target.value; renderTools(); });
+  $('armyNotes').addEventListener('change', e => { commit(); state.notes = e.target.value; renderTools(); });
+  $('notesBtn').addEventListener('click', () => {
+    const n = $('armyNotes'); n.hidden = !n.hidden; $('notesBtn').setAttribute('aria-expanded', String(!n.hidden)); if (!n.hidden) n.focus();
+  });
+  $('saveBtn').addEventListener('click', saveFavourite);
+  $('armiesBtn').addEventListener('click', showFavourites);
+  $('shareBtn').addEventListener('click', async () => {
+    const link = shareLink();
+    try { await navigator.clipboard.writeText(link); flash('Link copied to the clipboard.', true); }
+    catch { openModal(`<h3 class="serif">Share this army</h3><p class="muted">Copy this link:</p><div class="modal-row"><input type="text" id="shareInput" readonly></div>`);
+      $('shareInput').value = link; $('shareInput').select(); }
+  });
+  $('exportBtn').addEventListener('click', exportArmySetup);
+  $('importBtn').addEventListener('click', () => $('importFile').click());
+  $('importFile').addEventListener('change', e => { const f = e.target.files[0]; if (f) importArmySetup(f); e.target.value = ''; });
+  $('pngBtn').addEventListener('click', exportPng);
+  $('helpBtn').addEventListener('click', () => showHelp(false));
+  $('modalClose').addEventListener('click', closeModal);
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('modal').hidden) { closeModal(); return; }
+    if (e.target.closest('input, textarea, select')) return;
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
+    else if (mod && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { e.preventDefault(); redo(); }
+    else if (mod && e.key.toLowerCase() === 'd' && state.focus && state.focus.kind === 'army') { e.preventDefault(); duplicateUnit(state.focus.unit); }
+  });
+}
+
 /* ---------- Race : changement, couleur d'accent et illustration ---------- */
-function setRace(i) {
+function setRace(i, { keepArmy = false, record = true } = {}) {
+  if (record && (state.army.length || state.raceIndex !== i)) commit();
   state.raceIndex = (i + DATA.races.length) % DATA.races.length;
-  state.army = []; state.focus = null;
+  if (!keepArmy) state.army = [];
+  state.focus = null;
   const r = race(), root = document.documentElement;
   if (r.accent) root.style.setProperty('--accent', '#' + r.accent); else root.style.removeProperty('--accent');
   if (r.race_image) root.style.setProperty('--race-art', `url("images/${r.race_image}")`); else root.style.removeProperty('--race-art');
@@ -861,12 +1292,14 @@ function setupRacePicker() {
 
 function init() {
   setupRacePicker();
-  $('clearArmy').addEventListener('click', () => { state.army = []; state.focus = null; renderAll(); });
+  $('clearArmy').addEventListener('click', () => { if (!state.army.length) return; commit(); state.army = []; state.focus = null; renderAll(); });
+  setupTools();
   $('footer').textContent = `Data: Total War: WARHAMMER III game files (${DATA.patch.replace('patch_', 'patch ')}), ` +
     `budget ${fmt(DATA.budget)}, up to ${DATA.maxUnits} units. Experience rank costs are estimates. ` +
     `Unofficial fan-made tool, not affiliated with Creative Assembly or Games Workshop.`;
   setupDragAndDrop();
-  setRace(0);
+  setupTooltips();
+  if (!loadFromHash()) setRace(0, { record: false });
 }
 init();
 </script>
