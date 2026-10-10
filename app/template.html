@@ -144,6 +144,25 @@ button { font: inherit; color: inherit; }
 .tags li::before { content: "▲ "; color: var(--ok); }
 .tags li.neg::before { content: "▼ "; color: var(--danger); }
 .tags li.strong { font-weight: 700; }
+/* fiche de statistiques (comme le panneau d'unité du jeu) */
+.class-line { display: flex; align-items: center; gap: 6px; color: var(--muted); margin: 0 0 8px; font-size: 14px; }
+.class-line img { width: 22px; height: 22px; }
+.hp { position: relative; height: 16px; margin: 10px 0 6px; background: #1b2a12; border: 1px solid #6a8f3a; border-radius: 2px; }
+.hp i { position: absolute; inset: 0; background: linear-gradient(#8bd34a, #4f9a1e); width: var(--w, 100%); }
+.hp span { position: relative; display: block; text-align: center; font-size: 12px; font-weight: 700; line-height: 16px; color: #fff; text-shadow: 0 0 3px #000; }
+.size-line { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+.stat { display: grid; grid-template-columns: 1fr auto 52px; align-items: center; gap: 8px; padding: 3px 6px; font-size: 14.5px;
+  background: linear-gradient(90deg, rgba(127,26,21,.28), rgba(127,26,21,.08)); margin-bottom: 2px; }
+.stat .v { font-variant-numeric: tabular-nums; text-align: right; }
+.stat .v small { color: var(--muted); font-size: 11px; margin-right: 4px; }
+.stat .bar { height: 7px; background: rgba(0,0,0,.45); border: 1px solid rgba(140,106,59,.5); }
+.stat .bar i { display: block; height: 100%; width: var(--w); background: #c99a3e; }
+.stat-note { font-size: 12px; color: var(--muted); margin: -1px 0 3px 6px; }
+.trait { display: flex; align-items: center; gap: 8px; padding: 3px 6px; margin-bottom: 2px; font-size: 14.5px;
+  background: linear-gradient(90deg, rgba(127,26,21,.28), rgba(127,26,21,.08)); }
+.trait img, .trait .ico-empty { width: 24px; height: 24px; border-radius: 50%; flex: 0 0 24px; }
+.trait .ico-empty { background: rgba(140,106,59,.3); }
+.trait b { color: #8bd34a; font-weight: 500; }
 dl.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; margin: 0 0 12px; font-size: 14px; }
 dl.kv dt { color: var(--muted); }
 dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
@@ -234,7 +253,6 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   <div class="army-status" id="armyStatus" aria-live="polite"></div>
   <div class="caps" id="capsBar" aria-label="Unit caps in use"></div>
   <p class="flash" id="flash" role="status" hidden></p>
-  <p class="army-hint">Click: inspect and customise. Double-click or drag &amp; drop: add to the army, or remove (drag out of the bar). − / + under a unit: experience rank. The lord is the general: picking another lord replaces it.</p>
 </section>
 
 <div class="layout">
@@ -555,30 +573,53 @@ function renderRoster() {
   });
 }
 
-/* ---------- Panneau de gauche : statistiques de l'unité ---------- */
+/* ---------- Panneau de gauche : fiche de l'unité (statistiques calculées depuis les tables du jeu : pvp_unit_stats) ----------
+   Comme dans le jeu, une ligne n'apparaît que si elle a un sens pour l'unité (tir, résistances, capacités…). */
 function renderUnitStats() {
   const p = $('unitStats');
   if (!state.focus) { p.innerHTML = '<p class="empty">Click a card to inspect the unit.</p>'; return; }
   const { unit } = state.focus, { card, opt } = unit;
-  const tab = DATA.tabs.find(t => t.key === card.t);
-  const pic = opt.img || card.img;
+  const raw = DATA.stats[opt.u] || [];
+  const st = Object.fromEntries(DATA.statCols.map((c, i) => [c, raw[i]]));
+  const scale = DATA.statScale;
   const tags = DATA.tags[opt.u] || [];
-  const rk = race().key, capKeys = capsOf(rk).m[opt.u] || [];
+  const traits = DATA.traits[opt.u] || [];
+  const ups = upgradesOf(race().key);
+  const pct = (c, v) => Math.min(100, 100 * v / (scale[c] || 1)).toFixed(0);
+  const row = (label, c, extra = '') => st[c] == null ? '' :
+    `<div class="stat"><span>${label}</span><span class="v">${extra}${fmt(st[c])}</span><span class="bar"><i style="--w:${pct(c, st[c])}%"></i></span></div>`;
+  const line = (icon, text) => `<div class="trait">${icon ? `<img src="images/${esc(icon)}" alt="">` : '<span class="ico-empty"></span>'}<span>${text}</span></div>`;
+  const section = (title, body) => body ? `<h4 class="block-title serif">${title}</h4>${body}` : '';
+  const traitList = kind => traits.filter(t => t[0] === kind).map(t => line(t[2], esc(t[1]))).join('');
+  // pour un personnage : capacités, objets et sorts cochés dans la personnalisation, comme dans la fiche du jeu
+  const chosen = types => [...unit.sel].filter(k => ups[k] && types.includes(ups[k][1])).map(k => line(ups[k][5], esc(ups[k][0]))).join('');
+  const resistances = [['Physical resistance', 'physical_resistance'], ['Spell resistance', 'spell_resistance'],
+    ['Missile resistance', 'missile_resistance'], ['Fire resistance', 'fire_resistance'], ['Ward save', 'ward_save']]
+    .filter(([, c]) => st[c]).map(([l, c]) => line(null, `${l}: <b>${st[c] > 0 ? '+' : ''}${st[c]}%</b>`)).join('');
+  const notes = [st.bonus_v_large ? `+${st.bonus_v_large} vs large` : '', st.bonus_v_infantry ? `+${st.bonus_v_infantry} vs infantry` : '']
+    .filter(Boolean).join(' · ');
   p.innerHTML = `
-    ${pic ? `<img class="portrait" src="images/${esc(pic)}" alt="" onerror="this.remove()">` : ''}
     <h3 class="serif">${esc(opt.n)}</h3>
-    <p class="sub">${esc(tab ? tab.name : card.t)} › ${esc(card.grp || '')}${opt.fly ? ' · flying' : ''}</p>
+    <p class="class-line">${opt.ic ? `<img src="images/${esc(opt.ic)}" alt="">` : ''}<span>${esc(card.grp || '')}${opt.fly ? ' · flying' : ''}</span></p>
     ${tags.length ? `<ul class="tags">${tags.map(([n, s]) => `<li class="${s.includes('negative') ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${esc(n)}</li>`).join('')}</ul>` : ''}
-    <dl class="kv">
-      <dt>Total cost</dt><dd>${fmt(unitCost(unit))}</dd>
-      <dt>Unit</dt><dd>${fmt(opt.c)}</dd>
-      <dt>Rank ${shownRank(unit)}</dt><dd>${opt.rn ? 'included' : canRank(opt) ? '+' + fmt(rankedBase(opt.c, unit.rank) - opt.c) : 'n/a'}</dd>
-      <dt>Customisation</dt><dd>+${fmt(upgradesCost(unit.sel))}</dd>
-      <dt>Can lead</dt><dd>${opt.l && opt.g ? 'Yes' : 'No'}</dd>
-    </dl>
-    ${capKeys.length ? `<h4 class="block-title serif">Unit caps</h4><ul class="caps-list">${capKeys.map(k => `<li>${esc(capsOf(rk).g[k][0])}: ${effectiveCap(rk, k, state.army)}</li>`).join('')}</ul>` : ''}
-    <h4 class="block-title serif">Statistics</h4><p class="empty">Armour, leadership, speed, attack…: coming soon.</p>
-    <p class="key">${esc(opt.u)}</p>`;
+    ${st.health != null ? `<div class="hp" title="Health"><i style="--w:${pct('health', st.health)}%"></i><span>${fmt(st.health)}</span></div>` : ''}
+    ${st.unit_size != null ? `<p class="size-line">Unit size: ${fmt(st.unit_size)}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
+    ${row('Armour', 'armour', st.shield_block_chance ? `<small title="Missile block chance">shield ${st.shield_block_chance}%</small>` : '')}
+    ${row('Leadership', 'leadership')}
+    ${row('Speed', 'speed')}
+    ${row('Melee Attack', 'melee_attack')}
+    ${row('Melee Defence', 'melee_defence')}
+    ${row('Weapon Strength', 'weapon_strength', st.weapon_ap_damage ? `<small title="Armour-piercing part">AP ${st.weapon_ap_damage}</small>` : '')}
+    ${notes ? `<p class="stat-note">${notes}</p>` : ''}
+    ${row('Charge Bonus', 'charge_bonus')}
+    ${row('Ammunition', 'ammunition')}
+    ${row('Range', 'range')}
+    ${row('Missile Strength', 'missile_strength')}
+    ${section('Passive Abilities', traitList('p'))}
+    ${section('Abilities', chosen(['a', 'i']))}
+    ${section('Spells', chosen(['s']))}
+    ${section('Unit Attributes', traitList('t'))}
+    ${section('Resistances', resistances)}`;
 }
 
 /* ---------- Panneau de personnalisation (sous l'armée) : affiché seulement pour une unité personnalisable ---------- */

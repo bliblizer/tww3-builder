@@ -122,3 +122,12 @@ models:
     columns:
       - name: rank
         data_tests: [unique, not_null]
+
+  - name: pvp_unit_stats
+    description: "Statistiques des unités jouables calculées depuis les tables du jeu (taille, PV, vitesse, armure, mêlée, tir, résistances)."
+    columns:
+      - name: unit_key
+        data_tests: [unique, not_null]
+
+  - name: pvp_unit_traits
+    description: "Capacités innées et attributs (Vanguard Deployment, Hide (forest)…) de chaque unité jouable."

@@ -53,6 +53,14 @@ RENAME = {  # renommages vers des clés homogènes (par table)
  'battle_entities': {'key': 'battle_entity_key'},
  'mounts': {'key': 'mount_key', 'entity': 'battle_entity_key'},
  'battle_set_piece_armies_characters_items': {'character_item': 'ancillary_key', 'character_name': 'unit_key'},
+ 'unit_armour_types': {'key': 'armour_key'},
+ 'unit_shield_types': {'key': 'shield_key'},
+ 'melee_weapons': {'key': 'melee_weapon_key'},
+ 'missile_weapons': {'key': 'missile_weapon_key', 'default_projectile': 'projectile_key'},
+ 'projectiles': {'key': 'projectile_key', 'explosion_type': 'explosion_key'},
+ 'projectiles_explosions': {'key': 'explosion_key'},
+ 'unit_attributes': {'key': 'attribute_key'},
+ 'unit_attributes_to_groups_junctions': {'attribute': 'attribute_key'},
  'unit_variants': {'faction': 'faction_key', 'unit': 'land_unit_key', 'name': 'variant_name', 'variant': 'variant_key'},
 }
 PK = {  # clé primaire attendue (testée unique + non nulle si les données le confirment)

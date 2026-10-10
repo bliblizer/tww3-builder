@@ -56,3 +56,13 @@ db/land_units_tables/data__.tsv,unites,Land units : entité, monture, moteur (po
 db/battle_entities_tables/data__.tsv,unites,Entités de combat : vitesses dont fly_speed (vol),confirmé
 db/mounts_tables/data__.tsv,unites,Montures -> entité de combat,confirmé
 db/battle_set_piece_armies_characters_items_tables/data__.tsv,personnalisation,Objets proposés à chaque personnage en bataille personnalisée (clé d unité),confirmé
+db/unit_armour_types_tables/data__.tsv,statistiques,Type d armure -> valeur d armure,confirmé
+db/unit_shield_types_tables/data__.tsv,statistiques,Bouclier -> chance de bloquer les projectiles,confirmé
+db/melee_weapons_tables/data__.tsv,statistiques,Armes de mêlée (dégâts, perforants, bonus),confirmé
+db/missile_weapons_tables/data__.tsv,statistiques,Armes de tir -> projectile,confirmé
+db/projectiles_tables/data__.tsv,statistiques,Projectiles (dégâts, portée, rechargement),confirmé
+db/projectiles_explosions_tables/data__.tsv,statistiques,Explosions des projectiles,confirmé
+db/unit_attributes_tables/data__.tsv,statistiques,Attributs d unités,confirmé
+db/unit_attributes_to_groups_junctions_tables/data__.tsv,statistiques,Attributs de chaque groupe d attributs (land_units.attribute_group),confirmé
+text/db/unit_attributes__.loc.tsv,textes,Noms des attributs d unités,confirmé
+text/db/ui_text_replacements__.loc.tsv,textes,Textes de remplacement référencés par les renvois tr (ex. Vanguard Deployment),confirmé

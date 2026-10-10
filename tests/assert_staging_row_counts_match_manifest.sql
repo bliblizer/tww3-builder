@@ -111,6 +111,26 @@ with staged as (
     select 'db/mounts_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__mounts') }}
     union all
     select 'db/battle_set_piece_armies_characters_items_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battle_set_piece_armies_characters_items') }}
+    union all
+    select 'db/unit_armour_types_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_armour_types') }}
+    union all
+    select 'db/unit_shield_types_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_shield_types') }}
+    union all
+    select 'db/melee_weapons_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__melee_weapons') }}
+    union all
+    select 'db/missile_weapons_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__missile_weapons') }}
+    union all
+    select 'db/projectiles_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__projectiles') }}
+    union all
+    select 'db/projectiles_explosions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__projectiles_explosions') }}
+    union all
+    select 'db/unit_attributes_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_attributes') }}
+    union all
+    select 'db/unit_attributes_to_groups_junctions_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_attributes_to_groups_junctions') }}
+    union all
+    select 'text/db/unit_attributes__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_attributes') }}
+    union all
+    select 'text/db/ui_text_replacements__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__ui_text_replacements') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

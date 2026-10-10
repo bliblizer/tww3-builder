@@ -68,7 +68,7 @@ tabs = rows("""
     left join staging.stg_loc_texts x on x.loc_key = 'ui_unit_group_parents_onscreen_name_' || t.tab_key
     order by t.tab_order, t.tab_key""")
 
-races = rows("""select race_key as key, race_name as name, nb_cards, accent_hex as accent, race_image
+races = rows("""select race_key as key, race_name as name, nb_cards, accent_hex as accent, race_image, race_image_alt
                 from marts.pvp_races order by race_name""")
 
 cards = rows("""
@@ -215,6 +215,22 @@ for r in rows("select race_key, unit_set_key, unit_key from marts.pvp_cap_group_
 for r in rows("select race_key, unit_set_key, general_card_id, cap from marts.pvp_cap_overrides"):
     caps[r['race_key']]['o'].setdefault(r['general_card_id'], {})[r['unit_set_key']] = r['cap']
 
+# ---------- statistiques et traits des unités (panneau de gauche) ----------
+STAT_COLS = ['unit_size', 'health', 'speed', 'armour', 'shield_block_chance', 'leadership', 'melee_attack', 'melee_defence',
+             'weapon_strength', 'weapon_ap_damage', 'bonus_v_large', 'bonus_v_infantry', 'charge_bonus', 'ammunition', 'range',
+             'missile_strength', 'physical_resistance', 'spell_resistance', 'missile_resistance', 'fire_resistance', 'ward_save']
+stats = {r['unit_key']: [r[c] if r[c] is None else (int(r[c]) if float(r[c]).is_integer() else float(r[c])) for c in STAT_COLS]
+         for r in rows("select * from marts.pvp_unit_stats")}
+def p95(col):   # échelle des barres : 95e centile (les valeurs extrêmes remplissent simplement la barre)
+    vals = sorted(v[STAT_COLS.index(col)] for v in stats.values() if v[STAT_COLS.index(col)] is not None)
+    return vals[int(len(vals) * 0.95)] if vals else 1
+stat_scale = {c: p95(c) for c in ['health', 'armour', 'leadership', 'speed', 'melee_attack', 'melee_defence', 'weapon_strength',
+                                  'charge_bonus', 'ammunition', 'range', 'missile_strength']}
+traits = {}
+for r in rows("select unit_key, kind, trait_name, icon_name from marts.pvp_unit_traits order by unit_key, kind, trait_name"):
+    # 'p' = capacité innée (Passive Abilities), 't' = attribut (Unit Attributes)
+    traits.setdefault(r['unit_key'], []).append(['p' if r['kind'] == 'ability' else 't', r['trait_name'], ability_icon(r['icon_name'])])
+
 # ---------- forces / faiblesses, rangs d'expérience, catégories de variantes ----------
 tags = {}
 for r in rows("select unit_key, tag_name, state from marts.pvp_unit_tags order by unit_key, sort_order, tag_name"):
@@ -233,12 +249,14 @@ if os.path.isdir(RACE_ASSETS):
             if ext.lower() in EXTS:
                 race_found.setdefault(stem.lower(), os.path.join(dirpath, name))
 for r in races:
-    key = (r['race_image'] or '').lower()   # <faction>_large (race_strip_images) ou <faction> (bannières)
-    src = race_found.get(key) or race_found.get(key.removesuffix('_large'))
+    alt = (r.pop('race_image_alt') or '').lower()   # <culture> (bannières), sinon <faction>_large ou <faction>
+    names = [(r['race_image'] or '').lower(), alt, alt.removesuffix('_large')]
+    src = next((race_found[n] for n in names if n in race_found), None)
     r['race_image'] = copy_image(src, 'races', r['race_image']) if src else None
 
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
-        'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin}
+        'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
+        'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()

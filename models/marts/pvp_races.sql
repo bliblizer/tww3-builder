@@ -3,8 +3,8 @@
 --   main_faction_key : faction de la race qui a le plus d'unités jouables (sert aux couleurs et à l'illustration)
 --   accent_hex       : couleur principale de cette faction (factions.primary_colour_hex) ; si elle est trop sombre
 --                      pour un fond sombre, sa couleur secondaire ; sinon vide (l'application garde son rouge par défaut)
---   race_image       : illustration de la race utilisée par l'écran de bataille personnalisée du jeu
---                      (ui/frontend ui/race_strip_images/<race_image>.png, à extraire avec RPFM)
+--   race_image       : illustration de la race (bannière nommée d'après la clé de culture, ex. wh3_main_dae_daemons) ;
+--   race_image_alt   : nom de repli (ui/frontend ui/race_strip_images/<faction>_large.png)
 
 with cards as (
     select race_key, any_value(race_name) as race_name, count(*) as nb_cards, sum(nb_options) as nb_options,
@@ -39,8 +39,10 @@ select
     m.faction_key                                                          as main_faction_key,
     case when col.primary_luma >= 60 then col.primary_colour_hex
          when col.secondary_luma >= 60 then col.secondary_colour_hex end  as accent_hex,
-    m.faction_key || '_large'                                              as race_image,
+    cs.culture_key                                                         as race_image,       -- bannière <culture>.png
+    m.faction_key || '_large'                                              as race_image_alt,   -- race_strip_images/<faction>_large.png
     '{{ var("patch") }}'                                                   as patch
 from cards c
 join main_faction m using (race_key)
 left join colours col on col.faction_key = m.faction_key
+left join {{ ref('stg_dump__cultures_subcultures') }} cs on cs.subculture_key = c.race_key

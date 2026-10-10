@@ -304,3 +304,33 @@ models:
     description: "Montures -> entité de combat (source : db/mounts_tables/data__.tsv)"
   - name: stg_dump__battle_set_piece_armies_characters_items
     description: "Objets proposés à chaque personnage en bataille personnalisée (clé d unité) (source : db/battle_set_piece_armies_characters_items_tables/data__.tsv)"
+  - name: stg_dump__unit_armour_types
+    description: "Type d armure -> valeur d armure (source : db/unit_armour_types_tables/data__.tsv)"
+  - name: stg_dump__unit_shield_types
+    description: "Bouclier -> chance de bloquer les projectiles (source : db/unit_shield_types_tables/data__.tsv)"
+  - name: stg_dump__melee_weapons
+    description: "Armes de mêlée (dégâts (source : db/melee_weapons_tables/data__.tsv)"
+  - name: stg_dump__missile_weapons
+    description: "Armes de tir -> projectile (source : db/missile_weapons_tables/data__.tsv)"
+  - name: stg_dump__projectiles
+    description: "Projectiles (dégâts (source : db/projectiles_tables/data__.tsv)"
+  - name: stg_dump__projectiles_explosions
+    description: "Explosions des projectiles (source : db/projectiles_explosions_tables/data__.tsv)"
+  - name: stg_dump__unit_attributes
+    description: "Attributs d unités (source : db/unit_attributes_tables/data__.tsv)"
+  - name: stg_dump__unit_attributes_to_groups_junctions
+    description: "Attributs de chaque groupe d attributs (land_units.attribute_group) (source : db/unit_attributes_to_groups_junctions_tables/data__.tsv)"
+  - name: stg_dump_loc__unit_attributes
+    description: "Noms des attributs d unités (source : text/db/unit_attributes__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__ui_text_replacements
+    description: "Textes de remplacement référencés par les renvois tr (ex. Vanguard Deployment) (source : text/db/ui_text_replacements__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"

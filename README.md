@@ -46,7 +46,7 @@ dbt build --profiles-dir .
 ```
 
 Vérifie que `(.venv)` apparaît en début de ligne avant de lancer dbt.
-Le résultat attendu est `Done. PASS=225 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
+Le résultat attendu est `Done. PASS=244 WARN=2 ERROR=0`. Les deux avertissements sont volontaires, voir « Caps et validation » et « Personnalisation des personnages ».
 
 Pour regarder une table : `dbt show --select int_unit_faction_status --profiles-dir .`
 Pour une exploration plus confortable, ouvre `tww3.duckdb` avec DBeaver. Les schémas sont `staging`, `intermediate`, `marts` et `reference`.
@@ -185,7 +185,7 @@ Les images ne sont pas dans le dump GitHub. Elles viennent des fichiers du jeu, 
 |---|---|---|
 | `ui/units/icons/` | `assets/unit_cards/` | Les cartes d'unités : `<unit_card>.png` (1 140 images utiles) |
 | `ui/portraits/units/` | `assets/portraits_units/` | Les **personnages** dont la carte du jeu est générique (`placeholder`, 693 options). Le jeu construit leur carte à partir de leur portrait (`units_custom_battle_permissions.general_portrait`), soit 210 portraits utiles |
-| `ui/frontend ui/race_strip_images/` (ou bannières `<faction>.png`) | `assets/race_images/` | Les illustrations des races : menu de sélection et fond de page |
+| Bannières des races `<culture>.png` (ex. `wh3_main_dae_daemons.png`) | `assets/race_images/` | Les illustrations des races, pour le menu de sélection et le fond de page. Le nom attendu est la clé de culture (`pvp_races.race_image`) ; à défaut, `<faction>_large.png` |
 | `ui/common ui/unit_category_icons/` | `assets/unit_category_icons/` | L'icône de catégorie en bas de chaque carte (`pvp_roster_options.category_icon` : icône du type de personnage, par exemple le domaine de magie, sinon celle du sous-groupe d'interface ; 425 icônes utiles) |
 | `ui/battle ui/ability_icons/` | `assets/ability_icons/` | Les icônes des sorts et capacités (`unit_abilities.icon_name`) et des domaines de magie (icône du passif du domaine, `special_ability_groups.icon_path`) |
 | `ui/campaign ui/mounts/` | `assets/mount_icons/` | Les icônes des montures (`units_custom_battle_mounts.icon_name`) |
@@ -241,6 +241,27 @@ python -m playwright install chromium
 **Dans le builder :**
 - Une carte est grisée quand aucune de ses options ne peut être ajoutée (fonds, armée complète, plafond atteint). Le survol en donne la raison.
 - Sous l'armée s'affichent le statut (« ✓ Armée valide » ou la liste des problèmes) et les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés.
+
+## Fiche d'unité (panneau de gauche)
+
+**Les statistiques sont calculées à partir des tables du jeu** du dump (et non du JSON), et se mettent donc à jour à chaque patch :
+- `pvp_unit_stats` : taille, points de vie, vitesse, armure (+ bouclier), commandement, attaque et défense de mêlée, puissance d'arme (+ part perforante, bonus contre les grandes cibles et l'infanterie), charge, munitions, portée, puissance de tir, résistances ;
+- `pvp_unit_traits` : capacités innées (« Passive Abilities », par exemple Frenzy) et attributs (« Unit Attributes », par exemple Vanguard Deployment ou Hide (forest)).
+
+**Formules :**
+- **Armure, commandement, attaque, défense, charge, portée, rechargement** : valeurs directes des tables `land_units`, `unit_armour_types` et `projectiles`.
+- **Puissance d'arme** : dégâts + dégâts perforants de l'arme de mêlée.
+- **Points de vie** : soldats + montures + bonus de points de vie par corps.
+- **Vitesse** : vitesse de vol si l'unité vole, sinon la plus grande vitesse de course (soldat ou monture), × 10.
+- **Puissance de tir** : dégâts d'une salve (projectile + explosion) × projectiles × tirs × rafale × 10 / temps de rechargement. Ce temps est réduit par `land_units.reload`.
+- **Résistances** : colonnes `damage_mod_*` de `land_units`.
+
+**Vérifications :**
+- `assert_unit_stats_match_game` vérifie les valeurs relevées en jeu sur les captures (Dwarf Warriors (Great Weapons), Ekrund Miners) : elles sont identiques.
+- Comparé à un export tiers (tww3 stats card) sur les 2 161 unités jouables : armure, commandement, mêlée, charge et puissance de tir sont **identiques à 100 %**, la taille à 99,8 %, la vitesse à 96 % et les points de vie à 88 %. Les écarts restants concernent les chars, les machines de guerre et les personnages sur char ou engin, dont l'engin n'est pas encore pris en compte.
+- Les rangs d'expérience ne modifient pas encore les statistiques affichées.
+
+**Affichage :** comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
 
 ## Personnalisation des personnages (sorts, capacités, objets)
 

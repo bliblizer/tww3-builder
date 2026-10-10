@@ -31,16 +31,32 @@ with recursive all_loc as (
     select loc_key, text, 'units_custom_battle_types' as loc_table from {{ ref('stg_dump_loc__units_custom_battle_types') }}
     union all
     select loc_key, text, 'units_custom_battle_type_categories' as loc_table from {{ ref('stg_dump_loc__units_custom_battle_type_categories') }}
+    union all
+    select loc_key, text, 'unit_attributes' as loc_table from {{ ref('stg_dump_loc__unit_attributes') }}
+    union all
+    select loc_key, text, 'ui_text_replacements' as loc_table from {{ ref('stg_dump_loc__ui_text_replacements') }}
 ),
+
+ref_targets as (
+    -- cible d'un renvoi : une clé de texte complète, ou le nom court d'un texte de ui_text_replacements
+    -- (« guerrilla_deployment » -> ui_text_replacements_localised_text_guerrilla_deployment) ; 1 seule cible par nom
+    select loc_key as ref_key, text from all_loc
+    union all
+    select replace(loc_key, 'ui_text_replacements_localised_text_', ''), text
+    from all_loc a
+    where loc_table = 'ui_text_replacements' and starts_with(loc_key, 'ui_text_replacements_localised_text_')
+      and not exists (select 1 from all_loc b where b.loc_key = replace(a.loc_key, 'ui_text_replacements_localised_text_', ''))
+),
+
 resolved(loc_key, loc_table, text, depth) as (
     select loc_key, loc_table, text, 0 from all_loc
     union all
     select r.loc_key, r.loc_table,
-           replace(r.text, {{ ref_open }} || target.loc_key || {{ ref_close }}, coalesce(target.text, '')),
+           replace(r.text, {{ ref_open }} || regexp_extract(r.text, '[{][{]tr:([^}]+)[}][}]', 1) || {{ ref_close }}, coalesce(target.text, '')),
            r.depth + 1
     from resolved r
-    join all_loc target
-      on target.loc_key = regexp_extract(r.text, '[{][{]tr:([^}]+)[}][}]', 1)
+    join ref_targets target
+      on target.ref_key = regexp_extract(r.text, '[{][{]tr:([^}]+)[}][}]', 1)
     where r.depth < 10
 )
 select
