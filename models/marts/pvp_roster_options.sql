@@ -84,13 +84,13 @@ select
     o.is_general_unit_pvp                                              as can_be_general,
     o.caste_key,
     o.caste_key = 'lord'                                               as is_lord,   -- une armée n'a qu'un seul lord (validé en jeu)
-    -- rôle dans la composition (panneau de statistiques de l'armée). Seuils de l'infanterie = choix de présentation :
-    -- légère < 500, de ligne 500-899, d'élite >= 900 (prix de base multijoueur)
+    -- rôle dans la composition (panneau de statistiques de l'armée) ; infanterie selon le tier du jeu (main_units.tier) :
+    -- tier I = légère (« trash »), II = de ligne, III et plus = d'élite
     case
         when o.caste_key = 'lord'                                        then 'lord'
         when o.caste_key = 'hero'                                        then 'hero'
-        when o.caste_key in ('melee_infantry', 'monstrous_infantry') and o.multiplayer_cost < 500 then 'infantry_light'
-        when o.caste_key in ('melee_infantry', 'monstrous_infantry') and o.multiplayer_cost < 900 then 'infantry_line'
+        when o.caste_key in ('melee_infantry', 'monstrous_infantry') and mu.tier <= 1 then 'infantry_light'
+        when o.caste_key in ('melee_infantry', 'monstrous_infantry') and mu.tier = 2  then 'infantry_line'
         when o.caste_key in ('melee_infantry', 'monstrous_infantry')    then 'infantry_elite'
         when o.caste_key in ('missile_infantry', 'missile_cavalry')     then 'ranged'
         when o.caste_key = 'warmachine'                                  then 'artillery'
@@ -116,6 +116,7 @@ from options o
 join cards_with_mounts c using (card_id)
 left join {{ ref('int_unit_card_images') }} img using (unit_key)
 left join flying f using (unit_key)
+left join {{ ref('stg_dump__main_units') }} mu using (unit_key)
 left join portraits pt using (unit_key)
 left join category_icons ci using (unit_key)
 left join lore_groups lg using (unit_key)

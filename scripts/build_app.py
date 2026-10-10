@@ -218,9 +218,14 @@ for r in rows("select race_key, unit_set_key, general_card_id, cap from marts.pv
 # ---------- statistiques et traits des unités (panneau de gauche) ----------
 STAT_COLS = ['unit_size', 'health', 'speed', 'armour', 'shield_block_chance', 'leadership', 'melee_attack', 'melee_defence',
              'weapon_strength', 'weapon_ap_damage', 'bonus_v_large', 'bonus_v_infantry', 'charge_bonus', 'ammunition', 'range',
-             'missile_strength', 'physical_resistance', 'spell_resistance', 'missile_resistance', 'fire_resistance', 'ward_save']
-stats = {r['unit_key']: [r[c] if r[c] is None else (int(r[c]) if float(r[c]).is_integer() else float(r[c])) for c in STAT_COLS]
-         for r in rows("select * from marts.pvp_unit_stats")}
+             'missile_strength', 'physical_resistance', 'spell_resistance', 'missile_resistance', 'fire_resistance', 'ward_save',
+             'tier', 'is_armour_piercing', 'is_anti_large', 'has_magical_attacks', 'has_flaming_attacks',
+             'is_daemonic_or_undead', 'has_shield_or_missile_resistance']
+def compact(v):
+    if v is None: return None
+    if isinstance(v, bool): return int(v)
+    return int(v) if float(v).is_integer() else float(v)
+stats = {r['unit_key']: [compact(r[c]) for c in STAT_COLS] for r in rows("select * from marts.pvp_unit_stats")}
 def p95(col):   # échelle des barres : 95e centile (les valeurs extrêmes remplissent simplement la barre)
     vals = sorted(v[STAT_COLS.index(col)] for v in stats.values() if v[STAT_COLS.index(col)] is not None)
     return vals[int(len(vals) * 0.95)] if vals else 1

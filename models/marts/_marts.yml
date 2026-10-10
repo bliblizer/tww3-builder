@@ -64,7 +64,7 @@ models:
               arguments:
                 values: ['card', 'portrait']
       - name: role
-        description: "Rôle dans la composition (lord, hero, infantry_light / line / elite, ranged, artillery, cavalry, monster, war_beast, other)."
+        description: "Rôle dans la composition (lord, hero, infantry_light / line / elite = infanterie de tier I / II / III+, ranged, artillery, cavalry, monster, war_beast, other)."
         data_tests:
           - not_null
           - accepted_values:

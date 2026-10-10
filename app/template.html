@@ -71,9 +71,9 @@ button { font: inherit; color: inherit; }
 .army-head h2 { font-size: 16px; margin: 0; }
 .army-head .clear { background: none; border: 1px solid rgba(244,234,214,.5); color: #f4ead6; border-radius: 4px; padding: 1px 10px; cursor: pointer; margin-left: 8px; }
 .slots { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 60px; }
+.slot { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 0 0 50px; }
 .slot .card { flex: none; }
-.slot-empty { flex: 0 0 60px; height: 130px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
+.slot-empty { flex: 0 0 50px; height: 108px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
 .rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
 .rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
 .rank-ctl button:disabled { opacity: .35; cursor: default; }
@@ -91,15 +91,15 @@ button { font: inherit; color: inherit; }
 
 /* ---------- Cartes d'unité ---------- */
 .card {
-  flex: 0 0 60px; width: 60px; height: 130px; padding: 0; position: relative; cursor: pointer;
+  flex: 0 0 50px; width: 50px; height: 108px; padding: 0; position: relative; cursor: pointer;
   border: 1px solid var(--bronze); border-radius: 4px; overflow: hidden; text-align: center;
   background: var(--card-bg, #4a2c2a); color: var(--card-ink); box-shadow: 0 2px 4px var(--shadow);
   display: flex; flex-direction: column;
 }
 .card:hover { border-color: var(--gold); }
-.card .cost { background: rgba(0,0,0,.6); color: #f6d58a; font-weight: 700; font-size: 13px; padding: 1px 0; font-variant-numeric: tabular-nums; }
-.card .mono { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; opacity: .9; }
-.card .nm { font-size: 10px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
+.card .cost { background: rgba(0,0,0,.6); color: #f6d58a; font-weight: 700; font-size: 11.5px; padding: 1px 0; font-variant-numeric: tabular-nums; }
+.card .mono { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; opacity: .9; }
+.card .nm { font-size: 9px; line-height: 1.15; padding: 2px 3px 3px; background: rgba(0,0,0,.35); height: 38px;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .card .art { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: top; display: block; }
 .card.has-img .mono, .card.has-img .nm { display: none; }
@@ -115,16 +115,20 @@ button { font: inherit; color: inherit; }
 .card.blocked { filter: grayscale(.85) brightness(.6); }
 /* habillage du jeu (ui/skins/default) quand il est fourni : cadre, demi-cercle et icône de catégorie, sélection, survol */
 .card.skinned { border: none; border-radius: 0; box-shadow: none; overflow: visible; background: var(--card-bg, #4a2c2a); }
-.card.skinned .art { position: absolute; inset: 0; width: 60px; height: 130px; }
-.card.skinned .ov { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 3; }
+.card.skinned .art { position: absolute; inset: 0; width: 50px; height: 108px; }
+.card.skinned .ov { position: absolute; top: 0; left: 0; width: 50px; height: 108px; pointer-events: none; z-index: 3; }
 .card.skinned .ov-selected, .card.skinned .ov-hover { display: none; }
 .card.skinned.selected { outline: none; }
 .card.skinned.selected .ov-selected, .card.skinned:hover .ov-hover { display: block; }
-.card.skinned .semi { position: absolute; bottom: 0; left: 2px; z-index: 4; pointer-events: none; }
-.card.skinned .cat-icon { position: absolute; bottom: 0; left: 19px; width: 22px; height: 22px; z-index: 5; pointer-events: none; }
+.card.skinned .semi { position: absolute; bottom: 0; left: 2px; width: 46px; z-index: 4; pointer-events: none; }
+.card.skinned .cat-icon { position: absolute; bottom: 0; left: 15px; width: 19px; height: 19px; z-index: 5; pointer-events: none; }
 .card.skinned .cost { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 6; background: rgba(0,0,0,.55); }
-.card.skinned .badge-opt { top: 21px; z-index: 6; }
-.card .xp-img { position: absolute; top: 21px; left: 1px; width: 24px; height: 24px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
+.card.skinned .badge-opt { top: 18px; z-index: 6; }
+/* tier du jeu (I à V) en haut à droite, unités hors lords et héros */
+.card .tier { position: absolute; top: 18px; right: 2px; z-index: 7; font-family: "Cinzel", Georgia, serif; font-size: 9.5px; font-weight: 700;
+  color: #f6d58a; background: rgba(0,0,0,.65); border: 1px solid var(--bronze); border-radius: 2px; padding: 0 2px; line-height: 1.3; }
+.card .tier + .badge-opt, .card .badge-opt { right: auto; left: 2px; }
+.card .xp-img { position: absolute; top: 18px; left: 1px; width: 20px; height: 20px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
 .card.skinned .chevrons { z-index: 6; }
 .card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
 .card.skinned .badge-cap { bottom: 26px; z-index: 7; }
@@ -200,30 +204,46 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 
 /* roster */
 .roster h2 { font-size: 18px; margin: 0 0 10px; }
-.sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 14px 18px; }
+.sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }   /* 2 colonnes, dans l'ordre des onglets : comme le jeu */
 .section-head { display: flex; justify-content: space-between; align-items: center; background: var(--band); color: #f4ead6; border: 1px solid var(--bronze); padding: 3px 10px; margin-bottom: 6px; }
 .section-head h3 { margin: 0; font-size: 15px; }
 .section-head .n { font-size: 13px; opacity: .85; }
 .section-cards { display: flex; flex-wrap: wrap; gap: 5px; }
 
 /* composition */
-.comp-row { margin: 0 0 7px; font-size: 13.5px; }
+.comp-row { margin: 0 0 6px; font-size: 13px; }
+.comp-row.zero { opacity: .45; }
+.comp-row .top .pc { color: var(--text); font-variant-numeric: tabular-nums; }
+.comp-row .det { font-size: 12px; color: var(--muted); margin-top: 1px; font-variant-numeric: tabular-nums; }
+.card.skinned .mono { margin-top: 18px; font-size: 16px; }
+.comp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 2px 0 2px; }
+.comp-head b { font-size: 19px; color: var(--gold); }
+.elite { display: flex; justify-content: space-between; align-items: baseline; }
+.elite b { font-size: 21px; color: var(--gold); }
+.tiers { display: flex; height: 11px; border-radius: 2px; overflow: hidden; margin: 6px 0 3px; background: rgba(0,0,0,.4); }
+.tiers i { display: block; height: 100%; }
+.tl { display: flex; gap: 8px; font-size: 11.5px; color: var(--muted); }
+.tl i, .tiers i.t1, .tiers i.t2, .tiers i.t3, .tiers i.t4, .tiers i.t5 { display: inline-block; }
+.tl i { width: 9px; height: 9px; margin-right: 3px; vertical-align: -1px; }
+.t1 { background: #6b6155; } .t2 { background: #8c7a4f; } .t3 { background: #b08a3c; } .t4 { background: #cf9a2e; } .t5 { background: #f2c94c; }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+.kpi { background: var(--panel-2); border: 1px solid rgba(140,106,59,.5); border-radius: 3px; padding: 5px 7px; }
+.kpi b { display: block; font-size: 16px; color: var(--gold); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 12px; color: var(--muted); }
 .comp-row .top { display: flex; justify-content: space-between; gap: 6px; }
 .comp-row .top b { font-weight: 500; }
 .comp-row .top span { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bar { height: 6px; border-radius: 3px; background: rgba(140,106,59,.25); overflow: hidden; margin-top: 2px; }
 .bar i { display: block; height: 100%; background: var(--accent); }
-.footer { color: var(--muted); font-size: 13px; padding: 0 20px 24px; }
+.footer { color: var(--muted); font-size: 13px; padding: 24px 0 0; }
 
-@media (max-width: 1150px) {
-  .layout { grid-template-columns: 280px minmax(0, 1fr); }
-  .side.right { grid-column: 1 / -1; position: static; max-height: none; border-left: none; border-top: 1px solid var(--bronze); min-height: 0; }
+@media (max-width: 1250px) {
+  .layout { grid-template-columns: 250px minmax(0, 1fr) 250px; }
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
   .custom { height: auto; max-height: 70vh; }
   .side { position: static; max-height: none; min-height: 0 !important; border: none !important; border-bottom: 1px solid var(--bronze) !important; }
-  .sections { grid-template-columns: 1fr; }
   .race-picker { width: 100%; }
   .funds { margin-left: 0; }
 }
@@ -263,10 +283,10 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
       <h2 class="serif">Unit Roster</h2>
       <div class="sections" id="sections"></div>
     </div>
+    <p class="footer" id="footer"></p>   <!-- dans la colonne centrale : les panneaux latéraux restent visibles jusqu'en bas de page -->
   </main>
   <aside class="side right" id="composition" aria-label="Army composition statistics"></aside>
 </div>
-<p class="footer" id="footer"></p>
 
 <script>
 const DATA = /*__DATA__*/null;
@@ -279,8 +299,8 @@ const DIMS = ['lore', 'mark', 'spirit', 'other', 'mount'];
 const DIM_CAT = { lore: 'type_spell_lore', mark: 'type_mark', spirit: 'type_forest_spirit' };
 const UPGRADE_SECTIONS = [['s', 'Spells'], ['a', 'Abilities'], ['i', 'Items']];
 const ROLES = [   // rôles de la composition (calculés dans pvp_roster_options.role)
-  ['lord', 'Lord'], ['hero', 'Heroes'], ['infantry_light', 'Light infantry'], ['infantry_line', 'Line infantry'],
-  ['infantry_elite', 'Elite infantry'], ['ranged', 'Ranged'], ['artillery', 'Artillery'], ['cavalry', 'Cavalry & chariots'],
+  ['lord', 'Lord'], ['hero', 'Heroes'], ['infantry_light', 'Trash infantry (tier I)'], ['infantry_line', 'Line infantry (tier II)'],
+  ['infantry_elite', 'Elite infantry (tier III+)'], ['ranged', 'Ranged'], ['artillery', 'Artillery'], ['cavalry', 'Cavalry & chariots'],
   ['monster', 'Monsters'], ['war_beast', 'War beasts'], ['other', 'Other']
 ];
 const TAB_COLORS = {
@@ -289,7 +309,9 @@ const TAB_COLORS = {
   constructs: '#3d3d3d', flying_war_machine: '#30404a', missile_monster_beasts: '#2a4340',
   artillery_war_machines: '#45392a', campaign_exclusives: '#333'
 };
-const CLICK_DELAY = 260;   // ms : un clic simple attend la fin d'un éventuel double-clic avant d'ouvrir les panneaux
+const CLICK_DELAY = 260;
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
+const statOf = (unitKey, col) => { const r = DATA.stats[unitKey]; return r ? r[DATA.statCols.indexOf(col)] : null; };   // ms : un clic simple attend la fin d'un éventuel double-clic avant d'ouvrir les panneaux
 const $ = id => document.getElementById(id);
 const fmt = n => String(Math.round(n));   // comme en jeu : pas de séparateur de milliers
 const race = () => DATA.races[state.raceIndex];
@@ -471,7 +493,8 @@ function cardEl(card, { cost, label = '', img = null, rank = 0, opt = card.opts[
     : `<span class="chevrons" style="--chev:${['', '#c9874a', '#d8dde3', '#f2c94c'][tier]}" title="Rank ${rank}">${'<i></i>'.repeat(n)}</span>`;
   b.innerHTML =
     `<span class="cost">${fmt(cost)}</span>` +
-    chev +
+    chev + (opt.role !== 'lord' && opt.role !== 'hero' && statOf(opt.u, 'tier')
+      ? `<span class="tier" title="Tier ${statOf(opt.u, 'tier')}">${ROMAN[statOf(opt.u, 'tier')]}</span>` : '') +
     (img ? `<img class="art" src="images/${esc(img)}" alt="" loading="lazy" draggable="false">` : '') + skinHtml +
     `<span class="mono serif">${esc(initials(card.n))}</span><span class="nm">${esc(card.n)}</span>`;
   b.title = card.n + (label ? ' (' + label + ')' : '') + (rank ? ` – rank ${rank}` : '');
@@ -696,24 +719,85 @@ function renderCustom() {
   }));
 }
 
-/* ---------- Panneau de droite : statistiques de la composition ---------- */
+/* ---------- Panneau de droite : statistiques de la composition ----------
+   Chaque ligne : nombre d'unités, nombre de modèles (soldats ; 1 pour une entité unique), coût et part des fonds. */
+const isChar = o => o.role === 'lord' || o.role === 'hero';
+const BY_ROLE = [   // l'infanterie est détaillée par tier dans « Overall »
+  ['Lord', u => u.opt.role === 'lord'], ['Heroes', u => u.opt.role === 'hero'],
+  ['Infantry', u => (u.opt.role || '').startsWith('infantry')], ['Ranged', u => u.opt.role === 'ranged'],
+  ['Artillery', u => u.opt.role === 'artillery'], ['Cavalry & chariots', u => u.opt.role === 'cavalry'],
+  ['Monsters', u => u.opt.role === 'monster'], ['War beasts', u => u.opt.role === 'war_beast'], ['Other', u => (u.opt.role || 'other') === 'other'],
+];
+const COMP_OVERALL = [   // [libellé, test sur une unité de l'armée]
+  ['Flying (non-missile)', u => u.opt.fly && statOf(u.opt.u, 'range') == null],
+  ['Flying missiles', u => u.opt.fly && statOf(u.opt.u, 'range') != null],
+  ['Short-range missiles (< 150)', u => !isChar(u.opt) && u.opt.role !== 'artillery' && statOf(u.opt.u, 'range') != null && statOf(u.opt.u, 'range') < 150],
+  ['Long-range missiles (≥ 150)', u => !isChar(u.opt) && u.opt.role !== 'artillery' && statOf(u.opt.u, 'range') >= 150],
+  ['Missile cavalry & chariots', u => u.card.t === 'missile_cavalry_chariots'],
+  ['Artillery', u => u.opt.role === 'artillery'],
+  ['Cavalry & monstrous cavalry', u => u.opt.role === 'cavalry' && u.card.t !== 'missile_cavalry_chariots'],
+  ['Big single entities', u => !isChar(u.opt) && statOf(u.opt.u, 'unit_size') === 1],
+  ['Trash infantry (tier I)', u => u.opt.role === 'infantry_light'],
+  ['Line infantry (tier II)', u => u.opt.role === 'infantry_line'],
+  ['Elite infantry (tier III+)', u => u.opt.role === 'infantry_elite'],
+];
+const COMP_TRAITS = [
+  ['Armour-piercing', u => statOf(u.opt.u, 'is_armour_piercing')],
+  ['Anti-large', u => statOf(u.opt.u, 'is_anti_large')],
+  ['Magical damage', u => statOf(u.opt.u, 'has_magical_attacks')],
+  ['Fire damage', u => statOf(u.opt.u, 'has_flaming_attacks')],
+  ['Daemonic or Undead', u => statOf(u.opt.u, 'is_daemonic_or_undead')],
+  ['Shields or missile resistance', u => statOf(u.opt.u, 'has_shield_or_missile_resistance')],
+];
+const COMP_SPEED = [
+  ['Fast (speed ≥ 80)', u => statOf(u.opt.u, 'speed') >= 80],
+  ['Slow (speed ≤ 30)', u => statOf(u.opt.u, 'speed') != null && statOf(u.opt.u, 'speed') <= 30],
+];
 function renderComposition() {
   const p = $('composition'), army = state.army;
   const total = spent();
   if (!army.length) { p.innerHTML = '<h3 class="serif">Composition</h3><p class="empty">Add units to see how the army is split.</p>'; return; }
-  const by = {};
-  army.forEach(u => { const r = u.opt.role || 'other'; (by[r] ||= { n: 0, c: 0 }); by[r].n++; by[r].c += unitCost(u); });
-  const fly = army.filter(u => u.opt.fly), flyCost = fly.reduce((s, u) => s + unitCost(u), 0);
-  const row = (label, n, c) => `<div class="comp-row"><div class="top"><b>${esc(label)}</b><span>${n} · ${fmt(c)} · ${total ? Math.round(100 * c / total) : 0}%</span></div>` +
-    `<div class="bar"><i style="width:${total ? (100 * c / total).toFixed(1) : 0}%"></i></div></div>`;
+  const models = u => statOf(u.opt.u, 'unit_size') || 0;
+  const sum = (list, f) => list.reduce((s, u) => s + f(u), 0);
+  const row = (label, pred) => {
+    const sel = army.filter(pred), n = sel.length, m = sum(sel, models), c = sum(sel, unitCost);
+    const pc = total ? 100 * c / total : 0;
+    return `<div class="comp-row${n ? '' : ' zero'}"><div class="top"><b>${esc(label)}</b><span class="pc">${Math.round(pc)}%</span></div>` +
+      `<div class="bar"><i style="width:${pc.toFixed(1)}%"></i></div>` +
+      `<div class="det">${n} unit${n === 1 ? '' : 's'} · ${fmt(m)} model${m === 1 ? '' : 's'} · ${fmt(c)} gold</div></div>`;
+  };
+  // indice d'élite : tier moyen pondéré par le coût, sur les unités hors lords et héros
+  const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
+  const troopCost = sum(troops, unitCost);
+  const elite = troopCost ? sum(troops, u => statOf(u.opt.u, 'tier') * unitCost(u)) / troopCost : 0;
+  const level = !troopCost ? '' : elite >= 3.6 ? 'Elite' : elite >= 2.6 ? 'Balanced' : 'Horde';
+  const tierBar = [1, 2, 3, 4, 5].map(t => {
+    const c = sum(troops.filter(u => statOf(u.opt.u, 'tier') === t), unitCost);
+    return c ? `<i class="t${t}" style="width:${(100 * c / troopCost).toFixed(1)}%" title="Tier ${ROMAN[t]}: ${fmt(c)}"></i>` : '';
+  }).join('');
+  const hp = sum(army, u => statOf(u.opt.u, 'health') || 0);
+  const speedAvg = total ? sum(army, u => (statOf(u.opt.u, 'speed') || 0) * unitCost(u)) / total : 0;
   p.innerHTML = `<h3 class="serif">Composition</h3>
-    <p class="sub">${army.length} unit${army.length > 1 ? 's' : ''} · ${fmt(total)} / ${fmt(DATA.budget)} spent</p>
-    <h4 class="block-title serif">By role (share of funds)</h4>
-    ${ROLES.filter(([k]) => by[k]).map(([k, label]) => row(label, by[k].n, by[k].c)).join('')}
+    <div class="comp-head"><b>${army.length} / ${DATA.maxUnits} units</b><span class="muted">${fmt(sum(army, models))} models</span></div>
+    <p class="sub">${fmt(total)} / ${fmt(DATA.budget)} spent</p>
+    <h4 class="block-title serif">Elite index (troops)</h4>
+    ${troopCost ? `<div class="elite"><b>${elite.toFixed(1)} <span class="muted">/ 5</span></b><span class="muted">${level}</span></div>
+      <div class="tiers">${tierBar}</div><div class="tl">${[1, 2, 3, 4, 5].map(t => `<span><i class="t${t}"></i>${ROMAN[t]}</span>`).join('')}</div>`
+      : '<p class="empty">No troops yet.</p>'}
+    <h4 class="block-title serif">By role</h4>
+    ${BY_ROLE.filter(([, f]) => army.some(f)).map(([label, f]) => row(label, f)).join('')}
     <h4 class="block-title serif">Overall</h4>
-    ${row('Flying', fly.length, flyCost)}
-    ${row('Lord & heroes', (by.lord?.n || 0) + (by.hero?.n || 0), (by.lord?.c || 0) + (by.hero?.c || 0))}
-    <p class="muted">Light infantry &lt; 500, line 500–899, elite ≥ 900 (base cost).</p>`;
+    ${COMP_OVERALL.map(([l, f]) => row(l, f)).join('')}
+    <h4 class="block-title serif">Damage &amp; traits</h4>
+    ${COMP_TRAITS.map(([l, f]) => row(l, f)).join('')}
+    <h4 class="block-title serif">Speed</h4>
+    <div class="kpis"><div class="kpi"><b>${Math.round(speedAvg)}</b><span>Average speed (by cost)</span></div>
+      <div class="kpi"><b>${fmt(sum(army.filter(u => u.opt.fly), unitCost) * 100 / (total || 1))}%</b><span>Flying (share of funds)</span></div></div>
+    <div style="margin-top:8px">${COMP_SPEED.map(([l, f]) => row(l, f)).join('')}</div>
+    <h4 class="block-title serif">Health</h4>
+    <div class="kpis"><div class="kpi"><b>${fmt(hp)}</b><span>Total health</span></div>
+      <div class="kpi"><b>${fmt(total ? hp * 1000 / total : 0)}</b><span>Health per 1000 gold</span></div></div>
+    <p class="muted" style="margin-top:8px">Infantry: tier I = trash, II = line, III+ = elite. Lords and heroes are left out of the elite index.</p>`;
 }
 
 function renderAll() { renderTop(); renderArmy(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); }

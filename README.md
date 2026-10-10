@@ -160,12 +160,26 @@ Limites de la V0 :
   - en dessous, le statut de l'armée et les plafonds en cours.
 - **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
-- **À droite** : les **statistiques de la composition**, avec la part des fonds et le nombre d'unités par rôle (`pvp_roster_options.role` : lord, héros, infanterie légère / de ligne / d'élite, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), plus les volants et l'ensemble « lord & héros ».
+- **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
+  - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
+  - **l'indice d'élite** : tier moyen pondéré par le coût (`main_units.tier`, de 1 à 5), calculé **sans les lords et héros**. Il est lu « Horde » sous 2,6, « Balanced » jusqu'à 3,6, « Elite » au-delà, avec une barre de répartition des fonds par tier ;
+  - **By role** : lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre ;
+  - **Overall** :
+    - volants sans arme de tir, volants tireurs ;
+    - tireurs à courte portée (< 150) et à longue portée (≥ 150), hors artillerie ;
+    - cavalerie de tir et chars (onglet « Missile Cavalry & Chariots »), artillerie, cavalerie et cavalerie monstrueuse ;
+    - grandes entités uniques (taille 1, hors personnages) ;
+    - infanterie **trash (tier I), de ligne (tier II), d'élite (tier III+)** ;
+  - **Damage & traits** : perforant, anti-large, dégâts magiques, dégâts de feu, démoniaque ou mort-vivant, bouclier ou résistance au tir (indicateurs de `pvp_unit_stats`) ;
+  - **Speed** : vitesse moyenne pondérée par le coût, part des volants, unités rapides (≥ 80) et lentes (≤ 30) ;
+  - **Health** : PV totaux et PV pour 1 000 pièces d'or.
+- **Le roster est sur 2 colonnes**, dans l'ordre des onglets du jeu : Lords | Heroes, puis Infantry | Missile Infantry ou Cavalry, etc.
+- **Les cartes mesurent 50 × 108** pour voir plus de cartes par ligne. Le **tier** de l'unité (I à V) est affiché en haut à droite, sauf pour les lords et les héros.
 - **Alertes de plafond** : une carte du roster affiche un badge « n/plafond » quand l'un de ses groupes est plein ou n'a plus qu'une place.
 
 **Hypothèses de cette version :**
 - **Coût d'un rang** : `arrondi(prix × multiplicateur) + coût fixe` (`pvp_xp_ranks`, tiré de `unit_stats_land_experience_bonuses`).
-- **Infanterie** : légère < 500, de ligne 500-899, d'élite ≥ 900 (prix de base).
+- **Infanterie** : selon le tier du jeu, I = légère (« trash »), II = de ligne, III et plus = d'élite.
 - **Volant** : l'entité de combat du soldat ou de sa monture a une vitesse de vol (`battle_entities.fly_speed > 0`). Ce point n'est pas une hypothèse, mais un fait tiré des données.
 - **Couleur d'accent** : couleur principale de la faction principale de la race (`factions.primary_colour_hex`), ou sa couleur secondaire si la principale est trop sombre. À défaut, le rouge du builder (Vampire Counts, Chaos Dwarfs).
 

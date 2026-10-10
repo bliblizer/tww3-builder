@@ -26,7 +26,7 @@ base as (
 ),
 
 melee as (
-    select b.unit_key, w.damage, w.ap_damage, w.bonus_v_large, w.bonus_v_infantry
+    select b.unit_key, w.damage, w.ap_damage, w.bonus_v_large, w.bonus_v_infantry, w.is_magical, w.ignition_amount
     from base b join {{ ref('stg_dump__melee_weapons') }} w on w.melee_weapon_key = b.primary_melee_weapon
 ),
 
@@ -34,6 +34,8 @@ missile as (
     -- puissance de tir affichée = dégâts d'une salve (projectile + explosion, normaux + perforants)
     --   x projectiles x tirs par salve x rafale x 10 / temps de rechargement (réduit par land_units.reload)
     select b.unit_key, b.primary_ammo, p.effective_range,
+           coalesce(p.is_magical, false) or coalesce(e.is_magical, false)                    as is_magical,
+           coalesce(p.ignition_amount, 0) + coalesce(e.ignition_amount, 0)                   as ignition_amount,
            p.base_reload_time * (1 - coalesce(b.reload, 0) / 100.0)                         as reload_time,
            (p.damage + p.ap_damage + coalesce(e.detonation_damage, 0) + coalesce(e.detonation_damage_ap, 0))
              * p.projectile_number * coalesce(nullif(p.shots_per_volley, 0), 1) * coalesce(nullif(p.burst_size, 0), 1) as volley_damage
@@ -41,6 +43,14 @@ missile as (
     join {{ ref('stg_dump__missile_weapons') }} mw on mw.missile_weapon_key = b.primary_missile_weapon
     join {{ ref('stg_dump__projectiles') }} p on p.projectile_key = mw.projectile_key
     left join {{ ref('stg_dump__projectiles_explosions') }} e on e.explosion_key = p.explosion_key
+),
+
+tags as (
+    select unit_key, list(bullet_point_key) as tag_keys from {{ ref('pvp_unit_tags') }} group by unit_key
+),
+
+traits as (
+    select unit_key, list(trait_key) as trait_keys from {{ ref('pvp_unit_traits') }} group by unit_key
 )
 
 select
@@ -73,7 +83,22 @@ select
     nullif(b.damage_mod_missile, 0)                                      as missile_resistance,
     nullif(b.damage_mod_flame, 0)                                        as fire_resistance,
     nullif(b.damage_mod_all, 0)                                          as ward_save,
+    -- indicateurs pour les statistiques de composition
+    nullif(mu.tier, 0)                                                   as tier,   -- 1 à 5 (vide pour lords et héros)
+    list_has_any(coalesce(tg.tag_keys, []), ['armour_piercing', 'armour_piercing_melee', 'armour_piercing_ranged'])
+                                                                         as is_armour_piercing,
+    list_contains(coalesce(tg.tag_keys, []), 'anti_large') or coalesce(me.bonus_v_large, 0) > 0
+                                                                         as is_anti_large,
+    coalesce(me.is_magical, false) or coalesce(mi.is_magical, false)    as has_magical_attacks,
+    coalesce(me.ignition_amount, 0) + coalesce(mi.ignition_amount, 0) > 0
+      or list_contains(coalesce(tg.tag_keys, []), 'flaming_attacks')    as has_flaming_attacks,
+    list_has_any(coalesce(tr.trait_keys, []), ['daemonic', 'undead'])    as is_daemonic_or_undead,
+    coalesce(b.missile_block_chance, 0) > 0 or coalesce(b.damage_mod_missile, 0) > 0
+                                                                         as has_shield_or_missile_resistance,
     '{{ var("patch") }}'                                                 as patch
 from base b
+join {{ ref('stg_dump__main_units') }} mu using (unit_key)
 left join melee me using (unit_key)
 left join missile mi using (unit_key)
+left join tags tg using (unit_key)
+left join traits tr using (unit_key)
