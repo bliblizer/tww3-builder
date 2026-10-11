@@ -26,7 +26,7 @@ base as (
 ),
 
 melee as (
-    select b.unit_key, w.damage, w.ap_damage, w.bonus_v_large, w.bonus_v_infantry, w.is_magical, w.ignition_amount
+    select b.unit_key, w.damage, w.ap_damage, w.bonus_v_large, w.bonus_v_infantry, w.is_magical, w.ignition_amount, w.contact_phase
     from base b join {{ ref('stg_dump__melee_weapons') }} w on w.melee_weapon_key = b.primary_melee_weapon
 ),
 
@@ -36,6 +36,7 @@ missile as (
     select b.unit_key, b.primary_ammo, p.effective_range,
            coalesce(p.is_magical, false) or coalesce(e.is_magical, false)                    as is_magical,
            coalesce(p.ignition_amount, 0) + coalesce(e.ignition_amount, 0)                   as ignition_amount,
+           p.contact_stat_effect, p.ap_damage as proj_ap, p.damage as proj_damage, e.explosion_key is not null as explosive,
            p.base_reload_time * (1 - coalesce(b.reload, 0) / 100.0)                         as reload_time,
            (p.damage + p.ap_damage + coalesce(e.detonation_damage, 0) + coalesce(e.detonation_damage_ap, 0))
              * p.projectile_number * coalesce(nullif(p.shots_per_volley, 0), 1) * coalesce(nullif(p.burst_size, 0), 1) as volley_damage
@@ -83,8 +84,19 @@ select
     nullif(b.damage_mod_missile, 0)                                      as missile_resistance,
     nullif(b.damage_mod_flame, 0)                                        as fire_resistance,
     nullif(b.damage_mod_all, 0)                                          as ward_save,
-    -- unité « grande » au sens des règles du jeu (anti-large…) : soldat ou monture de taille large / very_large
-    coalesce(b.man_size, '') in ('large', 'very_large') or coalesce(b.mount_size, '') in ('large', 'very_large') as is_large,
+    -- unité « grande » au sens des règles du jeu (anti-large, icône de taille…) : soldat ou monture plus grand que
+    -- « small » (la cavalerie, montée sur des chevaux « medium », est une grande cible)
+    coalesce(b.man_size, '') not in ('', 'small', 'very_small') or coalesce(b.mount_size, '') not in ('', 'small', 'very_small') as is_large,
+    nullif(mu.barrier_health, 0)                                         as barrier_health,   -- barrière (« Barrier ») : PV supplémentaires
+    -- types de dégâts de l'arme de mêlée et de l'arme de tir (icônes de la fiche)
+    coalesce(me.is_magical, false)                                       as melee_magical,
+    coalesce(me.ignition_amount, 0) > 0                                  as melee_flaming,
+    coalesce(me.contact_phase, '') like '%poison%'                       as melee_poison,
+    coalesce(mi.is_magical, false)                                       as missile_magical,
+    coalesce(mi.ignition_amount, 0) > 0                                  as missile_flaming,
+    coalesce(mi.contact_stat_effect, '') like '%poison%'                 as missile_poison,
+    coalesce(mi.proj_ap, 0) > 0 and coalesce(mi.proj_ap, 0) >= coalesce(mi.proj_damage, 0) as missile_ap,
+    coalesce(mi.explosive, false)                                        as missile_explosive,
     -- indicateurs pour les statistiques de composition
     nullif(mu.tier, 0)                                                   as tier,   -- 1 à 5 (vide pour lords et héros)
     list_has_any(coalesce(tg.tag_keys, []), ['armour_piercing', 'armour_piercing_melee', 'armour_piercing_ranged'])

@@ -61,11 +61,23 @@ STAT_ICONS = {   # statistique du builder -> noms possibles du fichier d'icône 
     'ammunition': ['icon_stat_ammo', 'icon_stat_ammunition', 'icon_ammo', 'ammo'],
     'range': ['icon_stat_range', 'icon_range', 'range'],
     'missile_strength': ['icon_stat_ranged_damage', 'icon_stat_missile_strength', 'icon_ranged_damage', 'ranged_damage'],
-    'physical_resistance': ['icon_stat_resistance_physical', 'resistance_physical', 'icon_resistance_physical', 'physical_resistance'],
-    'spell_resistance': ['icon_stat_resistance_magic', 'resistance_magic', 'icon_resistance_magic', 'spell_resistance', 'magic_resistance'],
-    'missile_resistance': ['icon_stat_resistance_missile', 'resistance_missile', 'icon_resistance_missile', 'missile_resistance'],
-    'fire_resistance': ['icon_stat_resistance_fire', 'resistance_fire', 'icon_resistance_fire', 'fire_resistance', 'resistance_flame'],
-    'ward_save': ['icon_stat_resistance_all', 'resistance_all', 'icon_stat_ward_save', 'ward_save', 'icon_resistance_all'],
+    'physical_resistance': ['resistance_physical', 'icon_stat_resistance_physical', 'icon_resistance_physical', 'physical_resistance'],
+    'spell_resistance': ['resistance_magic', 'icon_stat_resistance_magic', 'icon_resistance_magic', 'spell_resistance', 'magic_resistance'],
+    'missile_resistance': ['resistance_missile', 'icon_stat_resistance_missile', 'icon_resistance_missile', 'missile_resistance'],
+    'fire_resistance': ['resistance_fire', 'icon_stat_resistance_fire', 'icon_resistance_fire', 'fire_resistance', 'resistance_flame'],
+    'ward_save': ['icon_stat_resistance_all', 'resistance_all', 'resistance_ward_save', 'icon_stat_ward_save', 'ward_save', 'icon_resistance_all'],
+    # barre de vie et modificateurs affichés à côté des valeurs (noms du jeu : ui/skins/default/…)
+    'health_bar': ['icon_stat_health_noframe_16px', 'icon_stat_health_noframe', 'icon_stat_health'],
+    'shield': ['modifier_icon_shield', 'icon_stat_missile_block_chance'],
+    'barrier': ['modifier_icon_shield', 'modifier_icon_directional_shield'],
+    'ap': ['modifier_icon_armour_piercing'],
+    'ap_ranged': ['modifier_icon_armour_piercing_ranged', 'modifier_icon_armour_piercing'],
+    'magical': ['modifier_icon_magical'],
+    'flaming': ['modifier_icon_flaming'],
+    'poison': ['modifier_icon_poison', 'wh_main_unit_contact_poison'],
+    'bonus_v_large': ['modifier_icon_bonus_vs_large'],
+    'bonus_v_infantry': ['modifier_icon_bonus_vs_infantry'],
+    'explosive': ['icon_stat_explosive_armour_piercing_damage', 'icon_explosive_damage'],
 }
 ARTWORK_ASSETS = os.path.join(ROOT, 'assets', 'artworks')
 EXTS = ('.png', '.webp')
@@ -261,7 +273,9 @@ STAT_COLS = ['unit_size', 'health', 'speed', 'armour', 'shield_block_chance', 'l
              'weapon_strength', 'weapon_ap_damage', 'bonus_v_large', 'bonus_v_infantry', 'charge_bonus', 'ammunition', 'range',
              'missile_strength', 'physical_resistance', 'spell_resistance', 'missile_resistance', 'fire_resistance', 'ward_save',
              'tier', 'is_armour_piercing', 'is_anti_large', 'has_magical_attacks', 'has_flaming_attacks',
-             'is_daemonic_or_undead', 'has_shield_or_missile_resistance', 'is_large']
+             'is_daemonic_or_undead', 'has_shield_or_missile_resistance', 'is_large', 'barrier_health',
+             'melee_magical', 'melee_flaming', 'melee_poison', 'missile_magical', 'missile_flaming', 'missile_poison',
+             'missile_ap', 'missile_explosive']
 def compact(v):
     if v is None: return None
     if isinstance(v, bool): return int(v)

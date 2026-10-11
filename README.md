@@ -162,12 +162,13 @@ Limites de la V0 :
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
 - **En haut de page** :
   - le menu des races, le bouton **Example armies** et la pastille du **patch des données** (« Game data patch 9.0 ») ;
-  - deux **tuiles** : **fonds restants** en or (pièce du jeu, barre du budget dépensé) et **modèles** en acier (icône d'entité, nombre d'unités).
-- **Barre de l'armée** :
-  - le nom de l'armée, puis le compteur « n / 20 units ». Le compteur passe **en rouge avec un « ! »** si l'armée n'est pas valide ; la raison s'affiche au survol et le détail s'ouvre au clic ;
-  - la barre d'outils en **icônes du jeu** (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`, ou des libellés texte à défaut) : **Export to game**, Import, Save, My armies, Share, Clear et **More** ;
+  - (les tuiles des fonds et des modèles sont dans le bandeau de l'armée, voir plus bas).
+- **Bandeau de l'armée**, **toujours visible** : il reste collé en haut de l'écran pendant qu'on fait défiler le roster, et la fiche d'unité se place juste dessous. Il contient :
+  - le nom de l'armée en titre, et une **alerte rouge « ⚠ n issues »** à côté quand l'armée n'est pas valide (détail au survol et au clic) ;
+  - à droite des cartes, deux **tuiles** : **fonds restants** en or (pièce du jeu, barre du budget dépensé) et **modèles** en acier (icône d'entité, nombre d'unités) ;
+  - la barre d'outils, avec des boutons homogènes (36 × 36) regroupés par usage : **Export to game** mis en avant, puis Import ; Save, My armies, Share ; Clear, More. Les icônes sont celles du jeu (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`), avec une icône de lien dessinée pour Share ;
   - le menu **More** contient Undo / Redo (aussi Ctrl+Z / Ctrl+Y), Notes, l'image PNG, le dossier du jeu, l'aide, et la bascule des **icônes de tier** sur les cartes (désactivées par défaut, mémorisé dans le navigateur).
-- **Cartes de l'armée à leur taille native (60 × 130)**, donc nettes, avec 3 px d'écart (3 px aussi dans le roster). Dessous, le **budget par rôle** (lord et héros, infanterie, tir, cavalerie, monstres…) et les fonds restants.
+- **Cartes de l'armée à leur taille native (60 × 130)**, donc nettes, avec 3 px d'écart (3 px aussi dans le roster). Dessous, la **barre de budget** : un segment par rôle avec son icône (couronne, épée, arc, cheval, créature, patte, canon) et sa couleur. Un segment d'au moins 11 % affiche le rôle, le montant et le % ; de 5 à 11 %, le % ; en dessous, l'icône seule (détail au survol). Les fonds restants forment un segment hachuré.
 - **Le panneau de droite remonte jusqu'en haut du bandeau de l'armée**, qui occupe les deux premières colonnes. Sous 1 750 px de large, l'armée reprend toute la largeur et le panneau redescend.
 - **Roster** :
   - des **filtres rapides** : Anti-large, Armour-piercing, Ranged, Flying, Magic dmg, Fire dmg, puis grandes et petites entités. Les filtres se combinent, et grandes / petites s'excluent. Chaque filtre affiche son nombre de cartes ; les cartes qui ne correspondent pas sont **estompées**, ce qui garde la disposition du jeu, et chaque section indique « n / total » ;
@@ -175,7 +176,7 @@ Limites de la V0 :
   - un **aperçu rapide au survol** : classe, tier, coût, PV, armure, attaque et défense, puissance d'arme, vitesse, tir, forces et faiblesses, avec les icônes du jeu.
 - **Panneaux latéraux repliables** (◀ / ▶) pour agrandir le roster. Leur état est mémorisé.
 - **Notifications** discrètes en bas à droite : enregistrement, lien copié, avertissements.
-- **Panneau de droite à onglets « Composition | Matchup | Caps »**. L'onglet **Caps** liste les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés. Le nombre de groupes pleins s'affiche sur l'onglet. L'onglet Matchup contient :
+- **Panneau de droite à onglets « Composition | Matchup | Caps »**. L'onglet **Caps** liste les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés. L'onglet Matchup contient :
   - **le choix d'une race adverse** ;
   - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py` ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
@@ -297,7 +298,14 @@ python -m playwright install chromium
 - Comparé à un export tiers (tww3 stats card) sur les 2 161 unités jouables : armure, commandement, mêlée, charge et puissance de tir sont **identiques à 100 %**, la taille à 99,8 %, la vitesse à 96 % et les points de vie à 88 %. Les écarts restants concernent les chars, les machines de guerre et les personnages sur char ou engin, dont l'engin n'est pas encore pris en compte.
 - Les rangs d'expérience ne modifient pas encore les statistiques affichées.
 
-**Affichage :** comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
+**Affichage :**
+- **Barre de vie comme en jeu** : toujours pleine, valeur au centre avec l'icône de santé. Pour une unité qui a une **barrière** (`main_units.barrier_health`, par exemple 800 pour les Tzaangors), sa valeur s'affiche avant les PV avec l'icône de bouclier.
+- **Icônes de modificateurs** (`assets/stats_icons/`, noms du jeu) à côté des valeurs :
+  - Armour : bouclier et chance de bloquer les projectiles ;
+  - Weapon Strength : perforant, magique, feu, poison (effet de contact de l'arme), bonus contre les grandes cibles et contre l'infanterie ;
+  - Missile Strength : perforant, magique, feu, poison, explosif.
+- **Taille** : l'icône d'entité est celle des grandes entités dès que le soldat ou la monture dépasse la taille *small* du jeu. La cavalerie, montée sur des chevaux *medium*, compte donc comme grande, comme pour les bonus anti-large.
+- Comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
 
 ## Compositions modèles (« Example armies »)
 

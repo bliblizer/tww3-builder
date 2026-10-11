@@ -186,7 +186,15 @@ button { font: inherit; color: inherit; }
 .tags.icons li::before { content: none; }
 .stat .lbl { display: flex; align-items: center; gap: 6px; } .stat .lbl img { width: 20px; height: 20px; }
 .size-line img { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; }
-.hp-wrap { display: flex; align-items: center; gap: 6px; } .hp-wrap img { width: 20px; height: 20px; } .hp-wrap .hp { flex: 1; }
+.hpbar { display: flex; align-items: center; justify-content: center; gap: 14px; height: 22px; margin: 10px 0 6px; border-radius: 2px;
+  background: linear-gradient(#8bd34a, #3f8a16); border: 1px solid #6a8f3a; box-shadow: inset 0 3px 0 rgba(125, 211, 252, .55);
+  font: 700 13.5px system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px #000; }
+.hpbar span { display: inline-flex; align-items: center; gap: 3px; } .hpbar img { width: 16px; height: 16px; }
+.stat > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.stat { grid-template-columns: minmax(0, 1fr) auto 46px; }
+.stat .v { display: inline-flex; align-items: center; justify-content: flex-end; white-space: nowrap; }
+.stat .v .mod { display: inline-flex; align-items: center; gap: 1px; margin-right: 4px; color: var(--muted); font-size: 11px; }
+.stat .v .mod img { width: 15px; height: 15px; }
 .tip li img { width: 13px; height: 13px; vertical-align: -2px; margin-right: 3px; } .tip ul.icons { list-style: none; padding-left: 0; }
 /* résumé de l'armée, à droite des emplacements */
 .matchup select { width: 100%; background: #140f0d; color: var(--text); border: 1px solid var(--bronze); border-radius: 3px; padding: 5px 8px; font: inherit; font-weight: 700; }
@@ -202,8 +210,8 @@ button { font: inherit; color: inherit; }
 .patch { font: 600 12px system-ui, sans-serif; letter-spacing: .04em; color: var(--muted); border: 1px solid rgba(140,106,59,.6); border-radius: 12px; padding: 2px 9px; background: rgba(0,0,0,.3); white-space: nowrap; }
 .patch b { color: var(--text); }
 /* fonds (or) et modèles (acier) : deux tuiles distinctes, mises en avant */
-.tiles { margin-left: auto; display: flex; gap: 10px; }
-.tile { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1px 10px; min-width: 210px; padding: 6px 14px; border-radius: 6px; border: 1px solid; }
+.tiles { display: flex; flex-direction: column; gap: 8px; }
+.tile { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1px 10px; min-width: 200px; padding: 7px 12px; border-radius: 6px; border: 1px solid; }
 .tile .ico { grid-row: 1 / 3; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
 .tile .ico img { width: 32px; height: 32px; }
 .tile .l { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
@@ -215,7 +223,39 @@ button { font: inherit; color: inherit; }
 .tile.funds .l { color: var(--gold); } .tile.funds b { color: #f6d58a; } .tile.funds b.over { color: var(--danger); } .tile.funds .tbar i { background: var(--gold); }
 .tile.models { border-color: #9fb4c8; background: linear-gradient(135deg, rgba(159,180,200,.16), rgba(0,0,0,.35)); }
 .tile.models .l { color: #b9cad8; } .tile.models b { color: #e6eef5; }
-@media (max-width: 1100px) { .tile { min-width: 0; } .patch { display: none; } }
+@media (max-width: 1100px) { .patch { display: none; } }
+/* bandeau de l'armée : toujours visible (collé en haut pendant le défilement), cartes + budget à gauche, tuiles à droite */
+.layout > .army { position: sticky; top: 0; z-index: 25; box-shadow: 0 6px 16px rgba(0,0,0,.45); }
+body .layout > .army, body.has-art .layout > .army { background: rgba(43, 32, 28, .97); backdrop-filter: blur(6px); }   /* opaque : le roster ne transparaît pas en défilant */
+.layout > .side.left { top: var(--army-h, 0px); max-height: calc(100vh - var(--army-h, 0px)); }
+.army-body { display: grid; grid-template-columns: minmax(0, auto) minmax(200px, 1fr); gap: 16px; align-items: start; }
+.army-main { min-width: 0; }
+@media (max-width: 1500px) { .army-body { grid-template-columns: 1fr; } .tiles { flex-direction: row; } }
+/* en-tête de l'armée : nom en titre, alerte de validité, boutons homogènes regroupés */
+.army-head { background: linear-gradient(180deg, color-mix(in srgb, var(--band) 90%, #fff 6%), color-mix(in srgb, var(--band) 75%, #000)); border-bottom: 2px solid var(--gold); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.army-name { font-size: 18px; background: transparent; }
+.army-alert { display: inline-flex; align-items: center; gap: 5px; background: #6b1d17; border: 1px solid var(--danger); color: #ffd9d3; border-radius: 12px; padding: 1px 10px; font: 700 12.5px system-ui, sans-serif; cursor: pointer; }
+.army-alert[hidden] { display: none; }
+.toolbar { margin-left: auto; gap: 10px; }
+.grp { display: inline-flex; gap: 4px; padding: 3px; border-radius: 7px; background: rgba(0,0,0,.25); border: 1px solid rgba(244,234,214,.18); }
+.tb.ib { width: 36px; height: 36px; border-radius: 5px; background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.25)); }
+.tb.ib:hover:not(:disabled) { border-color: var(--gold); }
+.tb.prim { height: 36px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border-radius: 5px; border: 1px solid var(--gold);
+  background: linear-gradient(180deg, #b88a2a, #7a5a16); color: #fff3d4; font: 700 14px "Cinzel", Georgia, serif; }
+.tb.prim:hover:not(:disabled) { filter: brightness(1.1); }
+/* budget : barre épaisse, icône + rôle + montant dans chaque segment */
+.budget { display: flex; height: 42px; border-radius: 5px; overflow: hidden; background: rgba(0,0,0,.4); border: 1px solid rgba(140,106,59,.55); margin-top: 10px; }
+.budget .seg { display: flex; align-items: center; gap: 7px; padding: 0 8px; min-width: 0; overflow: hidden; white-space: nowrap;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 42%, #120d0b), color-mix(in srgb, var(--c) 22%, #120d0b)); border-right: 2px solid #211613; border-top: 3px solid var(--c); }
+.budget .bico { flex: 0 0 26px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.35); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 60%, transparent); }
+.budget .btxt { display: flex; flex-direction: column; min-width: 0; } .budget .btxt b { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; color: #f4ead6; } .budget .btxt span { font-size: 11.5px; color: #d8cbb2; }
+.budget .bpc { display: none; font: 700 12px system-ui; color: #f4ead6; }
+.budget .seg.mid .btxt { display: none; } .budget .seg.mid .bpc { display: block; }
+.budget .seg.tiny { padding: 0; justify-content: center; } .budget .seg.tiny .btxt, .budget .seg.tiny .bpc { display: none; }
+.budget .seg.tiny .bico { flex-basis: 22px; width: 22px; height: 22px; } .budget .seg.tiny svg { width: 14px; height: 14px; }
+.budget .rest { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 44px; color: var(--muted); font-size: 11px;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.03) 0 6px, transparent 6px 12px); }
+.budget .rest b { font: 700 13px "Cinzel", Georgia, serif; color: var(--gold); }
 /* onglets du panneau de droite, panneaux repliables */
 .tabs { display: flex; gap: 4px; margin: 0 0 10px; border-bottom: 1px solid var(--bronze); padding-right: 26px; }
 .tab { background: none; border: 1px solid transparent; border-bottom: none; border-radius: 4px 4px 0 0; padding: 5px 12px; font: 700 14px "Cinzel", Georgia, serif; color: var(--muted); cursor: pointer; }
@@ -258,10 +298,7 @@ input.sw:checked { background: var(--ok); } input.sw:checked::after { left: 16px
 .slots .card, .slots .slot-empty { --cw: 60px; --ch: 130px; }   /* taille native des images du jeu : cartes nettes */
 .slots .slot-empty { width: var(--cw); height: var(--ch); flex: none; }
 .slots .card .cost { font-size: 13px; }
-.budget { display: flex; height: 9px; border-radius: 4px; overflow: hidden; background: rgba(0,0,0,.45); margin-top: 10px; }
-.budget i { display: block; height: 100%; }
-.budget-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin-top: 4px; }
-.budget-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 4px; vertical-align: -1px; }
+
 .caps-tab[hidden] { display: none; } .caps-tab .caps { margin: 0; }
 .tab .badge { background: var(--gold); color: #211613; border-radius: 8px; padding: 0 6px; font: 700 11px system-ui; margin-left: 3px; }
 .tab .badge[hidden] { display: none; }
@@ -443,50 +480,55 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   </div>
   <button class="tb" id="templatesBtn" title="Example armies for this race">Example armies</button>
   <span class="patch" id="patchPill"></span>
-  <div class="tiles">
-    <div class="tile funds"><span class="ico" id="fundsIco"></span><span class="l">Funds remaining</span>
-      <div><b id="funds">0</b><small id="topBudget"></small></div><div class="tbar"><i id="fundsBar"></i></div></div>
-    <div class="tile models"><span class="ico" id="modelsIco"></span><span class="l">Models</span>
-      <div><b id="topModels">0</b><small id="modelsSub"></small></div></div>
-  </div>
 </header>
 
 <div class="layout" id="layout">
 <section class="army" id="armyZone" aria-label="Army">
   <div class="army-head">
     <input class="army-name" id="armyName" placeholder="Main Army" maxlength="60" aria-label="Army name">
-    <button class="count" id="unitCount" title="">0 / 20 units</button>
+    <button class="army-alert" id="armyAlert" hidden></button>
     <div class="toolbar" role="toolbar" aria-label="Army tools">
-      <button class="tb txt primary" id="exportBtn" title="Export the army to the game (.army_setup)">⇩ Export to game</button>
-      <button class="tb ib" id="importBtn" title="Import a .army_setup file from the game" data-icon="icoLoad">Import</button>
-      <span class="sep"></span>
-      <button class="tb ib" id="saveBtn" title="Save to My armies (this browser)" data-icon="icoSave">Save</button>
-      <button class="tb ib" id="armiesBtn" title="My armies" data-icon="icoPlayer">My armies</button>
-      <button class="tb txt" id="shareBtn" title="Copy a link to this army">🔗 Share</button>
-      <span class="sep"></span>
-      <button class="tb ib" id="clearArmy" title="Clear the army" data-icon="icoDelete">Clear</button>
-      <div class="more">
-        <button class="tb ib" id="moreBtn" aria-haspopup="menu" aria-expanded="false" title="More" data-icon="icoMenu">More</button>
-        <div class="menu" id="moreMenu" role="menu" hidden>
-          <h5>Edit</h5>
-          <button class="mi" id="undoBtn" role="menuitem">Undo <small>Ctrl+Z</small></button>
-          <button class="mi" id="redoBtn" role="menuitem">Redo <small>Ctrl+Y</small></button>
-          <button class="mi" id="notesBtn" role="menuitem" aria-expanded="false">Notes…</button>
-          <hr><h5>Share &amp; files</h5>
-          <button class="mi" id="pngBtn" role="menuitem">Download image (PNG)</button>
-          <button class="mi" id="folderBtn" role="menuitem" hidden>Game folder</button>
-          <hr><h5>Display</h5>
-          <label class="mi"><span>Tier icons on cards</span><input type="checkbox" class="sw" id="optTiers"></label>
-          <hr><button class="mi" id="helpBtn" role="menuitem">Help: use the army in the game</button>
-        </div>
-      </div>
+      <button class="tb prim" id="exportBtn" title="Export the army to the game (.army_setup)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff3d4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg><span>Export to game</span></button>
+      <span class="grp"><button class="tb ib" id="importBtn" title="Import a .army_setup file from the game" data-icon="icoLoad">Import</button></span>
+      <span class="grp">
+        <button class="tb ib" id="saveBtn" title="Save to My armies (this browser)" data-icon="icoSave">Save</button>
+        <button class="tb ib" id="armiesBtn" title="My armies" data-icon="icoPlayer">My armies</button>
+        <button class="tb ib svg" id="shareBtn" title="Copy a link to this army"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#f0e2c0" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
+      </span>
+      <span class="grp">
+        <button class="tb ib" id="clearArmy" title="Clear the army" data-icon="icoDelete">Clear</button>
+        <span class="more">
+          <button class="tb ib" id="moreBtn" aria-haspopup="menu" aria-expanded="false" title="More" data-icon="icoMenu">More</button>
+          <div class="menu" id="moreMenu" role="menu" hidden>
+            <h5>Edit</h5>
+            <button class="mi" id="undoBtn" role="menuitem">Undo <small>Ctrl+Z</small></button>
+            <button class="mi" id="redoBtn" role="menuitem">Redo <small>Ctrl+Y</small></button>
+            <button class="mi" id="notesBtn" role="menuitem" aria-expanded="false">Notes…</button>
+            <hr><h5>Share &amp; files</h5>
+            <button class="mi" id="pngBtn" role="menuitem">Download image (PNG)</button>
+            <button class="mi" id="folderBtn" role="menuitem" hidden>Game folder</button>
+            <hr><h5>Display</h5>
+            <label class="mi"><span>Tier icons on cards</span><input type="checkbox" class="sw" id="optTiers"></label>
+            <hr><button class="mi" id="helpBtn" role="menuitem">Help: use the army in the game</button>
+          </div>
+        </span>
+      </span>
       <input type="file" id="importFile" accept=".army_setup" hidden>
     </div>
   </div>
   <textarea class="notes" id="armyNotes" placeholder="Notes about this army (plan, matchups, deployment…)" hidden></textarea>
-  <div class="slots" id="slots"></div>
-  <div class="budget" id="budgetBar" aria-label="Budget by role"></div>
-  <div class="budget-legend" id="budgetLegend"></div>
+  <div class="army-body">
+    <div class="army-main">
+      <div class="slots" id="slots"></div>
+      <div class="budget" id="budgetBar" aria-label="Budget by role"></div>
+    </div>
+    <div class="tiles">
+      <div class="tile funds"><span class="ico" id="fundsIco"></span><span class="l">Funds remaining</span>
+        <div><b id="funds">0</b><small id="topBudget"></small></div><div class="tbar"><i id="fundsBar"></i></div></div>
+      <div class="tile models"><span class="ico" id="modelsIco"></span><span class="l">Models</span>
+        <div><b id="topModels">0</b><small id="modelsSub"></small></div></div>
+    </div>
+  </div>
 </section>
 
   <aside class="side left">
@@ -506,7 +548,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tabComp" aria-selected="true">Composition</button>
       <button class="tab" role="tab" id="tabMatch" aria-selected="false">Matchup</button>
-      <button class="tab" role="tab" id="tabCaps" aria-selected="false">Caps <span class="badge" id="capsCount" hidden></span></button>
+      <button class="tab" role="tab" id="tabCaps" aria-selected="false">Caps</button>
     </div>
     <div class="caps-tab" id="capsTab" hidden><div class="caps" id="capsBar"></div>
       <p class="muted" style="margin-top:8px">Caps reached are shown in gold, exceeded in red.</p></div>
@@ -767,11 +809,11 @@ function renderTop() {
   $('modelsSub').textContent = state.army.length ? ` in ${state.army.length} unit${state.army.length > 1 ? 's' : ''}` : '';
   $('patchPill').innerHTML = `Game data <b>${esc(DATA.patch.replace('patch_', 'patch '))}</b>`;
   const errs = state.army.length ? validate(race().key, state.army) : [];
-  const uc = $('unitCount');
-  uc.innerHTML = `${state.army.length} / ${DATA.maxUnits} units` + (errs.length ? '<span class="bang">!</span>' : '');
-  uc.classList.toggle('invalid', errs.length > 0);
-  uc.title = errs.map(e => e.text).join('\n');
-  uc.onclick = errs.length ? () => openModal(`<h3 class="serif">Army issues</h3><ul>${errs.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`) : null;
+  const al = $('armyAlert');
+  al.hidden = !errs.length;
+  al.textContent = `⚠ ${errs.length} issue${errs.length > 1 ? 's' : ''}`;
+  al.title = errs.map(e => e.text).join('\n');
+  al.onclick = errs.length ? () => openModal(`<h3 class="serif">Army issues</h3><ul>${errs.map(e => `<li>${esc(e.text)}</li>`).join('')}</ul>`) : null;
 }
 
 function renderArmy() {
@@ -813,22 +855,37 @@ function renderArmy() {
     .sort((a, b) => (b.n / b.cap) - (a.n / a.cap) || a.k.localeCompare(b.k));
   bar.innerHTML = chips.length ? chips.map(c => `<span class="cap-chip ${c.n > c.cap ? 'over' : c.n === c.cap ? 'full' : ''}">${esc(capsOf(rk).g[c.k][0])} ${c.n}/${c.cap}</span>`).join('')
     : '<p class="empty">No unit cap in use yet.</p>';
-  const full = chips.filter(c => c.n >= c.cap).length;
-  $('capsCount').hidden = !full; $('capsCount').textContent = `${full} full`;
+
 }
 
-/* budget de l'armée par rôle, sous les cartes */
+/* budget de l'armée par rôle, sous les cartes : une barre épaisse, un segment par rôle avec son icône.
+   Segment ≥ 11 % : icône + rôle + montant + % ; 5 à 11 % : icône + % ; < 5 % : icône seule (détail au survol). */
+const ROLE_ICONS = {
+  lord: '<path d="M4 17l2-9 4 4 2-6 2 6 4-4 2 9z"/><path d="M4 20h16"/>',
+  inf: '<path d="M5 19l9-9"/><path d="M14 4h6v6l-9 9-6-6z"/><path d="M8 13l3 3"/>',
+  ranged: '<path d="M5 19C5 10 10 5 19 5"/><path d="M5 19L19 5"/><path d="M15 5h4v4"/><path d="M5 19l2-5M5 19l5-2"/>',
+  cav: '<path d="M7 20v-5l-3-2 4-7 3 1 4-3 1 4 4 3-2 3-3-1-2 4v3"/>',
+  monster: '<path d="M6 20c0-6 2-10 6-12M18 20c0-6-2-10-6-12"/><path d="M9 8l-2-4M15 8l2-4"/><circle cx="10" cy="12" r="1"/><circle cx="14" cy="12" r="1"/>',
+  beast: '<circle cx="7" cy="10" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="17" cy="10" r="2"/><path d="M8 18c0-3 2-5 4-5s4 2 4 5c0 1-1 2-4 2s-4-1-4-2z"/>',
+  art: '<circle cx="8" cy="17" r="3"/><path d="M10 15l9-8"/><path d="M5 20h8"/>',
+  other: '<circle cx="12" cy="12" r="6"/>',
+};
 const BUDGET_GROUPS = [
-  ['Lord & heroes', u => isChar(u.opt), '#e2b65a'], ['Infantry', u => (u.opt.role || '').startsWith('infantry'), '#b08a3c'],
-  ['Ranged', u => u.opt.role === 'ranged', '#5b8fd6'], ['Cavalry & chariots', u => u.opt.role === 'cavalry', '#8c7a4f'],
-  ['Monsters', u => u.opt.role === 'monster', '#7d5a8c'], ['War beasts', u => u.opt.role === 'war_beast', '#6b6155'],
-  ['Artillery', u => u.opt.role === 'artillery', '#9a4f3a'], ['Other', u => (u.opt.role || 'other') === 'other', '#555'],
+  ['Lord & heroes', u => isChar(u.opt), '#e2b65a', 'lord'], ['Infantry', u => (u.opt.role || '').startsWith('infantry'), '#d4893a', 'inf'],
+  ['Ranged', u => u.opt.role === 'ranged', '#5b9be0', 'ranged'], ['Cavalry & chariots', u => u.opt.role === 'cavalry', '#8fbf4a', 'cav'],
+  ['Monsters', u => u.opt.role === 'monster', '#b07ad0', 'monster'], ['War beasts', u => u.opt.role === 'war_beast', '#4fb3a6', 'beast'],
+  ['Artillery', u => u.opt.role === 'artillery', '#d0604a', 'art'], ['Other', u => (u.opt.role || 'other') === 'other', '#8a8a8a', 'other'],
 ];
 function renderBudget() {
-  const groups = BUDGET_GROUPS.map(([l, f, c]) => [l, state.army.filter(f).reduce((s, u) => s + unitCost(u), 0), c]).filter(g => g[1] > 0);
-  $('budgetBar').innerHTML = groups.map(([l, v, c]) => `<i style="width:${Math.min(100, 100 * v / DATA.budget).toFixed(2)}%;background:${c}" title="${esc(l)}: ${fmt(v)}"></i>`).join('');
-  $('budgetLegend').innerHTML = groups.map(([l, v, c]) => `<span><i style="background:${c}"></i>${esc(l)} ${fmt(v)}</span>`).join('')
-    + (state.army.length ? `<span style="margin-left:auto">${fmt(remaining())} left</span>` : '');
+  const icon = (k, c) => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ROLE_ICONS[k]}</svg>`;
+  const groups = BUDGET_GROUPS.map(([l, f, c, k]) => [l, state.army.filter(f).reduce((s, u) => s + unitCost(u), 0), c, k]).filter(g => g[1] > 0);
+  const segs = groups.map(([l, v, c, k]) => {
+    const w = 100 * v / DATA.budget, pc = Math.round(w), cls = w >= 11 ? 'full' : w >= 5 ? 'mid' : 'tiny';
+    return `<div class="seg ${cls}" style="width:${Math.min(100, w).toFixed(2)}%;--c:${c}" title="${esc(l)}: ${fmt(v)} · ${pc}%">` +
+      `<span class="bico">${icon(k, c)}</span><span class="btxt"><b>${esc(l)}</b><span>${fmt(v)} · ${pc}%</span></span><span class="bpc">${pc}%</span></div>`;
+  }).join('');
+  const left = remaining();
+  $('budgetBar').innerHTML = segs + (left > 0 ? `<div class="rest"><b>${fmt(left)}</b><span>left</span></div>` : '');
 }
 
 /* ---------- Matchup : ton armée face au profil moyen du roster adverse ----------
@@ -1015,9 +1072,18 @@ function renderUnitStats() {
     .filter(([, c]) => st[c]).map(([l, c]) => line(DATA.statIcons[c] || null, `${l}: <b>${st[c] > 0 ? '+' : ''}${st[c]}%</b>`)).join('');
   const notes = [st.bonus_v_large ? `+${st.bonus_v_large} vs large` : '', st.bonus_v_infantry ? `+${st.bonus_v_infantry} vs infantry` : '']
     .filter(Boolean).join(' · ');
-  const actions = state.focus.kind === 'army'
-    ? `<div class="modal-row" style="margin:0 0 10px"><button class="tb" id="dupBtn" title="Duplicate (Ctrl+D)">Duplicate</button><button class="tb" id="remBtn">Remove</button></div>`
-    : `<div class="modal-row" style="margin:0 0 10px"><button class="tb primary" id="addBtn2">Add to army</button></div>`;
+  const actions = '';   // ajouter : double-clic ou glisser ; retirer : double-clic sur l'armée ; dupliquer : Ctrl+D
+  const mod = (key, title, text = '') => DATA.statIcons[key]
+    ? `<span class="mod" title="${esc(title)}"><img src="images/${esc(DATA.statIcons[key])}" alt="">${text}</span>`
+    : (text ? `<span class="mod" title="${esc(title)}">${text}</span>` : '');
+  const meleeMods = [st.is_armour_piercing && st.weapon_ap_damage ? mod('ap', `Armour-piercing (${st.weapon_ap_damage} of ${st.weapon_strength})`) : '',
+    st.melee_magical ? mod('magical', 'Magical attacks') : '', st.melee_flaming ? mod('flaming', 'Flaming attacks') : '',
+    st.melee_poison ? mod('poison', 'Poison attacks') : '',
+    st.bonus_v_large ? mod('bonus_v_large', `Bonus vs large: +${st.bonus_v_large}`, `+${st.bonus_v_large}`) : '',
+    st.bonus_v_infantry ? mod('bonus_v_infantry', `Bonus vs infantry: +${st.bonus_v_infantry}`, `+${st.bonus_v_infantry}`) : ''].join('');
+  const missileMods = [st.missile_ap ? mod('ap_ranged', 'Armour-piercing missiles') : '', st.missile_magical ? mod('magical', 'Magical missiles') : '',
+    st.missile_flaming ? mod('flaming', 'Flaming missiles') : '', st.missile_poison ? mod('poison', 'Poison missiles') : '',
+    st.missile_explosive ? mod('explosive', 'Explosive missiles') : ''].join('');
   p.innerHTML = `
     <h3 class="serif">${esc(opt.n)}</h3>
     ${actions}
@@ -1025,28 +1091,26 @@ function renderUnitStats() {
     ${tags.length ? `<ul class="tags${DATA.skin.effPos ? ' icons' : ''}">${tags.map(([n, s]) => {
         const neg = s.includes('negative'), img = neg ? DATA.skin.effNeg : DATA.skin.effPos;
         return `<li class="${neg ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(n)}</li>`; }).join('')}</ul>` : ''}
-    ${st.health != null ? `<div class="hp-wrap" title="Health">${icon('health')}<div class="hp"><i style="--w:${pct('health', st.health)}%"></i><span>${fmt(st.health)}</span></div></div>` : ''}
+    ${st.health != null ? `<div class="hpbar" title="${st.barrier_health ? `Barrier ${fmt(st.barrier_health)} · ` : ''}Health ${fmt(st.health)}">
+      ${st.barrier_health ? `<span class="barrier">${DATA.statIcons.barrier ? `<img src="images/${esc(DATA.statIcons.barrier)}" alt="">` : '◈ '}${fmt(st.barrier_health)}</span>` : ''}
+      <span>${DATA.statIcons.health_bar ? `<img src="images/${esc(DATA.statIcons.health_bar)}" alt="">` : '✚ '}${fmt(st.health)}</span></div>` : ''}
     ${st.unit_size != null ? `<p class="size-line">${(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall) ? `<img src="images/${esc(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall)}" alt="" title="${st.is_large ? 'Large' : 'Small'} entity">` : ''}Unit size: ${fmt(st.unit_size)}${st.is_large ? ' · large' : ''}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
-    ${row('Armour', 'armour', st.shield_block_chance ? `<small title="Missile block chance">shield ${st.shield_block_chance}%</small>` : '')}
+    ${row('Armour', 'armour', st.shield_block_chance ? mod('shield', `Shield: ${st.shield_block_chance}% chance to block missiles`, `${st.shield_block_chance}%`) || `<small>shield ${st.shield_block_chance}%</small>` : '')}
     ${row('Leadership', 'leadership')}
     ${row('Speed', 'speed')}
     ${row('Melee Attack', 'melee_attack')}
     ${row('Melee Defence', 'melee_defence')}
-    ${row('Weapon Strength', 'weapon_strength', st.weapon_ap_damage ? `<small title="Armour-piercing part">AP ${st.weapon_ap_damage}</small>` : '')}
-    ${notes ? `<p class="stat-note">${notes}</p>` : ''}
+    ${row('Weapon Strength', 'weapon_strength', meleeMods)}
     ${row('Charge Bonus', 'charge_bonus')}
     ${row('Ammunition', 'ammunition')}
     ${row('Range', 'range')}
-    ${row('Missile Strength', 'missile_strength')}
+    ${row('Missile Strength', 'missile_strength', missileMods)}
     ${section('Passive Abilities', traitList('p'))}
     ${section('Abilities', chosen(['a', 'i']))}
     ${section('Spells', chosen(['s']))}
     ${section('Unit Attributes', traitList('t'))}
     ${section('Resistances', resistances)}`;
-  if (state.focus.kind === 'army') {
-    $('dupBtn').addEventListener('click', () => duplicateUnit(unit));
-    $('remBtn').addEventListener('click', () => removeUnit(unit));
-  } else $('addBtn2').addEventListener('click', () => addUnit(unit));
+
 }
 
 /* ---------- Panneau de personnalisation (sous l'armée) : affiché seulement pour une unité personnalisable ---------- */
@@ -1758,7 +1822,7 @@ function renderTools() {
 }
 function setupTools() {
   // icônes du jeu sur les boutons (sinon leur libellé texte)
-  document.querySelectorAll('.tb.ib[data-icon]').forEach(b => {
+  document.querySelectorAll('.tb.ib[data-icon]:not(.svg)').forEach(b => {
     const src = DATA.skin[b.dataset.icon];
     if (src) b.innerHTML = `<img src="images/${esc(src)}" alt="${esc(b.textContent)}">`; else b.classList.add('noicon');
   });
@@ -1854,6 +1918,12 @@ function setupRacePicker() {
   document.addEventListener('click', e => { if (!list.hidden && !e.target.closest('.race-picker')) close(false); });
 }
 
+function trackArmyHeight() {
+  const army = document.querySelector('.layout > .army');
+  const set = () => document.documentElement.style.setProperty('--army-h', army.offsetHeight + 'px');
+  if ('ResizeObserver' in window) new ResizeObserver(set).observe(army); set();
+}
+
 function init() {
   setupRacePicker();
   $('clearArmy').addEventListener('click', () => { if (!state.army.length) return; commit(); state.army = []; state.focus = null; renderAll(); });
@@ -1863,6 +1933,7 @@ function init() {
     `Unofficial fan-made tool, not affiliated with Creative Assembly or Games Workshop.`;
   setupDragAndDrop();
   setupTooltips();
+  trackArmyHeight();
   if (!loadFromHash()) setRace(0, { record: false });
 }
 init();
