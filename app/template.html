@@ -29,7 +29,7 @@ body {
 /* illustration de campagne de la race en fond (plein écran, fixe, fondue) + vignettage pour la lisibilité */
 body::before {
   content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
-  background: var(--race-art, none) center / cover no-repeat; opacity: var(--art-op, .4);
+  background: var(--race-art, none) center / cover no-repeat; opacity: .4;
 }
 body::after {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
@@ -125,10 +125,10 @@ button { font: inherit; color: inherit; }
 .slot-empty.skin { border: none; opacity: 1; background: var(--slot-img) center / 100% 100% no-repeat; }
 .slots .slot-empty { width: 60px; height: 130px; }
 .slot-empty { flex: 0 0 50px; height: 108px; border: 1px dashed var(--bronze); border-radius: 4px; opacity: .45; }
-.rank-ctl { display: flex; align-items: center; gap: 2px; font-size: 12px; font-variant-numeric: tabular-nums; }
-.rank-ctl button { width: 20px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
+.rank-ctl { display: flex; align-items: center; justify-content: center; gap: 1px; width: 60px; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.rank-ctl button { width: 18px; height: 17px; line-height: 1; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel); cursor: pointer; }
 .rank-ctl button:disabled { opacity: .35; cursor: default; }
-.rank-ctl span { min-width: 20px; text-align: center; color: var(--muted); }
+.rank-ctl span { min-width: 16px; text-align: center; color: var(--muted); }
 .army-status { margin: 10px 0 0; font-size: 14px; }
 .army-status .ok { color: var(--ok); font-weight: 700; }
 .army-status .ko { color: var(--danger); font-weight: 700; }
@@ -199,11 +199,23 @@ button { font: inherit; color: inherit; }
 .keypoints summary { cursor: pointer; font: 700 14px "Cinzel", Georgia, serif; margin: 10px 0 6px; }
 .keypoints .kp { font-size: 13px; padding: 5px 7px; margin-bottom: 5px; border-left: 3px solid var(--bronze); background: rgba(0,0,0,.2); }
 .keypoints .kp.warn { border-color: var(--danger); } .keypoints .kp.good { border-color: var(--ok); }
-.top-kpis { margin-left: auto; display: flex; align-items: flex-end; gap: 26px; }
-.top-kpis .k span { display: block; color: var(--muted); font-size: 13px; text-align: right; }
-.top-kpis .k b { font: 700 24px "Cinzel", Georgia, serif; color: var(--gold); font-variant-numeric: tabular-nums; }
-.top-kpis .k b.over { color: var(--danger); }
-.top-kpis .k small { color: var(--muted); }
+.patch { font: 600 12px system-ui, sans-serif; letter-spacing: .04em; color: var(--muted); border: 1px solid rgba(140,106,59,.6); border-radius: 12px; padding: 2px 9px; background: rgba(0,0,0,.3); white-space: nowrap; }
+.patch b { color: var(--text); }
+/* fonds (or) et modèles (acier) : deux tuiles distinctes, mises en avant */
+.tiles { margin-left: auto; display: flex; gap: 10px; }
+.tile { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1px 10px; min-width: 210px; padding: 6px 14px; border-radius: 6px; border: 1px solid; }
+.tile .ico { grid-row: 1 / 3; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+.tile .ico img { width: 32px; height: 32px; }
+.tile .l { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+.tile b { font: 700 26px "Cinzel", Georgia, serif; line-height: 1; font-variant-numeric: tabular-nums; }
+.tile small { font: 500 14px system-ui, sans-serif; opacity: .75; }
+.tile .tbar { grid-column: 1 / 3; height: 5px; border-radius: 3px; background: rgba(0,0,0,.45); overflow: hidden; margin-top: 4px; }
+.tile .tbar i { display: block; height: 100%; }
+.tile.funds { border-color: var(--gold); background: linear-gradient(135deg, rgba(226,182,90,.18), rgba(0,0,0,.35)); }
+.tile.funds .l { color: var(--gold); } .tile.funds b { color: #f6d58a; } .tile.funds b.over { color: var(--danger); } .tile.funds .tbar i { background: var(--gold); }
+.tile.models { border-color: #9fb4c8; background: linear-gradient(135deg, rgba(159,180,200,.16), rgba(0,0,0,.35)); }
+.tile.models .l { color: #b9cad8; } .tile.models b { color: #e6eef5; }
+@media (max-width: 1100px) { .tile { min-width: 0; } .patch { display: none; } }
 /* onglets du panneau de droite, panneaux repliables */
 .tabs { display: flex; gap: 4px; margin: 0 0 10px; border-bottom: 1px solid var(--bronze); padding-right: 26px; }
 .tab { background: none; border: 1px solid transparent; border-bottom: none; border-radius: 4px 4px 0 0; padding: 5px 12px; font: 700 14px "Cinzel", Georgia, serif; color: var(--muted); cursor: pointer; }
@@ -211,7 +223,7 @@ button { font: inherit; color: inherit; }
 .side { position: sticky; }
 .collapse { position: absolute; top: 10px; right: 8px; z-index: 3; width: 22px; height: 22px; padding: 0; border: 1px solid var(--bronze); border-radius: 3px; background: var(--panel-2); color: var(--muted); cursor: pointer; font-size: 11px; }
 .side.left .collapse { right: 8px; } .side.right .collapse { left: auto; right: 8px; }
-.layout.hide-left { grid-template-columns: 0 minmax(0, 1fr) 330px; } .layout.hide-right { grid-template-columns: 300px minmax(0, 1fr) 0; }
+.layout.hide-left { grid-template-columns: 0 minmax(0, 1fr) 380px; } .layout.hide-right { grid-template-columns: 300px minmax(0, 1fr) 0; }
 .layout.hide-left.hide-right { grid-template-columns: 0 minmax(0, 1fr) 0; }
 .layout.hide-left .side.left, .layout.hide-right .side.right { visibility: hidden; overflow: hidden; min-width: 0; width: 0; padding: 0; border: 0; }
 .reopen { position: fixed; top: 50%; z-index: 30; width: 22px; height: 60px; padding: 0; border: 1px solid var(--bronze); background: var(--panel-2); color: var(--gold); cursor: pointer; }
@@ -242,19 +254,19 @@ input.sw:checked { background: var(--ok); } input.sw:checked::after { left: 16px
 .mi input[type=range] { width: 110px; accent-color: var(--gold); }
 /* bandeau de l'armée sur toute la largeur : 20 emplacements, cartes au ratio du jeu */
 .army { position: relative; }
-.slots { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 6px; }
-.slots .card, .slots .slot-empty { --cw: clamp(48px, calc((100vw - 40px - 114px) / 20), 86px); --ch: calc(var(--cw) * 130 / 60); }
+.slots { display: grid; grid-template-columns: repeat(20, 60px); gap: 3px; justify-content: start; }
+.slots .card, .slots .slot-empty { --cw: 60px; --ch: 130px; }   /* taille native des images du jeu : cartes nettes */
 .slots .slot-empty { width: var(--cw); height: var(--ch); flex: none; }
 .slots .card .cost { font-size: 13px; }
 .budget { display: flex; height: 9px; border-radius: 4px; overflow: hidden; background: rgba(0,0,0,.45); margin-top: 10px; }
 .budget i { display: block; height: 100%; }
 .budget-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin-top: 4px; }
 .budget-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 4px; vertical-align: -1px; }
-.caps-pop { position: absolute; right: 20px; top: 46px; z-index: 55; width: min(620px, 92vw); background: #1b1310; border: 1px solid var(--gold); border-radius: 5px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
-.caps-pop[hidden] { display: none; } .caps-pop h4 { margin: 0 0 8px; font-size: 14px; } .caps-pop .caps { margin: 0; }
+.caps-tab[hidden] { display: none; } .caps-tab .caps { margin: 0; }
+.tab .badge { background: var(--gold); color: #211613; border-radius: 8px; padding: 0 6px; font: 700 11px system-ui; margin-left: 3px; }
+.tab .badge[hidden] { display: none; }
 /* réglages d'affichage */
 body:not(.show-tiers) .card .tier, body:not(.show-tiers) .card img.tier-img { display: none; }
-body.show-names .card.has-img .nm { display: -webkit-box; position: absolute; left: 0; right: 0; bottom: calc(var(--cw) * .36); z-index: 6; height: auto; max-height: 34px; background: rgba(0,0,0,.6); }
 /* filtres rapides du roster */
 .roster-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 10px; }
 .roster-head h2 { margin: 0 !important; }
@@ -298,7 +310,15 @@ body.show-names .card.has-img .nm { display: -webkit-box; position: absolute; le
 .card.is-general { box-shadow: 0 0 0 2px var(--gold), 0 2px 4px var(--shadow); }
 
 /* ---------- Mise en page : statistiques d'unité | personnalisation + roster | composition ---------- */
-.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr) 330px; align-items: start; }
+.layout { display: grid; grid-template-columns: 300px minmax(0, 1fr) 380px; grid-template-rows: auto 1fr; align-items: start; }
+/* l'armée occupe les deux premières colonnes ; le panneau de droite remonte jusqu'en haut de l'armée */
+.layout > .army { grid-column: 1 / 3; grid-row: 1; }
+.layout > .side.left { grid-column: 1; grid-row: 2; } .layout > .center { grid-column: 2; grid-row: 2; }
+.layout > .side.right { grid-column: 3; grid-row: 1 / 3; }
+.layout.hide-right > .army { grid-column: 1 / -1; }
+@media (max-width: 1749px) {   /* écran plus étroit : l'armée reprend toute la largeur, le panneau redescend */
+  .layout > .army { grid-column: 1 / -1; } .layout > .side.right { grid-row: 2; }
+}
 .side { position: sticky; top: env(safe-area-inset-top, 0px); max-height: 100vh; overflow-y: auto; padding: 16px; background: color-mix(in srgb, var(--panel) 94%, transparent); }
 .side.left { border-right: 1px solid var(--bronze); min-height: 60vh; }
 .side.right { border-left: 1px solid var(--bronze); min-height: 60vh; }
@@ -369,7 +389,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .section-head { display: flex; justify-content: space-between; align-items: center; background: var(--band); color: #f4ead6; border: 1px solid var(--bronze); padding: 3px 10px; margin-bottom: 6px; }
 .section-head h3 { margin: 0; font-size: 15px; }
 .section-head .n { font-size: 13px; opacity: .85; }
-.section-cards { display: flex; flex-wrap: wrap; gap: 5px; }
+.section-cards { display: flex; flex-wrap: wrap; gap: 3px; }
 
 /* composition */
 .comp-row { margin: 0 0 6px; font-size: 13px; }
@@ -422,12 +442,16 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     <ul class="race-list" id="raceList" role="listbox" aria-label="Races" hidden></ul>
   </div>
   <button class="tb" id="templatesBtn" title="Example armies for this race">Example armies</button>
-  <div class="top-kpis">
-    <div class="k"><span>Models</span><b id="topModels">0</b></div>
-    <div class="k"><span>Funds remaining</span><b id="funds">0</b><small id="topBudget"></small></div>
+  <span class="patch" id="patchPill"></span>
+  <div class="tiles">
+    <div class="tile funds"><span class="ico" id="fundsIco"></span><span class="l">Funds remaining</span>
+      <div><b id="funds">0</b><small id="topBudget"></small></div><div class="tbar"><i id="fundsBar"></i></div></div>
+    <div class="tile models"><span class="ico" id="modelsIco"></span><span class="l">Models</span>
+      <div><b id="topModels">0</b><small id="modelsSub"></small></div></div>
   </div>
 </header>
 
+<div class="layout" id="layout">
 <section class="army" id="armyZone" aria-label="Army">
   <div class="army-head">
     <input class="army-name" id="armyName" placeholder="Main Army" maxlength="60" aria-label="Army name">
@@ -440,7 +464,6 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
       <button class="tb ib" id="armiesBtn" title="My armies" data-icon="icoPlayer">My armies</button>
       <button class="tb txt" id="shareBtn" title="Copy a link to this army">🔗 Share</button>
       <span class="sep"></span>
-      <button class="tb txt" id="capsBtn" aria-expanded="false" title="Unit caps in use">Caps <span class="badge" id="capsCount" hidden></span></button>
       <button class="tb ib" id="clearArmy" title="Clear the army" data-icon="icoDelete">Clear</button>
       <div class="more">
         <button class="tb ib" id="moreBtn" aria-haspopup="menu" aria-expanded="false" title="More" data-icon="icoMenu">More</button>
@@ -454,8 +477,6 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
           <button class="mi" id="folderBtn" role="menuitem" hidden>Game folder</button>
           <hr><h5>Display</h5>
           <label class="mi"><span>Tier icons on cards</span><input type="checkbox" class="sw" id="optTiers"></label>
-          <label class="mi"><span>Unit names on cards</span><input type="checkbox" class="sw" id="optNames"></label>
-          <label class="mi"><span>Background art</span><input type="range" id="optArt" min="0" max="80" step="5"></label>
           <hr><button class="mi" id="helpBtn" role="menuitem">Help: use the army in the game</button>
         </div>
       </div>
@@ -466,10 +487,8 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   <div class="slots" id="slots"></div>
   <div class="budget" id="budgetBar" aria-label="Budget by role"></div>
   <div class="budget-legend" id="budgetLegend"></div>
-  <div class="caps-pop" id="capsPop" hidden><h4 class="serif">Unit caps in use</h4><div class="caps" id="capsBar"></div></div>
 </section>
 
-<div class="layout" id="layout">
   <aside class="side left">
     <button class="collapse" id="hideLeft" title="Hide unit stats" aria-label="Hide unit stats">◀</button>
     <div id="unitStats" aria-live="polite"></div>
@@ -487,7 +506,10 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tabComp" aria-selected="true">Composition</button>
       <button class="tab" role="tab" id="tabMatch" aria-selected="false">Matchup</button>
+      <button class="tab" role="tab" id="tabCaps" aria-selected="false">Caps <span class="badge" id="capsCount" hidden></span></button>
     </div>
+    <div class="caps-tab" id="capsTab" hidden><div class="caps" id="capsBar"></div>
+      <p class="muted" style="margin-top:8px">Caps reached are shown in gold, exceeded in red.</p></div>
     <div id="composition" aria-label="Army composition statistics"></div>
     <div class="matchup" id="matchup" hidden>
       <select id="enemySelect" aria-label="Opponent race"></select>
@@ -735,10 +757,15 @@ function renderTop() {
   $('raceName').textContent = race().name;
   $('raceStrip').style.backgroundImage = race().race_image ? `url("images/${race().race_image}")` : 'none';
   const f = $('funds');
-  f.innerHTML = (DATA.skin.coin ? `<img class="coin-img" src="images/${esc(DATA.skin.coin)}" alt="">` : '<span class="coin"></span>') + fmt(remaining());
+  f.textContent = fmt(remaining());
   f.classList.toggle('over', remaining() < 0);
   $('topBudget').textContent = ` / ${fmt(DATA.budget)}`;
+  $('fundsBar').style.width = Math.max(0, Math.min(100, 100 * spent() / DATA.budget)) + '%';
+  $('fundsIco').innerHTML = DATA.skin.coin ? `<img src="images/${esc(DATA.skin.coin)}" alt="">` : '<span class="coin"></span>';
+  $('modelsIco').innerHTML = DATA.skin.entitySmall ? `<img src="images/${esc(DATA.skin.entitySmall)}" alt="">` : '';
   $('topModels').textContent = fmt(state.army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0));
+  $('modelsSub').textContent = state.army.length ? ` in ${state.army.length} unit${state.army.length > 1 ? 's' : ''}` : '';
+  $('patchPill').innerHTML = `Game data <b>${esc(DATA.patch.replace('patch_', 'patch '))}</b>`;
   const errs = state.army.length ? validate(race().key, state.army) : [];
   const uc = $('unitCount');
   uc.innerHTML = `${state.army.length} / ${DATA.maxUnits} units` + (errs.length ? '<span class="bang">!</span>' : '');
@@ -1536,42 +1563,63 @@ function loadImage(src) {
   return new Promise(res => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; });
 }
 async function drawArmyPng(withImages) {
-  const army = state.army, perRow = 10, cw = 60, ch = 130, gap = 8, pad = 24, headH = 92;
+  // image de l'armée : cartes complètes (illustration, cadre, demi-cercle, icône de catégorie, coût, chevrons
+  // d'expérience), nom de l'armée et nombre de modèles ; illustration de la race en fond
+  const army = state.army, perRow = 10, cw = 60, ch = 130, gap = 6, pad = 24, headH = 74, footH = 30;
   const rows = Math.max(1, Math.ceil(army.length / perRow));
-  const W = pad * 2 + perRow * cw + (perRow - 1) * gap, H = headH + rows * (ch + gap) + pad + 18, k = 2;
+  const W = pad * 2 + perRow * cw + (perRow - 1) * gap, H = headH + rows * ch + (rows - 1) * gap + footH + 10, k = 2;
   const cv = document.createElement('canvas'); cv.width = W * k; cv.height = H * k;
   const g = cv.getContext('2d'); g.scale(k, k);
-  const css = getComputedStyle(document.documentElement), accent = css.getPropertyValue('--accent').trim() || '#a3261e';
-  g.fillStyle = '#1d1614'; g.fillRect(0, 0, W, H);
-  g.fillStyle = accent; g.fillRect(0, 0, W, 4);
-  g.fillStyle = '#e2b65a'; g.font = '700 22px Cinzel, Georgia, serif'; g.textBaseline = 'top';
-  g.fillText(state.name.trim() || 'Main Army', pad, 18);
-  const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
-  const tc = troops.reduce((s, u) => s + unitCost(u), 0);
-  const elite = tc ? troops.reduce((s, u) => s + statOf(u.opt.u, 'tier') * unitCost(u), 0) / tc : 0;
-  const models = army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0);
-  g.fillStyle = '#eadfc8'; g.font = '500 15px "Alegreya Sans", system-ui, sans-serif';
-  g.fillText(`${race().name}  ·  ${fmt(spent())} / ${fmt(DATA.budget)}  ·  ${army.length} units  ·  ${fmt(models)} models  ·  elite index ${elite.toFixed(1)}`, pad, 50);
+  const img = src => (withImages && src ? loadImage('images/' + src) : Promise.resolve(null));
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#a3261e';
   const sk = DATA.skin || {};
-  const frame = withImages && sk.frame ? await loadImage('images/' + sk.frame) : null;
+  g.fillStyle = '#1d1614'; g.fillRect(0, 0, W, H);
+  const bg = await img(race().art);
+  if (bg) {   // illustration de la race, recadrée pour couvrir l'image, atténuée
+    const r = Math.max(W / bg.width, H / bg.height), w = bg.width * r, h = bg.height * r;
+    g.globalAlpha = .3; g.drawImage(bg, (W - w) / 2, (H - h) / 2, w, h); g.globalAlpha = 1;
+    const grd = g.createLinearGradient(0, 0, 0, H); grd.addColorStop(0, 'rgba(29,22,20,.35)'); grd.addColorStop(1, 'rgba(29,22,20,.8)');
+    g.fillStyle = grd; g.fillRect(0, 0, W, H);
+  }
+  g.fillStyle = accent; g.fillRect(0, 0, W, 4);
+  // en-tête : nom de l'armée à gauche, modèles à droite (tuile acier)
+  g.textBaseline = 'middle'; g.textAlign = 'left';
+  g.fillStyle = '#f6d58a'; g.font = '700 24px Cinzel, Georgia, serif';
+  g.fillText(state.name.trim() || race().name, pad, 38);
+  const models = army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0);
+  const label = `${fmt(models)} models`, entity = await img(sk.entitySmall);
+  g.font = '700 18px Cinzel, Georgia, serif';
+  const tw = g.measureText(label).width + (entity ? 30 : 0) + 24, tx = W - pad - tw, ty = 20, th = 36;
+  g.fillStyle = 'rgba(159,180,200,.16)'; g.strokeStyle = '#9fb4c8'; g.lineWidth = 1;
+  g.beginPath(); g.roundRect ? g.roundRect(tx, ty, tw, th, 6) : g.rect(tx, ty, tw, th); g.fill(); g.stroke();
+  if (entity) g.drawImage(entity, tx + 10, ty + 7, 22, 22);
+  g.fillStyle = '#e6eef5'; g.fillText(label, tx + (entity ? 38 : 12), ty + th / 2 + 1);
+  // cartes
+  const frame = await img(sk.frame);
   for (let i = 0; i < army.length; i++) {
     const u = army[i], x = pad + (i % perRow) * (cw + gap), y = headH + Math.floor(i / perRow) * (ch + gap);
     g.fillStyle = TAB_COLORS[u.card.t] || '#4a2c2a'; g.fillRect(x, y, cw, ch);
-    const src = u.opt.img || u.card.img, im = withImages && src ? await loadImage('images/' + src) : null;
-    if (im) g.drawImage(im, x, y, cw, ch);
-    else { g.fillStyle = '#f4ead6'; g.font = '700 18px Cinzel, Georgia, serif'; g.textAlign = 'center'; g.fillText(initials(u.card.n), x + cw / 2, y + 52); g.textAlign = 'left'; }
+    const art = await img(u.opt.img || u.card.img);
+    if (art) g.drawImage(art, x, y, cw, ch);
+    else { g.fillStyle = '#f4ead6'; g.font = '700 17px Cinzel, Georgia, serif'; g.textAlign = 'center'; g.fillText(initials(u.card.n), x + cw / 2, y + 58); g.textAlign = 'left'; }
     if (frame) g.drawImage(frame, x, y, cw, ch); else { g.strokeStyle = '#8c6a3b'; g.strokeRect(x + .5, y + .5, cw - 1, ch - 1); }
+    const semi = await img(u.opt.rn ? sk.semiRenown : isChar(u.opt) ? sk.semiHero : sk.semi);
+    if (semi) { const sh = semi.height * (cw - 4) / semi.width; g.drawImage(semi, x + 2, y + ch - sh, cw - 4, sh); }
+    const cat = await img(u.opt.ic);
+    if (cat) g.drawImage(cat, x + cw * .3, y + ch - cw * .38, cw * .38, cw * .38);
     g.fillStyle = 'rgba(0,0,0,.6)'; g.fillRect(x + 2, y + 2, cw - 4, 16);
-    g.fillStyle = '#f6d58a'; g.font = '700 12px system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(fmt(unitCost(u)), x + cw / 2, y + 4);
-    const tier = !isChar(u.opt) && statOf(u.opt.u, 'tier'), rk = shownRank(u);
-    g.font = '700 10px Cinzel, Georgia, serif'; g.textAlign = 'right';
-    if (tier) g.fillText(ROMAN[tier], x + cw - 4, y + 21);
-    g.textAlign = 'left'; if (rk) g.fillText('★' + rk, x + 4, y + 21);
-    g.textAlign = 'left';
+    g.fillStyle = '#f6d58a'; g.font = '700 12px system-ui, sans-serif'; g.textAlign = 'center'; g.fillText(fmt(unitCost(u)), x + cw / 2, y + 10); g.textAlign = 'left';
+    const rk = shownRank(u);
+    if (rk) {
+      const xp = await img(sk.xp && sk.xp[rk]);
+      if (xp) g.drawImage(xp, x + 1, y + 19, 22, 22);
+      else { g.fillStyle = '#f6d58a'; g.font = '700 10px system-ui'; g.fillText('★' + rk, x + 4, y + 27); }
+    }
   }
-  g.fillStyle = '#a8977d'; g.font = '12px system-ui, sans-serif';
-  g.fillText('Total War: WARHAMMER III army builder · unofficial fan-made tool', pad, H - 20);
-  return new Promise((res, rej) => { try { cv.toBlob(b => (b ? res(b) : rej(new Error('empty'))), 'image/png'); } catch (e) { rej(e); } });
+  g.fillStyle = '#a8977d'; g.font = '12px system-ui, sans-serif'; g.textBaseline = 'alphabetic';
+  g.fillText(`Game data ${DATA.patch.replace('patch_', 'patch ')}`, pad, H - 12);
+  g.textAlign = 'right'; g.fillText('TWW3 army builder · unofficial fan-made tool', W - pad, H - 12);
+  return new Promise((res, rej) => { try { cv.toBlob(bl => (bl ? res(bl) : rej(new Error('empty'))), 'image/png'); } catch (e) { rej(e); } });
 }
 async function exportPng() {
   if (!state.army.length) { flash('The army is empty.'); return; }
@@ -1682,19 +1730,18 @@ function setupPreview() {
 
 /* ---------- Réglages d'affichage (mémorisés dans le navigateur) ---------- */
 const SETTINGS_KEY = 'tww3-builder:settings';
-const settings = Object.assign({ tiers: false, names: false, art: 40 }, (() => { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; } })());
+const settings = Object.assign({ tiers: false }, (() => { try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch { return {}; } })());
 function applySettings() {
   document.body.classList.toggle('show-tiers', settings.tiers);
-  document.body.classList.toggle('show-names', settings.names);
-  document.documentElement.style.setProperty('--art-op', String(settings.art / 100));
-  $('optTiers').checked = settings.tiers; $('optNames').checked = settings.names; $('optArt').value = settings.art;
+  $('optTiers').checked = settings.tiers;
 }
 function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch {} applySettings(); }
 
 /* ---------- Onglets Composition / Matchup, panneaux repliables ---------- */
 function setTab(which) {
-  $('tabComp').setAttribute('aria-selected', String(which === 'comp')); $('tabMatch').setAttribute('aria-selected', String(which === 'match'));
-  $('composition').hidden = which !== 'comp'; $('matchup').hidden = which !== 'match';
+  [['comp', 'tabComp', 'composition'], ['match', 'tabMatch', 'matchup'], ['caps', 'tabCaps', 'capsTab']].forEach(([k, tab, panel]) => {
+    $(tab).setAttribute('aria-selected', String(which === k)); $(panel).hidden = which !== k;
+  });
 }
 function setPanels() {
   const l = !!settings.hideLeft, r = !!settings.hideRight;
@@ -1716,20 +1763,18 @@ function setupTools() {
     if (src) b.innerHTML = `<img src="images/${esc(src)}" alt="${esc(b.textContent)}">`; else b.classList.add('noicon');
   });
   // menu « More » et volet des plafonds
-  const menu = $('moreMenu'), pop = $('capsPop');
-  const closeAll = () => { menu.hidden = true; $('moreBtn').setAttribute('aria-expanded', 'false'); pop.hidden = true; $('capsBtn').setAttribute('aria-expanded', 'false'); };
+  const menu = $('moreMenu');
+  const closeAll = () => { menu.hidden = true; $('moreBtn').setAttribute('aria-expanded', 'false'); };
   $('moreBtn').addEventListener('click', e => { e.stopPropagation(); const open = menu.hidden; closeAll(); menu.hidden = !open; $('moreBtn').setAttribute('aria-expanded', String(open)); });
-  $('capsBtn').addEventListener('click', e => { e.stopPropagation(); const open = pop.hidden; closeAll(); pop.hidden = !open; $('capsBtn').setAttribute('aria-expanded', String(open)); });
-  document.addEventListener('click', e => { if (!e.target.closest('#moreMenu, #capsPop')) closeAll(); });
+  document.addEventListener('click', e => { if (!e.target.closest('#moreMenu')) closeAll(); });
   menu.addEventListener('click', e => { if (e.target.closest('button.mi')) closeAll(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
   // réglages d'affichage
   $('optTiers').addEventListener('change', e => { settings.tiers = e.target.checked; saveSettings(); });
-  $('optNames').addEventListener('change', e => { settings.names = e.target.checked; saveSettings(); });
-  $('optArt').addEventListener('input', e => { settings.art = Number(e.target.value); saveSettings(); });
   applySettings();
   // onglets et panneaux repliables
   $('tabComp').addEventListener('click', () => setTab('comp')); $('tabMatch').addEventListener('click', () => setTab('match'));
+  $('tabCaps').addEventListener('click', () => setTab('caps'));
   $('hideLeft').addEventListener('click', () => { settings.hideLeft = true; saveSettings(); setPanels(); });
   $('hideRight').addEventListener('click', () => { settings.hideRight = true; saveSettings(); setPanels(); });
   $('showLeft').addEventListener('click', () => { settings.hideLeft = false; saveSettings(); setPanels(); });

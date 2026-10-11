@@ -160,19 +160,22 @@ Limites de la V0 :
   - en dessous, le statut de l'armée et les plafonds en cours.
 - **À gauche** : les **statistiques de l'unité** sélectionnée, c'est-à-dire ses forces et faiblesses (étiquettes du jeu), le détail de son coût (unité, rang, personnalisation) et ses plafonds. Les statistiques chiffrées sont à venir.
 - **Au centre, sous l'armée** : le **panneau de personnalisation**, de hauteur fixe pour que le roster ne bouge pas. Il contient le domaine de magie ou la lignée, la marque…, les sorts, les capacités, les objets et les montures. Chaque sort, capacité ou objet porte une **gemme de rareté** aux couleurs du jeu (`ancillary_uniqueness_groupings.col_hex`). Le roster est en dessous.
-- **En haut de page** : le nombre de **modèles** et les **fonds restants**. Le bouton **Example armies** ouvre les compositions modèles de la race.
+- **En haut de page** :
+  - le menu des races, le bouton **Example armies** et la pastille du **patch des données** (« Game data patch 9.0 ») ;
+  - deux **tuiles** : **fonds restants** en or (pièce du jeu, barre du budget dépensé) et **modèles** en acier (icône d'entité, nombre d'unités).
 - **Barre de l'armée** :
   - le nom de l'armée, puis le compteur « n / 20 units ». Le compteur passe **en rouge avec un « ! »** si l'armée n'est pas valide ; la raison s'affiche au survol et le détail s'ouvre au clic ;
-  - la barre d'outils en **icônes du jeu** (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`, ou des libellés texte à défaut) : **Export to game**, Import, Save, My armies, Share, **Caps** (volet des plafonds en cours, avec le nombre de groupes pleins), Clear et **More** ;
-  - le menu **More** contient Undo / Redo (aussi Ctrl+Z / Ctrl+Y), Notes, l'image PNG, le dossier du jeu, l'aide, et les **réglages d'affichage**, mémorisés dans le navigateur : icônes de tier sur les cartes (**désactivées par défaut**), noms des unités sur les cartes, intensité de l'illustration de fond.
-- **Les 20 emplacements occupent toute la largeur** : les cartes de l'armée s'agrandissent avec l'écran, jusqu'à 86 px de large, au ratio du jeu. Dessous, le **budget par rôle** (lord et héros, infanterie, tir, cavalerie, monstres…) et les fonds restants.
+  - la barre d'outils en **icônes du jeu** (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`, ou des libellés texte à défaut) : **Export to game**, Import, Save, My armies, Share, Clear et **More** ;
+  - le menu **More** contient Undo / Redo (aussi Ctrl+Z / Ctrl+Y), Notes, l'image PNG, le dossier du jeu, l'aide, et la bascule des **icônes de tier** sur les cartes (désactivées par défaut, mémorisé dans le navigateur).
+- **Cartes de l'armée à leur taille native (60 × 130)**, donc nettes, avec 3 px d'écart (3 px aussi dans le roster). Dessous, le **budget par rôle** (lord et héros, infanterie, tir, cavalerie, monstres…) et les fonds restants.
+- **Le panneau de droite remonte jusqu'en haut du bandeau de l'armée**, qui occupe les deux premières colonnes. Sous 1 750 px de large, l'armée reprend toute la largeur et le panneau redescend.
 - **Roster** :
   - des **filtres rapides** : Anti-large, Armour-piercing, Ranged, Flying, Magic dmg, Fire dmg, puis grandes et petites entités. Les filtres se combinent, et grandes / petites s'excluent. Chaque filtre affiche son nombre de cartes ; les cartes qui ne correspondent pas sont **estompées**, ce qui garde la disposition du jeu, et chaque section indique « n / total » ;
   - un badge **« ×n »** sur les cartes déjà présentes dans l'armée ;
   - un **aperçu rapide au survol** : classe, tier, coût, PV, armure, attaque et défense, puissance d'arme, vitesse, tir, forces et faiblesses, avec les icônes du jeu.
 - **Panneaux latéraux repliables** (◀ / ▶) pour agrandir le roster. Leur état est mémorisé.
 - **Notifications** discrètes en bas à droite : enregistrement, lien copié, avertissements.
-- **Panneau de droite à onglets « Composition | Matchup »**. L'onglet Matchup contient :
+- **Panneau de droite à onglets « Composition | Matchup | Caps »**. L'onglet **Caps** liste les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés. Le nombre de groupes pleins s'affiche sur l'onglet. L'onglet Matchup contient :
   - **le choix d'une race adverse** ;
   - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py` ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
@@ -324,7 +327,12 @@ Pour en ajouter une, monte l'armée dans le builder, clique sur Share, colle le 
   - **Contenu** : la faction est la faction principale de la race si elle autorise toutes les unités, sinon une faction commune. Pour chaque unité : général, rang, éléments cochés, et pour les lords et héros leurs capacités innées, sans celles de la monture, comme le fait le jeu.
   - **Vérification** : `scripts/test_app.py` importe puis réexporte les 5 fichiers du jeu de `tests/fixtures/`. Le contenu redevient identique (seul l'ordre des éléments peut différer, la taille est la même au fichier près).
 - **Import** : charge un `.army_setup` du jeu. La race est déduite de la faction, et les unités non jouables en PvP sont ignorées et signalées.
-- **PNG** : télécharge une image de l'armée (nom, race, coût, unités, modèles, indice d'élite, cartes avec coût, tier et rang), prête pour Discord ou Reddit.
+- **PNG** (menu More) : télécharge une image de l'armée, prête pour Discord ou Reddit :
+  - les cartes complètes comme en jeu (illustration, cadre, demi-cercle, icône de catégorie, coût, chevrons d'expérience), sans les tiers ;
+  - le nom de l'armée, et le nombre de modèles dans une tuile en haut à droite ;
+  - l'illustration de la race en fond et le patch des données en bas.
+
+  Les images sont incluses quand le site est servi par un serveur (GitHub Pages). En ouvrant le fichier local, le navigateur peut les bloquer : l'image est alors produite avec les initiales.
 
 **Info-bulles des sorts, capacités et objets** (`pvp_ability_details`) : au survol d'une ligne du panneau de personnalisation ou de la fiche d'unité, on voit le nom, passif ou non, mana, recharge, durée, nombre d'utilisations, la description du jeu et **les effets**. Les effets sont calculés à partir des phases de la capacité : effets chiffrés sur les statistiques (« +10 Melee Attack »), attributs donnés (« Gains: Immune to Psychology ») et lignes d'effet propres au jeu.
 
