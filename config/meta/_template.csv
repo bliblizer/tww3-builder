@@ -1,0 +1,34 @@
+section,item,value,text
+race_key,,"<race_key, ex. wh2_main_sc_skv_skaven>",
+reviewed_patch,,patch_9.0,
+difficulty,,,1 to 5: how hard the roster is to play well
+adaptability,,,1 to 5: how well the roster adjusts to any opponent
+summary,,,"Two or three sentences: how the faction wins, what it struggles with, the first army to try."
+playstyle,,,First paragraph of the playstyle. Add one playstyle row per paragraph.
+strength,Strength title,,What it means in a real battle and which units deliver it. One row per strength.
+weakness,Weakness title,,"Which matchups or unit types punish it, and how players work around it. One row per weakness."
+matchup,Beastmen,,
+matchup,Bretonnia,,
+matchup,Chaos Dwarfs,,
+matchup,Daemons of Chaos,,
+matchup,Dark Elves,,
+matchup,Dwarfs,,
+matchup,Grand Cathay,,
+matchup,Greenskins,,
+matchup,High Elves,,
+matchup,Khorne,,
+matchup,Kislev,,
+matchup,Lizardmen,,
+matchup,Norsca,,
+matchup,Nurgle,,
+matchup,Ogre Kingdoms,,
+matchup,Skaven,,
+matchup,Slaanesh,,
+matchup,The Empire,,
+matchup,Tomb Kings,,
+matchup,Tzeentch,,
+matchup,Undead Legions,,
+matchup,Vampire Coast,,
+matchup,Vampire Counts,,
+matchup,Warriors of Chaos,,
+matchup,Wood Elves,,

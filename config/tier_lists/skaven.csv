@@ -1,0 +1,86 @@
+race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_grey_seer_plague_0,Grey Seer,characters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_thanquol,Thanquol,characters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_warlord_0,Warlord,characters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc09_skv_cha_tretch_craventail,Tretch Craventail,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_cha_warlock_master_0,Warlock Master,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_cha_throt_the_unclean_0,Throt the Unclean,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_lord_skrolk,Lord Skrolk,characters,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_queek_headtaker,Queek Headtaker,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_cha_master_assassin_0,Master Assassin,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_cha_ikit_claw_0,Ikit Claw,characters,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_cha_deathmaster_snikch_0,Deathmaster Snikch,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_verminlord_corruptor,Verminlord Corruptor,characters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_verminlord_deceiver,Verminlord Deceiver,characters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_verminlord_warbringer,Verminlord Warbringer,characters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_verminlord_warpseer,Verminlord Warpseer,characters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_cha_eshin_sorcerer_0,Eshin Sorcerer,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_warlock_engineer,Warlock Engineer,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_plague_priest_0,Plague Priest,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_cha_assassin,Assassin,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_cha_packmaster_0,Packmaster,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_cha_chieftain_0,Chieftain,characters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_cha_ghoritch_0,Ghoritch,characters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_cha_skreech_verminking,Skreech Verminking,characters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_skavenslaves_0,Skavenslaves,infantry,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_skavenslave_spearmen_0,Skavenslave Spears,infantry,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_inf_pusbags,Pusbags,infantry,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_clanrats_0,Clanrats,infantry,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_clanrat_spearmen_0,Clanrat Spears,infantry,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_clanrats_1,Clanrats (Shields),infantry,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_clanrat_spearmen_1,Clanrat Spears (Shields),infantry,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_clanrats_ror_0,Clan Vulkn Tailslashers (Clanrats – Shields),infantry,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_warp_grinder_0,Warp-Grinders,infantry,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_plague_monks,Plague Monks,infantry,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_eshin_triads_0,Eshin Triads,infantry,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_death_runners_0,Death Runners,infantry,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_stormvermin_1,Stormvermin (Swords & Shields),infantry,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_eshin_triads_ror_0,Iksha's Triads (Eshin Triads),infantry,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_stormvermin_0,Stormvermin (Halberds),infantry,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_plague_monk_censer_bearer,Plague Monk Censer Bearers,infantry,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_death_runners_ror_0,Visktrin's Death Squad (Death Runners),infantry,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_plague_monk_censer_bearer_ror_0,Blightscab's Plaguepack (Plague Monk Censer Bearers),infantry,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_stormvermin_ror_0,Council Guard (Stormvermin – Halberds),infantry,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_inf_deathvermin_ror,Deathvermin (Stormvermin – Halberds & Shields),infantry,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_skavenslave_slingers_0,Skavenslave Slingers,range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_night_runners_0,Night Runners,range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_night_runners_1,Night Runners (Slings),range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_warpfire_thrower,Warpfire Throwers,range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_poison_wind_globadiers,Poisoned Wind Globadiers,range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_gutter_runner_slingers_0,Gutter Runner Slingers,range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_gutter_runners_0,Gutter Runners,range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_gutter_runner_slingers_1,Gutter Runner Slingers (Poison),range,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_gutter_runners_1,Gutter Runners (Poison),range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_ratling_gun_0,Ratling Guns,range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_inf_death_globe_bombardiers,Death Globe Bombardiers,range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_art_plagueclaw_catapult,Plagueclaw Catapults,range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_art_warp_lightning_cannon,Warp Lightning Cannons,range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_warplock_jezzails_0,Warplock Jezzails,range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_poison_wind_mortar_0,Poisoned Wind Mortars,range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_ratling_gun_ror_0,Teeth-Breakers (Ratling Guns),range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_art_warp_lightning_cannon_ror_0,Ikit's Zzzzap-Zzzzap! (Warp Lightning Cannons),range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_art_plagueclaw_catapult_ror,Virulent Batteries (Plagueclaw Catapults),range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_inf_warplock_jezzails_ror_0,Natty Buboe's Sharpshooters (Warplock Jezzails),range,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_warpfire_projectors,Stormfiends (Warpfire Projectors),range,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_veh_doomwheel,Doomwheel,range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_ratling_cannons,Stormfiends (Ratling Cannons),range,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_windlaunchers,Stormfiends (Windlaunchers),range,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc14_skv_inf_poison_wind_mortar_ror_0,The Avalanche Mortars (Death Globe Mortars),range,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_art_warp_doom_magma_cannon,Warp-Doom Magma-Cannon,range,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_veh_doomwheel_ror_0,Wheelz of Dooom (Doomwheel),range,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiends_ratling_cannons_ror,Scratterfire Team (Stormfiends – Ratling Cannons),range,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_wolf_rats_0,Wolf Rats,monsters,viable,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_wolf_rats_1,Wolf Rats (Poison),monsters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_mon_rat_ogres,Rat Ogres,monsters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_brood_horror_0,Brood Horror,monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_veh_doom_flayer_0,Doom-Flayers,monsters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_rat_ogres_ror_0,Pit Fighters of Hell’s Deep (Rat Ogres),monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_rat_ogre_mutant,Mutant Rat Ogre,monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_grinderfists,Stormfiends (Grinderfists),monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc12_skv_veh_doom_flayer_ror_0,Dwarf-Thing Menace (Doom-Flayers),monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_veh_cauldron_of_a_thousand_poxes,Cauldron of a Thousand Poxes,monsters,weak,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_doomflayer_gauntlets,Stormfiends (Doom-flayer Gauntlets),monsters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh3_dlc29_skv_mon_stormfiend_shock_gauntlets,Stormfiends (Shock Gauntlets),monsters,meta,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_rat_ogre_mutant_ror_0,Morskittar's Hellion (Mutant Rat Ogre),monsters,strong,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_main_skv_mon_hell_pit_abomination,Hell Pit Abomination,monsters,situational,,,,patch_9.0
+wh2_main_sc_skv_skaven,wh2_dlc16_skv_mon_hell_pit_abomination_ror_0,The Thing-Thing (Hell Pit Abomination),monsters,situational,,,,patch_9.0

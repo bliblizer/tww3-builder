@@ -322,18 +322,19 @@ for r in rows("""
 
 # ---------- profil moyen du roster de chaque race (matchup) ----------
 # 1 carte = 1 voix (son option la moins chère), hors lords et héros ; parts en %
+# « ranged » compte aussi l'artillerie : sa portée est absente des statistiques pour la plupart des pièces (correction provisoire)
 race_profiles = {}
 for r in rows("""
     with opt as (
-      select o.race_key, o.card_id, o.unit_key, o.multiplayer_cost, o.is_flying,
+      select o.race_key, o.card_id, o.unit_key, o.multiplayer_cost, o.is_flying, o.role,
              row_number() over (partition by o.race_key, o.card_id order by o.multiplayer_cost, o.unit_key) as rn
       from marts.pvp_roster_options o where o.role not in ('lord', 'hero')),
     base as (
-      select o.race_key, o.multiplayer_cost as c, o.is_flying, s.*,
+      select o.race_key, o.multiplayer_cost as c, o.is_flying, o.role, s.*,
              exists (select 1 from marts.pvp_unit_tags t where t.unit_key = o.unit_key and t.bullet_point_key = 'ethereal') as ethereal
       from opt o join marts.pvp_unit_stats s using (unit_key) where rn = 1)
     select race_key,
-      100 * avg((armour >= 80)::int) as armoured, 100 * avg(is_large::int) as large_units, 100 * avg(("range" is not null)::int) as ranged,
+      100 * avg((armour >= 80)::int) as armoured, 100 * avg(is_large::int) as large_units, 100 * avg(("range" is not null or role = 'artillery')::int) as ranged,
       100 * avg(is_flying::int) as flying, avg(speed) as speed, avg(health * 1000.0 / c) as hp_per_1000,
       100 * avg(has_magical_attacks::int) as magic, 100 * avg(is_armour_piercing::int) as ap, 100 * avg(is_anti_large::int) as anti_large,
       100 * avg(ethereal::int) as ethereal, 100 * avg(has_shield_or_missile_resistance::int) as shields, avg(tier) as tier

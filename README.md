@@ -18,7 +18,7 @@ seeds/reference/                résultats figés de la V0 (scripts Python), pou
 tests/                          tests transverses et tests métier
 dbt_project.yml, profiles.yml   configuration dbt / DuckDB
 tww3.duckdb                     base produite par dbt (non versionnée, se reconstruit)
-docs/                           site publié par GitHub Pages (application builder)
+docs/                           site publié par GitHub Pages (builder : index.html, guide par faction : meta.html)
 models/marts/                   tables finales du builder PvP (roster par race)
 ```
 
@@ -178,7 +178,7 @@ Limites de la V0 :
 - **Notifications** discrètes en bas à droite : enregistrement, lien copié, avertissements.
 - **Panneau de droite à onglets « Composition | Matchup | Caps »**. L'onglet **Caps** liste les plafonds en cours : en or quand ils sont atteints, en rouge quand ils sont dépassés. L'onglet Matchup contient :
   - **le choix d'une race adverse** ;
-  - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py` ;
+  - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py`. Dans ce profil, l'artillerie compte comme Ranged : sa portée est absente des statistiques pour la plupart des pièces (correction provisoire) ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
@@ -389,13 +389,93 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 - **Comme en jeu**, le prix n'est affiché que sur les éléments non cochés : c'est le surcoût de leur ajout.
 - **Le clic simple attend une fraction de seconde** avant d'ouvrir les panneaux. Sans ce délai, l'apparition du panneau déplacerait le roster entre les deux clics d'un double-clic.
 
+## Page Faction Meta (`docs/meta.html`)
+
+Un guide PvP par faction, publié à côté du builder : `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#tiers`, `#matchups`, `#armies`, `#patch`).
+
+```
+app/meta_template.html        mise en page et code de la page (HTML + CSS + JavaScript, sans bibliothèque)
+scripts/build_meta.py         assemble la page à partir des données du builder et des fichiers ci-dessous
+config/tier_lists/<faction>.csv   tier list d'une faction
+config/meta/<faction>.csv         meta breakdown d'une faction (textes, notes, matchups)
+history/units_<patch>.csv     instantané des unités d'un patch (coûts et statistiques), base de l'onglet Patch changes
+```
+
+`<faction>` est le nom de la faction en minuscules, mots reliés par des tirets : `skaven`, `the-empire`, `daemons-of-chaos`, `warriors-of-chaos`… Les fichiers qui commencent par `_` sont des modèles et sont ignorés (`_template.csv`).
+
+**Build** : `build_meta.py` réutilise les données de `docs/index.html`. Il se lance donc **après** le builder :
+
+```
+python scripts/build_app.py
+python scripts/build_meta.py
+```
+
+**Mise en page** : une fiche de faction à gauche (bandeau, difficulté et adaptabilité en étoiles, résumé, profil du roster comparé à la moyenne des factions), et cinq onglets :
+- **Guide** : style de jeu, forces et faiblesses (partie écrite, puis lignes calculées quand la faction s'écarte d'au moins 20 % de la moyenne), archétypes utilisés par ses armées d'exemple ;
+- **Tier list** : Meta / Strong / Viable / Situational / Weak (couleurs classiques) × Lords & Heroes / Infantry / Range / Cavalry & Monsters. Une carte non notée n'apparaît pas ;
+- **Matchups** : tableau indicatif de +2 (Very favoured) à -2 (Very unfavoured). Un clic sur une faction ouvre sa page ;
+- **Example armies** : les armées de `config/army_templates/` (mêmes données que la galerie du builder), filtrables par archétype, avec un bouton **Open in builder**. En dessous, « Built to beat … » liste les armées des autres factions dont `strong_vs` contient cette faction ;
+- **Patch changes** : les cartes dont le coût ou une statistique a changé depuis le patch précédent, les cartes ajoutées et retirées.
+
+Une faction sans fichier a quand même sa page : profil du roster, armées d'exemple et changements de patch viennent des données du jeu. Les onglets sans contenu l'indiquent.
+
+**Regroupement des cartes** : Lords + Heroes ; Infantry ; Range = Missile Infantry, Missile Cavalry & Chariots, Missile Monsters & Beasts, artillerie (rôle `artillery` dans Artillery & War Machines) et Flying War Machines qui ont du tir ; Cavalry & Monsters = Cavalry & Chariots, Monsters & Beasts, Constructs, les autres War Machines et les Flying War Machines sans tir. La colonne `group` de la tier list permet de forcer le groupe d'une carte (exemple : le Doomwheel en `monsters`).
+
+### Tier list : `config/tier_lists/<faction>.csv`
+
+Même format que le formulaire envoyé aux joueurs et que l'export du mode éditeur : une ligne par carte.
+
+| Colonne | Contenu |
+|---|---|
+| `race_key` | Clé de la race (contrôlée) |
+| `root_unit_key` | Clé de la carte (seule colonne utilisée pour retrouver l'unité) |
+| `unit_name`, `group` | Pour la lecture. `group` (`characters`, `infantry`, `range`, `monsters`) force le groupe s'il diffère de la règle |
+| `tier` | `meta`, `strong`, `viable`, `situational`, `weak`, ou vide (carte masquée) |
+| `note` | Facultative, affichée au survol de la carte |
+| `contributor`, `experience`, `patch` | Facultatives, non affichées |
+
+**Mode éditeur** : `meta.html?race=skaven&edit=1`. Glisser une carte vers un autre tier, ou la sélectionner et taper 1 à 5 (0 pour la retirer). Le brouillon reste dans le navigateur ; **Export CSV** donne le contenu complet du fichier, à enregistrer dans `config/tier_lists/<faction>.csv` avant de relancer le build et de pousser. Seul un push modifie la tier list publiée.
+
+### Meta breakdown : `config/meta/<faction>.csv`
+
+Une ligne par élément, colonnes `section, item, value, text`. Modèle : `config/meta/_template.csv`.
+
+| `section` | `item` | `value` | `text` |
+|---|---|---|---|
+| `race_key` | | clé de la race (contrôlée) | |
+| `reviewed_patch` | | patch de relecture, ex. `patch_9.0` | |
+| `difficulty`, `adaptability` | | 1 à 5 | |
+| `summary` | | | 2 ou 3 phrases d'accroche |
+| `playstyle` | | | un paragraphe par ligne |
+| `strength`, `weakness` | titre | | explication (une ligne par point) |
+| `matchup` | nom de la faction adverse (ou code, ex. `DW`) | `+2`, `+1`, `0`, `-1`, `-2` ; vide = non affiché | note facultative, au survol |
+
+Si `reviewed_patch` est plus ancien que les données, la page affiche « may be outdated ».
+
+### Patch changes : `history/`
+
+À chaque build, `build_meta.py` écrit `history/units_<patch courant>.csv` : une ligne par option jouable (coût et statistiques). Il compare ensuite le patch courant au plus récent des patchs plus anciens présents dans `history/`. **Ce dossier est versionné** : l'instantané de chaque patch sert de base au suivant. Au premier patch suivi (9.0), l'onglet indique qu'il n'y a pas encore de comparaison.
+
+Sont comparés : le coût, la taille d'unité, la santé, la vitesse, l'armure, le bouclier, le moral, les statistiques de mêlée et de tir, les résistances et la barrière. Les sorts, capacités et objets ne le sont pas encore. Quand toutes les options d'une carte changent de la même façon, une seule ligne « All options » est affichée.
+
+### Contrôles au build
+
+Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fichier et ligne, message). Rien n'est bloquant.
+- nom de fichier qui ne correspond à aucune faction, `race_key` différent du fichier ;
+- unité inconnue au patch courant, tier ou groupe invalide, carte en double ;
+- section inconnue, note hors de 1 à 5, faction inconnue ou valeur hors de -2…+2 dans les matchups ;
+- guide relu sur un patch plus ancien que les données ;
+- **symétrie des matchups** : si A contre B vaut +1, B contre A doit valoir -1 ;
+- armée d'exemple dont des unités ont disparu du roster ;
+- nombre de cartes notées quand une tier list est incomplète.
+
 ## Git et GitHub
 
-**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `docs/` (le site) et ce README.
+**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `app/meta_template.html`, `history/`, `docs/` (le site) et ce README.
 **Ce qui ne l'est pas** (voir `.gitignore`) : `tww3.duckdb`, `target/`, `logs/`, `exports/`, `.venv/`, ainsi que les images originales extraites du jeu (`assets/`).
 
 **Routine après une modification**, avec GitHub Desktop :
-1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer.
+1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (page Faction Meta).
 2. Dans GitHub Desktop, onglet **Changes** : relis les fichiers modifiés.
 3. Écris un résumé en bas à gauche, par exemple « Roster : ajout des images », puis clique sur **Commit to main**.
 4. Clique sur **Push origin**. Le code est sauvegardé sur GitHub, et le site en ligne se met à jour en une à deux minutes.
@@ -406,7 +486,10 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 python scripts/fetch_raw.py patch_9.1 <hash du commit WH3-Dump>
 dbt build --profiles-dir . --vars "patch: patch_9.1"
 python scripts/build_app.py
+python scripts/build_meta.py
 ```
+
+`build_meta.py` écrit alors `history/units_patch_9.1.csv` et compare au patch 9.0 : l'onglet Patch changes se remplit. Pense à versionner le nouvel instantané.
 
 Après un ajout de ligne dans `config/sources.csv`, lance d'abord `python scripts/generate_staging.py patch_9.1` pour créer le modèle du nouveau fichier.
 

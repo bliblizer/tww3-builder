@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TWW3 – Faction Meta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ---------- Jetons (mêmes que le builder) ---------- */
+:root {
+  --bg: #1d1614; --panel: #2a1e1a; --panel-2: #33241f; --crimson: #7f1a15; --crimson-hi: #a3261e;
+  --bronze: #8c6a3b; --gold: #e2b65a; --text: #eadfc8; --muted: #a8977d; --danger: #ff6b5a; --ok: #7fc77f; --info: #9fc2d8;
+  --card-ink: #f4ead6; --accent: #a3261e;
+  /* couleurs classiques des tier lists */
+  --t-meta: #ff7f7f; --t-strong: #ffbf7f; --t-viable: #ffdf7f; --t-situational: #ffff7f; --t-weak: #bfff7f; --t-unrated: #5a4a3c;
+  color-scheme: dark;
+}
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 56px); }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: "Alegreya Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.45; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none; background: var(--art, none) center / cover no-repeat; opacity: .3; }
+body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(29,22,20,.5) 60%, rgba(29,22,20,.93) 100%); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+a { color: var(--gold); }
+code { background: rgba(0,0,0,.35); padding: 1px 5px; border-radius: 3px; font-size: 13px; }
+.serif { font-family: "Cinzel", Georgia, "Times New Roman", serif; }
+h2 { font: 700 22px "Cinzel", Georgia, serif; margin: 0 0 6px; color: #f4ead6; }
+h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gold); }
+.mt { margin-top: 30px; }
+.panel { background: rgba(42,30,26,.86); border: 1px solid rgba(140,106,59,.55); border-radius: 6px; padding: 16px 18px; }
+.intro { margin: 0 0 16px; color: var(--muted); max-width: 78ch; }
+.empty { color: var(--muted); font-style: italic; margin: 0; }
+.empty-box { border: 1px dashed rgba(140,106,59,.7); border-radius: 6px; padding: 22px; background: rgba(29,22,20,.6); color: var(--muted); }
+.empty-box b { color: var(--text); }
+.btn { background: rgba(0,0,0,.3); border: 1px solid rgba(244,234,214,.45); border-radius: 4px; padding: 5px 12px; cursor: pointer; color: #f4ead6; text-decoration: none; display: inline-block; }
+.btn:hover { background: rgba(0,0,0,.5); }
+.btn.primary { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 18%, rgba(0,0,0,.3)); }
+.src { display: inline-block; font: 11.5px "Alegreya Sans", system-ui, sans-serif; color: var(--info); border: 1px solid rgba(120,160,190,.5); border-radius: 3px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
+
+/* ---------- Bandeau du haut ---------- */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; padding: 10px 20px; position: relative; z-index: 50;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, rgba(42,30,26,.85)), rgba(42,30,26,.82) 60%); border-bottom: 2px solid var(--accent); }
+.site-nav { display: flex; gap: 2px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.6); border-radius: 4px; padding: 2px; }
+.site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; }
+.site-nav a:hover { color: var(--text); }
+.site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
+.race-pick { position: relative; }
+.race-btn { position: relative; display: block; width: 300px; max-width: 100%; height: 48px; padding: 0; border: 1px solid var(--bronze); border-radius: 4px;
+  background: #140f0d; cursor: pointer; overflow: hidden; text-align: left; }
+.strip { position: absolute; inset: 0; background: var(--s) right center / cover no-repeat; opacity: .85;
+  -webkit-mask-image: linear-gradient(90deg, transparent 18%, #000 55%); mask-image: linear-gradient(90deg, transparent 18%, #000 55%); }
+.race-btn .lbl { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 700; text-shadow: 0 1px 3px #000; }
+.race-btn .caret { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); text-shadow: 0 0 3px #000; }
+.race-menu { position: absolute; top: calc(100% + 6px); left: 0; width: 340px; max-width: calc(100vw - 24px); max-height: min(70vh, 640px); overflow-y: auto;
+  background: var(--panel); border: 1px solid var(--bronze); border-radius: 6px; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.6); display: grid; gap: 4px; }
+.race-menu[hidden] { display: none; }
+.race-opt { position: relative; height: 40px; border: 1px solid rgba(140,106,59,.6); border-radius: 4px; background: #140f0d; cursor: pointer; overflow: hidden; text-align: left; padding: 0; }
+.race-opt:hover, .race-opt:focus-visible { border-color: var(--gold); }
+.race-opt[aria-current="true"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
+.race-opt .lbl { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-weight: 700; text-shadow: 0 1px 3px #000; }
+.race-opt .has { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; }
+.race-opt .has span { font-size: 10.5px; background: rgba(0,0,0,.7); border: 1px solid rgba(226,182,90,.6); color: var(--gold); border-radius: 3px; padding: 0 4px; }
+.pills { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font-size: 13px; color: var(--muted); border: 1px solid rgba(140,106,59,.7); border-radius: 12px; padding: 2px 10px; background: rgba(0,0,0,.3); }
+.pill b { color: var(--text); font-weight: 500; }
+.pill.ok b { color: var(--ok); } .pill.stale { border-color: var(--gold); } .pill.stale b { color: var(--gold); }
+.pill[hidden] { display: none; }
+
+/* ---------- Mise en page : fiche + onglets ---------- */
+.layout { max-width: 1680px; margin: 0 auto; padding: 20px 24px 80px; display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 24px; align-items: start; }
+.layout > main { min-width: 0; }
+.side { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin;
+  background: rgba(29,22,20,.86); border: 1px solid rgba(140,106,59,.6); border-radius: 8px; padding: 0 0 16px; min-width: 0; }
+.id-card { position: relative; padding: 70px 18px 10px; border-bottom: 1px solid rgba(140,106,59,.45); overflow: hidden; }
+.id-strip { position: absolute; inset: 0; background: var(--strip, none) right top / cover no-repeat; opacity: .75;
+  -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 100%); mask-image: linear-gradient(180deg, #000 30%, transparent 100%); }
+.id-card h1 { position: relative; margin: 0; font: 700 36px "Cinzel", Georgia, serif; line-height: 1.05; color: #f4ead6; text-shadow: 0 2px 12px #000; }
+.id-card .sub { position: relative; margin: 2px 0 0; font: 500 15px "Cinzel", Georgia, serif; color: var(--gold); }
+.ratings { margin: 14px 18px 0; padding: 12px 14px; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; align-items: center;
+  background: rgba(0,0,0,.25); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; }
+.ratings[hidden] { display: none; }
+.ratings .lbl { font: 700 15px "Cinzel", Georgia, serif; color: #f4ead6; }
+.ratings .hint { grid-column: 1 / -1; font-size: 12.5px; color: var(--muted); }
+.stars { display: inline-flex; gap: 2px; font-size: 20px; line-height: 1; }
+.stars span { color: rgba(168,151,125,.35); } .stars span.on { color: var(--gold); }
+.stars .val { font-size: 13px; color: var(--muted); margin-left: 6px; align-self: center; }
+.side .lede { margin: 14px 18px 0; font-size: 15.5px; }
+.side-block { margin: 18px 18px 0; padding-top: 14px; border-top: 1px solid rgba(140,106,59,.35); }
+.side-block h3 { font-size: 15px; }
+.facts { display: grid; grid-template-columns: 1fr max-content; gap: 2px 8px; font-size: 13.5px; }
+.facts .bar { grid-column: 1 / -1; position: relative; height: 6px; margin-bottom: 7px; background: rgba(0,0,0,.4); border-radius: 3px; }
+.facts .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: var(--gold); }
+.facts .bar u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--info); }
+.facts .v { font-variant-numeric: tabular-nums; color: var(--muted); text-align: right; font-size: 12.5px; }
+.facts .v b { color: var(--text); font-weight: 500; }
+.up { color: var(--ok); } .down { color: var(--danger); }
+.legend-line { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.legend-line i { display: inline-block; width: 12px; height: 8px; border-radius: 3px; background: var(--gold); margin-right: 5px; }
+.legend-line u { display: inline-block; width: 2px; height: 12px; background: var(--info); margin-right: 6px; vertical-align: -2px; }
+.method { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+
+.tabs { position: sticky; top: 0; z-index: 30; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px;
+  background: rgba(29,22,20,.92); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(140,106,59,.55); padding-top: env(safe-area-inset-top, 0px); }
+.tabs button { background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 16px 9px; cursor: pointer; color: var(--muted);
+  font: 700 16px "Cinzel", Georgia, serif; white-space: nowrap; }
+.tabs button:hover { color: var(--text); }
+.tabs button[aria-selected="true"] { color: #f4ead6; border-bottom-color: var(--gold); }
+
+.tabs .n:empty { display: none; }
+.tabs .n { font: 12px "Alegreya Sans", system-ui, sans-serif; margin-left: 5px; color: var(--muted); }
+.pane[hidden] { display: none; }
+
+/* ---------- Guide ---------- */
+.prose p { margin: 0 0 10px; max-width: 75ch; }
+.prose p:last-child { margin-bottom: 0; }
+.sw { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.sw ul { list-style: none; margin: 0; padding: 0; }
+.sw li { padding: 8px 0 8px 22px; border-top: 1px solid rgba(140,106,59,.3); position: relative; }
+.sw li:first-child { border-top: none; }
+.sw .pos li::before { content: "▲"; position: absolute; left: 0; top: 9px; font-size: 11px; color: var(--ok); }
+.sw .neg li::before { content: "▼"; position: absolute; left: 0; top: 9px; font-size: 11px; color: var(--danger); }
+.sw li b { color: #f4ead6; }
+.sw h4 { margin: 14px 0 2px; font-size: 13px; font-weight: 700; color: var(--info); }
+.sw h4.w { color: var(--muted); margin-top: 0; }
+.arch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.arch-card { text-align: left; cursor: pointer; background: rgba(29,22,20,.75); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; padding: 12px 14px; }
+.arch-card:hover, .arch-card:focus-visible { border-color: var(--gold); }
+.arch-card b { font: 700 16px "Cinzel", Georgia, serif; color: #f4ead6; }
+.arch-card .n { color: var(--gold); font-size: 13px; margin-left: 6px; }
+.arch-card p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+/* ---------- Tier list ---------- */
+.edit-banner { display: none; margin-bottom: 12px; padding: 10px 14px; border: 1px dashed var(--gold); border-radius: 6px; background: rgba(226,182,90,.08); }
+body.editing .edit-banner { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.edit-banner p { margin: 0; flex: 1 1 380px; }
+.edit-banner .dirty { color: var(--gold); font-weight: 700; }
+.matrix { display: grid; grid-template-columns: 130px repeat(4, minmax(0, 1fr)); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; overflow: hidden; background: rgba(29,22,20,.8); }
+.gh { padding: 9px 10px; background: rgba(51,36,31,.97); border-bottom: 1px solid rgba(140,106,59,.6); border-left: 1px solid rgba(140,106,59,.35);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.matrix .gh:first-child { border-left: none; }
+.gh .nm { font: 700 15px "Cinzel", Georgia, serif; color: #f4ead6; }
+.gh .cnt { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl { padding: 10px 12px; color: #1d1614; display: flex; flex-direction: column; justify-content: center; gap: 2px; background: var(--tc);
+  border-top: 1px solid rgba(0,0,0,.35); border-right: 1px solid rgba(0,0,0,.45); }
+.tl .t { font: 700 17px "Cinzel", Georgia, serif; line-height: 1.1; }
+.tl .d { font-size: 12px; line-height: 1.2; opacity: .8; }
+.tl.unrated { color: #f4ead6; }
+.cell { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 3px; padding: 8px; min-height: 124px;
+  background: color-mix(in srgb, var(--tc) 6%, transparent); border-top: 1px solid rgba(140,106,59,.25); border-left: 1px solid rgba(140,106,59,.25); }
+.cell.unrated, .tl.unrated { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 8px, transparent 8px 16px); }
+.cell.empty { align-content: center; justify-content: center; }
+.cell.empty::after { content: "–"; color: rgba(168,151,125,.5); }
+body.editing .cell.empty::after { content: "Drop here"; font-size: 12px; }
+.cell.drop-ok { box-shadow: inset 0 0 0 2px var(--gold); background-color: rgba(226,182,90,.12); }
+.cell .sep { flex: none; width: 1px; align-self: stretch; margin: 0 5px; background: rgba(226,182,90,.45); }
+.stack .gblock { margin-bottom: 14px; border: 1px solid rgba(140,106,59,.6); border-radius: 6px; overflow: hidden; background: rgba(29,22,20,.8); }
+.stack .gblock .gh { border-left: none; }
+.stack .row { display: grid; grid-template-columns: 92px 1fr; }
+.stack .tl { padding: 8px; } .stack .tl .t { font-size: 14px; } .stack .tl .d { display: none; }
+.stack .cell { min-height: 0; border-left: none; }
+
+/* Cartes : mêmes dimensions et habillage que le roster du builder */
+.card { --cw: 50px; --ch: 108px; position: relative; flex: 0 0 var(--cw); width: var(--cw); height: var(--ch); padding: 0; cursor: default; border: none;
+  background: var(--card-bg, #4a2c2a); color: var(--card-ink); display: block; text-align: center; }
+.card .art { position: absolute; inset: 0; width: var(--cw); height: var(--ch); object-fit: cover; object-position: top; }
+.card .ov { position: absolute; top: 0; left: 0; width: var(--cw); height: var(--ch); pointer-events: none; z-index: 3; }
+.card .ov-hover { display: none; } .card:hover .ov-hover, .card:focus-visible .ov-hover { display: block; }
+.card .semi { position: absolute; bottom: 0; left: 2px; width: calc(var(--cw) - 4px); z-index: 4; pointer-events: none; }
+.card .cat { position: absolute; bottom: 0; left: calc(var(--cw) * .3); width: calc(var(--cw) * .38); height: calc(var(--cw) * .38); z-index: 5; pointer-events: none; }
+.card .cost { position: absolute; top: 2px; left: 2px; right: 2px; z-index: 6; background: rgba(0,0,0,.55); color: #f6d58a; font-weight: 700; font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.card .mono { position: absolute; top: 24px; left: 0; right: 0; font: 700 17px "Cinzel", Georgia, serif; opacity: .9; }
+.card .nm { position: absolute; left: 0; right: 0; bottom: 22px; font-size: 9px; line-height: 1.15; padding: 2px 3px; background: rgba(0,0,0,.35);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.card.has-img .mono, .card.has-img .nm { display: none; }
+.card .crown { position: absolute; top: 18px; left: 2px; z-index: 7; font-size: 11px; color: var(--gold); text-shadow: 0 0 3px #000; }
+.card img.utier { position: absolute; top: 17px; right: 1px; width: 17px; height: 17px; z-index: 7; }
+.card .note-dot { position: absolute; top: 34px; right: 2px; z-index: 8; font-size: 10px; background: var(--gold); color: #1d1614; border-radius: 3px; padding: 0 3px; line-height: 1.3; }
+body.editing .card { cursor: grab; }
+body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; }
+.card.moved::after { content: ""; position: absolute; top: -3px; right: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); z-index: 9; box-shadow: 0 0 0 2px #1d1614; }
+.card.dragging { opacity: .35; }
+
+/* ---------- Matchups ---------- */
+.mu { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; overflow: hidden; background: rgba(29,22,20,.78); }
+.mu-col { border-left: 1px solid rgba(140,106,59,.35); display: flex; flex-direction: column; }
+.mu-col:first-child { border-left: none; }
+.mu-h { padding: 9px 12px; background: var(--mc); color: #1d1614; display: flex; align-items: baseline; gap: 8px; }
+.mu-h .sc { font: 700 20px "Cinzel", Georgia, serif; font-variant-numeric: tabular-nums; }
+.mu-h .lb { font-weight: 700; }
+.mu-list { display: flex; flex-direction: column; gap: 6px; padding: 10px; flex: 1; background: color-mix(in srgb, var(--mc) 6%, transparent); min-height: 70px; }
+.mu-list.empty { align-items: center; justify-content: center; }
+.mu-list.empty::after { content: "–"; color: rgba(168,151,125,.5); }
+.foe { position: relative; display: block; height: 40px; border: 1px solid var(--bronze); border-radius: 4px; background: #140f0d; overflow: hidden; text-decoration: none; color: var(--text); }
+.foe:hover, .foe:focus-visible { border-color: var(--gold); }
+.foe .strip { opacity: .9; -webkit-mask-image: linear-gradient(90deg, transparent 10%, #000 60%); mask-image: linear-gradient(90deg, transparent 10%, #000 60%); }
+.foe .n { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px #000; }
+.foe .nt { position: absolute; right: 5px; top: 4px; font-size: 10.5px; background: var(--gold); color: #1d1614; border-radius: 3px; padding: 0 4px; }
+
+/* ---------- Armées d'exemple ---------- */
+.fchips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.fchip { background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.6); border-radius: 14px; padding: 3px 11px; cursor: pointer; font-size: 14px; }
+.fchip[aria-pressed="true"] { border-color: var(--gold); background: rgba(226,182,90,.16); }
+.fchip .n { color: var(--muted); margin-left: 3px; }
+.ex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 14px; }
+.ex { min-width: 0; display: flex; flex-direction: column; gap: 8px; background: rgba(42,30,26,.88); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; padding: 12px 14px; }
+.ex-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ex-head b { font: 700 16px "Cinzel", Georgia, serif; color: #f4ead6; margin-left: 2px; }
+.ex-race { font-size: 13px; color: var(--muted); }
+.arch { font-size: 12px; border: 1px solid rgba(226,182,90,.6); color: var(--gold); border-radius: 3px; padding: 0 6px; cursor: help; }
+.arch.cheese { border-color: #ff8a7a; color: #ff8a7a; }
+.ex-strip { display: flex; gap: 2px; overflow: hidden; }
+.ex-strip .mini { width: 26px; height: 56px; flex: none; object-fit: cover; object-position: top; border-radius: 2px; }
+.ex-strip .mini.txt { display: flex; align-items: center; justify-content: center; font: 700 10px "Cinzel", Georgia, serif; color: var(--card-ink); }
+.ex-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; color: var(--muted); }
+.ex-meta b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+.ex-meta img { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
+.meters { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.meter .dots { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: 1px; }
+.meter .dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(168,151,125,.25); }
+.meter .dots i.on { background: var(--c); }
+.ex-vs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 12.5px; }
+.ex-vs .lbl { color: var(--muted); margin-right: 2px; }
+.ex-vs .lbl:not(:first-child) { margin-left: 8px; }
+.vs-chip { border-radius: 3px; padding: 0 6px; border: 1px solid; }
+.vs-chip.s { color: var(--ok); border-color: rgba(127,199,127,.5); } .vs-chip.w { color: var(--danger); border-color: rgba(255,107,90,.5); }
+.vs-chip.me { background: rgba(226,182,90,.2); color: var(--gold); border-color: var(--gold); }
+.ex-desc { margin: 0; font-size: 14px; }
+.ex-warn { font-size: 12.5px; color: var(--gold); }
+.ex-act { margin-top: auto; display: flex; justify-content: flex-end; }
+
+/* ---------- Patch changes ---------- */
+.pc-group { margin-bottom: 20px; }
+.pc-group h3 { font-size: 15px; color: #f4ead6; }
+.pc-list { display: grid; gap: 6px; }
+.pc { display: grid; grid-template-columns: 34px minmax(160px, 260px) 1fr; gap: 12px; align-items: center; padding: 6px 10px 6px 6px;
+  background: rgba(42,30,26,.86); border: 1px solid rgba(140,106,59,.45); border-radius: 5px; }
+.pc .mini { width: 34px; height: 46px; object-fit: cover; object-position: top; border-radius: 3px; }
+.pc .mini.txt { display: flex; align-items: center; justify-content: center; font: 700 11px "Cinzel", Georgia, serif; color: var(--card-ink); }
+.pc .who b { display: block; color: #f4ead6; }
+.pc .who span { font-size: 12.5px; color: var(--muted); }
+.pc .what { display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: 13.5px; }
+.chg { white-space: nowrap; border: 1px solid rgba(140,106,59,.45); border-radius: 3px; padding: 0 6px; background: rgba(0,0,0,.25); }
+.chg img { width: 14px; height: 14px; vertical-align: -2px; margin-right: 3px; }
+.chg .d { font-weight: 700; margin-left: 4px; }
+.chg.buff .d { color: var(--ok); } .chg.nerf .d { color: var(--danger); }
+.pc-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+
+/* ---------- Info-bulle, menu de tier, export ---------- */
+.tip { position: fixed; z-index: 120; max-width: 300px; pointer-events: none; background: #1b1310; border: 1px solid var(--bronze); border-radius: 4px;
+  padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,.6); font-size: 13.5px; }
+.tip[hidden] { display: none; }
+.tip h5 { margin: 0 0 3px; font: 700 15px "Cinzel", Georgia, serif; color: var(--gold); }
+.tip .meta { color: var(--muted); font-size: 12.5px; }
+.tip .meta b { color: var(--text); font-weight: 500; }
+.tip .note { margin-top: 5px; font-style: italic; color: #e6dbc4; }
+.tip .tier-now { margin-top: 5px; font-weight: 700; }
+.picker { position: fixed; z-index: 130; background: var(--panel); border: 1px solid var(--gold); border-radius: 6px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.6);
+  display: grid; gap: 3px; min-width: 180px; }
+.picker[hidden] { display: none; }
+.picker .ttl { font-size: 12.5px; color: var(--muted); padding: 2px 4px 4px; max-width: 220px; }
+.picker button { display: flex; align-items: center; gap: 8px; text-align: left; background: rgba(0,0,0,.25); border: 1px solid transparent; border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+.picker button:hover, .picker button:focus-visible { border-color: var(--gold); }
+.picker button[aria-current="true"] { background: rgba(226,182,90,.18); }
+.picker .sw-c { width: 12px; height: 12px; border-radius: 2px; background: var(--tc); }
+.picker kbd { margin-left: auto; font: 11px system-ui; color: var(--muted); }
+.modal { position: fixed; inset: 0; z-index: 140; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.6); padding: 16px; }
+.modal[hidden] { display: none; }
+.modal-box { width: min(680px, 100%); max-height: 85vh; overflow-y: auto; background: var(--panel); border: 1px solid var(--bronze); border-radius: 6px; padding: 18px 20px; }
+.modal-box h3 { font-size: 18px; color: #f4ead6; }
+.modal-box p { margin: 0 0 10px; color: var(--muted); }
+.modal-box textarea { width: 100%; height: 260px; background: #140f0d; color: var(--text); border: 1px solid var(--bronze); border-radius: 4px; padding: 8px; font: 12.5px ui-monospace, Consolas, monospace; }
+.modal-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding: 14px 12px 60px; }
+  .side { position: static; max-height: none; }
+  .sw { grid-template-columns: 1fr; }
+  .mu { grid-template-columns: 1fr; } .mu-col { border-left: none; border-top: 1px solid rgba(140,106,59,.35); }
+  .mu-list { flex-direction: row; flex-wrap: wrap; } .foe { flex: 1 1 200px; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 10px 12px; } .pills { margin-left: 0; }
+  .pc { grid-template-columns: 34px 1fr; } .pc .what { grid-column: 1 / -1; }
+  .ex-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="meta.html" aria-current="page">Faction Meta</a></nav>
+  <div class="race-pick">
+    <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
+    <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
+  </div>
+  <div class="pills"><span class="pill" id="reviewedPill" hidden></span><span class="pill">Game data <b id="patchTxt"></b></span></div>
+</header>
+
+<div class="layout">
+  <aside class="side" aria-label="Faction summary">
+    <div class="id-card"><div class="id-strip"></div><h1 id="raceTitle"></h1><p class="sub">PvP faction guide</p></div>
+    <div class="ratings" id="ratings" hidden></div>
+    <p class="lede" id="summary" hidden></p>
+    <div class="side-block">
+      <h3>Roster at a glance <span class="src">From game data</span></h3>
+      <div class="facts" id="facts"></div>
+      <div class="legend-line"><span><i></i><span id="legendRace"></span></span><span><u></u>Average of all factions</span></div>
+      <p class="method">Shares of the unit cards in the PvP roster: one vote per card (its cheapest option), lords and heroes excluded. Artillery counts as ranged.</p>
+    </div>
+  </aside>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Guide sections">
+      <button role="tab" type="button" data-tab="guide" id="tab-guide">Guide</button>
+      <button role="tab" type="button" data-tab="tiers" id="tab-tiers">Tier list</button>
+      <button role="tab" type="button" data-tab="matchups" id="tab-matchups">Matchups</button>
+      <button role="tab" type="button" data-tab="armies" id="tab-armies">Example armies<span class="n" id="armiesCount"></span></button>
+      <button role="tab" type="button" data-tab="patch" id="tab-patch">Patch changes<span class="n" id="patchCount"></span></button>
+    </nav>
+
+    <section class="pane" data-pane="guide" role="tabpanel" aria-labelledby="tab-guide">
+      <div class="panel"><h2>Playstyle</h2><div class="prose" id="playstyle"></div></div>
+      <div class="sw">
+        <div class="panel"><h3>Strengths</h3><div id="swPos"></div></div>
+        <div class="panel"><h3>Weaknesses</h3><div id="swNeg"></div></div>
+      </div>
+      <h2 class="mt">Archetypes</h2>
+      <p class="intro" id="archIntro"></p>
+      <div class="arch-grid" id="archGrid"></div>
+    </section>
+
+    <section class="pane" data-pane="tiers" role="tabpanel" aria-labelledby="tab-tiers">
+      <p class="intro">One rating per card, whatever its mount, lore or variant. Hover a card for details.</p>
+      <div class="edit-banner" role="region" aria-label="Edit mode">
+        <p><b>Edit mode.</b> Drag a card to another tier, or select it and press 1 to 5 (0 for unrated). Your draft stays in this browser; the public tier list only changes when you save the export as <code id="exportPath"></code> and push. <span class="dirty" id="dirty"></span></p>
+        <button class="btn primary" type="button" id="exportBtn">Export CSV</button>
+        <button class="btn" type="button" id="discardBtn">Discard draft</button>
+      </div>
+      <div id="matrixHost"></div>
+    </section>
+
+    <section class="pane" data-pane="matchups" role="tabpanel" aria-labelledby="tab-matchups">
+      <p class="intro" id="muIntro"></p>
+      <div id="matchupBoard"></div>
+    </section>
+
+    <section class="pane" data-pane="armies" role="tabpanel" aria-labelledby="tab-armies">
+      <p class="intro">Ready-made armies to learn the faction. Open one in the builder to check it, adapt it, or save it.</p>
+      <div class="fchips" id="archFilter"></div>
+      <div class="ex-grid" id="armyGrid"></div>
+      <div id="countersBlock"></div>
+    </section>
+
+    <section class="pane" data-pane="patch" role="tabpanel" aria-labelledby="tab-patch">
+      <div id="patchHost"></div>
+    </section>
+  </main>
+</div>
+
+<div class="tip" id="tip" hidden></div>
+<div class="picker" id="picker" hidden role="menu"></div>
+<div class="modal" id="modal" hidden><div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="exportTitle">
+  <h3 id="exportTitle">Export tier list</h3>
+  <p>Save this as <code id="exportPath2"></code> (replace the whole file), then commit and push.</p>
+  <textarea id="csvOut" readonly aria-label="Tier list CSV"></textarea>
+  <div class="modal-row"><button class="btn primary" type="button" id="copyBtn">Copy</button><button class="btn" type="button" id="closeModal">Close</button></div>
+</div></div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const TIERS = [
+  { key: 'meta', name: 'Meta', desc: 'Defines the strongest lists' },
+  { key: 'strong', name: 'Strong', desc: 'Reliable in most armies' },
+  { key: 'viable', name: 'Viable', desc: 'Works with the right plan' },
+  { key: 'situational', name: 'Situational', desc: 'Shines in specific matchups' },
+  { key: 'weak', name: 'Weak', desc: 'Rarely worth the slot' }
+];
+const UNRATED = { key: null, name: 'Unrated', desc: 'Edit mode only' };
+const GROUPS = [
+  { key: 'characters', name: 'Lords & Heroes' }, { key: 'infantry', name: 'Infantry' },
+  { key: 'range', name: 'Range' }, { key: 'monsters', name: 'Cavalry & Monsters' }
+];
+const MU = [
+  { v: 2, label: 'Very favoured', c: '#7fd87f' }, { v: 1, label: 'Favoured', c: '#bfe89a' }, { v: 0, label: 'Even', c: '#e8e2a0' },
+  { v: -1, label: 'Unfavoured', c: '#ffbf7f' }, { v: -2, label: 'Very unfavoured', c: '#ff8a7a' }
+];
+const FACTS = [
+  ['ranged', 'Ranged', 'Units with a missile range, artillery included'], ['ap', 'Armour-piercing', 'Units with armour-piercing attacks'],
+  ['anti_large', 'Anti-large', 'Units with a bonus against large'], ['armoured', 'Armoured', 'Units with 80 armour or more'],
+  ['shields', 'Shields / missile resist.', 'Units with a shield or missile resistance'], ['large_units', 'Large units', 'Units classed as large'],
+  ['flying', 'Flying', 'Units that can fly'], ['magic', 'Magic damage', 'Units with magical attacks'],
+  ['speed', 'Average speed', 'Average speed value, not a percentage'], ['tier', 'Average unit tier', 'Average unit tier, I to V']
+];
+const STAT_ICON = { 'Health': 'health', 'Armour': 'armour', 'Leadership': 'leadership', 'Speed': 'speed', 'Melee attack': 'melee_attack',
+  'Melee defence': 'melee_defence', 'Weapon strength': 'weapon_strength', 'Charge bonus': 'charge_bonus', 'Ammunition': 'ammunition',
+  'Range': 'range', 'Missile damage': 'missile_strength', 'Bonus vs large': 'bonus_v_large', 'Bonus vs infantry': 'bonus_v_infantry', 'AP damage': 'ap', 'Shield': 'shield', 'Barrier': 'barrier' };
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const img = p => p ? 'images/' + p.split('/').map(encodeURIComponent).join('/') : '';
+const cssUrl = p => p ? `url("${img(p)}")` : 'none';
+const tierVar = k => `var(--t-${k || 'unrated'})`;
+const initials = n => n.replace(/\(.*?\)/g, '').split(/[\s-]+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+const patchName = p => (p || '').replace('patch_', 'patch ');
+const archDef = a => ((DATA.archetypes || []).find(x => x[0] === a) || [])[1] || '';
+const raceByKey = k => DATA.races.find(r => r.key === k);
+$('patchTxt').textContent = patchName(DATA.patch);
+
+/* ---------- Faction et onglet courants : meta.html?race=skaven#tiers ---------- */
+const params = new URLSearchParams(location.search);
+const editing = params.has('edit');
+document.body.classList.toggle('editing', editing);
+let race = DATA.races.find(r => r.slug === params.get('race')) || DATA.races.find(r => r.guide || r.tiers) || DATA.races[0];
+let tab = 'guide', armyFilter = '';
+const page = () => DATA.pages[race.key];
+
+function setRace(r, push = true) {
+  race = r; armyFilter = '';
+  if (push) { const p = new URLSearchParams(location.search); p.set('race', r.slug); history.replaceState(null, '', '?' + p + location.hash); }
+  document.title = `${r.name} – Faction Meta – TWW3`;
+  const root = document.documentElement.style;
+  root.setProperty('--accent', r.accent ? '#' + r.accent : '#a3261e');
+  root.setProperty('--strip', cssUrl(r.strip));
+  root.setProperty('--art', r.art ? cssUrl(r.art) : 'none');
+  $('raceBtnStrip').style.setProperty('--s', cssUrl(r.strip));
+  $('raceBtnLbl').textContent = r.name; $('raceBtn').setAttribute('aria-label', `Faction: ${r.name}. Change faction`);
+  $('raceTitle').textContent = r.name; $('legendRace').textContent = r.name;
+  loadDraft(); renderAll();
+}
+
+/* ---------- Menu des factions ---------- */
+function renderRaceMenu() {
+  $('raceMenu').innerHTML = DATA.races.map(r => `<button class="race-opt" role="menuitem" type="button" data-slug="${r.slug}" aria-current="${r.key === race.key}">
+    <span class="strip" style="--s:${cssUrl(r.strip)}"></span><span class="lbl">${esc(r.name)}</span>
+    <span class="has">${r.guide ? '<span>Guide</span>' : ''}${r.tiers ? '<span>Tiers</span>' : ''}</span></button>`).join('');
+  $('raceMenu').querySelectorAll('.race-opt').forEach(b => b.onclick = () => { toggleMenu(false); setRace(DATA.races.find(r => r.slug === b.dataset.slug)); window.scrollTo({ top: 0 }); });
+}
+function toggleMenu(open) {
+  $('raceMenu').hidden = !open; $('raceBtn').setAttribute('aria-expanded', String(open));
+  if (open) { renderRaceMenu(); ($('raceMenu').querySelector('[aria-current="true"]') || $('raceMenu').firstElementChild).focus(); }
+}
+$('raceBtn').onclick = () => toggleMenu($('raceMenu').hidden);
+document.addEventListener('mousedown', e => { if (!$('raceMenu').hidden && !e.target.closest('.race-pick')) toggleMenu(false); });
+
+/* ---------- Fiche latérale ---------- */
+function stars(n) {
+  return `<span class="stars" role="img" aria-label="${n} out of 5">${[1, 2, 3, 4, 5].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('')}<span class="val">${n}/5</span></span>`;
+}
+const SCALE = { speed: 100, tier: 5 };
+const fmtFact = k => k === 'tier' ? v => v.toFixed(1) : k === 'speed' ? v => String(Math.round(v)) : v => Math.round(v) + '%';
+function renderSide() {
+  const m = page().meta, p = DATA.profiles[race.key] || {}, a = DATA.avg;
+  const pill = $('reviewedPill');
+  pill.hidden = !(m && m.reviewed);
+  if (m && m.reviewed) {
+    const stale = m.reviewed !== DATA.patch;
+    pill.className = 'pill ' + (stale ? 'stale' : 'ok');
+    pill.innerHTML = stale ? `Guide reviewed on <b>${esc(patchName(m.reviewed))}</b>, may be outdated` : `Guide reviewed on <b>${esc(patchName(m.reviewed))}</b>`;
+  }
+  const r = $('ratings');
+  r.hidden = !(m && (m.difficulty || m.adaptability));
+  if (!r.hidden) r.innerHTML = (m.difficulty ? `<span class="lbl">Difficulty</span>${stars(m.difficulty)}` : '') +
+    (m.adaptability ? `<span class="lbl">Adaptability</span>${stars(m.adaptability)}` : '') +
+    '<span class="hint">Difficulty: how hard the roster is to play well. Adaptability: how well it adjusts to any opponent.</span>';
+  $('summary').hidden = !(m && m.summary); $('summary').textContent = m ? m.summary : '';
+  $('facts').innerHTML = FACTS.filter(([k]) => k in p).map(([k, label, how]) => {
+    const max = SCALE[k] || 100, f = fmtFact(k), q = a[k] ? p[k] / a[k] : 1;
+    const arrow = q >= 1.2 ? '<span class="up" title="Well above average">▲</span> ' : q <= .8 ? '<span class="down" title="Well below average">▼</span> ' : '';
+    return `<span title="${how}">${label}</span><span class="v">${arrow}<b>${f(p[k])}</b> vs ${f(a[k])}</span>
+      <span class="bar" aria-hidden="true"><i style="width:${Math.min(100, 100 * p[k] / max)}%"></i><u style="left:${Math.min(99, 100 * a[k] / max)}%"></u></span>`;
+  }).join('');
+}
+
+/* ---------- Onglet Guide ---------- */
+function renderGuide() {
+  const m = page().meta;
+  $('playstyle').innerHTML = m && m.playstyle.length ? m.playstyle.map(t => `<p>${esc(t)}</p>`).join('')
+    : `<p class="empty">No written guide for ${esc(race.name)} yet. The roster profile and the example armies are already available.</p>`;
+  const pos = [], neg = [], p = DATA.profiles[race.key] || {}, a = DATA.avg;
+  FACTS.filter(([k]) => k !== 'tier' && k in p).forEach(([k, label]) => {
+    const q = p[k] / a[k], f = fmtFact(k);
+    const txt = k === 'speed' ? `${label}: ${f(p[k])}, against ${f(a[k])} on average` : `${label}: ${f(p[k])} of unit cards, against ${f(a[k])} on average`;
+    if (q >= 1.2) pos.push(txt); else if (q <= .8) neg.push(txt);
+  });
+  const written = list => list.map(x => `<li>${x.title ? `<b>${esc(x.title)}.</b> ` : ''}${esc(x.text)}</li>`).join('');
+  const block = (list, data, cls) => (list && list.length ? `<h4 class="w">Analysis</h4><ul class="${cls}">${written(list)}</ul>` : '') +
+    `<h4>From game data</h4><ul class="${cls}">${data.map(t => `<li>${esc(t)}</li>`).join('') || '<li class="empty">Nothing stands out from the average.</li>'}</ul>`;
+  $('swPos').innerHTML = block(m && m.strengths, pos, 'pos');
+  $('swNeg').innerHTML = block(m && m.weaknesses, neg, 'neg');
+  const used = {}; armiesOf(race.key).forEach(t => t.archs.forEach(x => { used[x] = (used[x] || 0) + 1; }));
+  const names = Object.keys(used).sort((x, y) => used[y] - used[x] || x.localeCompare(y));
+  $('archIntro').textContent = names.length ? `The archetypes used by the ${race.name} example armies. Pick one to see its armies.`
+    : `No example army for ${race.name} yet, so no archetype to show.`;
+  $('archGrid').innerHTML = names.map(x => `<button class="arch-card" type="button" data-arch="${esc(x)}"><b>${esc(x)}</b><span class="n">${used[x]} ${used[x] > 1 ? 'armies' : 'army'}</span><p>${esc(archDef(x))}</p></button>`).join('');
+  $('archGrid').querySelectorAll('.arch-card').forEach(b => b.onclick = () => { armyFilter = b.dataset.arch; openTab('armies', true); renderArmies(); });
+}
+
+/* ---------- Onglet Tier list (+ mode édition : meta.html?race=…&edit=1) ---------- */
+let draft = null;
+const DRAFT_KEY = () => 'tww3-meta:tier-draft:' + race.key;
+function loadDraft() { draft = null; if (!editing) return; try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY()) || 'null'); } catch (e) { draft = null; } }
+function saveDraft() { try { localStorage.setItem(DRAFT_KEY(), JSON.stringify(draft)); } catch (e) { /* stockage indisponible : brouillon en mémoire */ } }
+const cardsOf = () => page().cards;
+const tierOf = c => (editing && draft && c.key in draft) ? draft[c.key] : c.t;
+const changes = () => draft ? cardsOf().filter(c => c.key in draft && draft[c.key] !== c.t).length : 0;
+function setTier(key, t) {
+  draft = draft || {};
+  const c = cardsOf().find(x => x.key === key);
+  if (t === c.t) delete draft[key]; else draft[key] = t;
+  saveDraft(); renderTiers();
+  const el = document.querySelector(`.card[data-key="${CSS.escape(key)}"]`); if (el) el.focus();
+}
+const sortCards = l => l.sort((x, y) => (y.lord - x.lord) || (x.min - y.min) || x.n.localeCompare(y.n));
+let dragGroup = null;
+function cardEl(c) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'card' + (c.img ? ' has-img' : ''); b.dataset.key = c.key;
+  b.style.setProperty('--card-bg', DATA.tabColors[c.tab] || '#4a2c2a');
+  const S = DATA.skin, semi = c.rn ? S.semiRenown : c.char ? S.semiHero : S.semi;
+  b.innerHTML = (c.img ? `<img class="art" src="${img(c.img)}" alt="" loading="lazy" draggable="false">` : '') +
+    `<img class="ov" src="${img(S.frame)}" alt="" draggable="false"><img class="ov ov-hover" src="${img(S.hover)}" alt="" draggable="false">` +
+    `<img class="semi" src="${img(semi)}" alt="" draggable="false">` + (c.ic ? `<img class="cat" src="${img(c.ic)}" alt="" draggable="false">` : '') +
+    `<span class="cost">${c.min === c.max ? c.min : c.min + '+'}</span>` + (c.lord ? '<span class="crown" title="Lord">♛</span>' : '') +
+    (!c.char && c.utier && S.tier ? `<img class="utier" src="${img(S.tier[c.utier])}" alt="">` : '') +
+    (c.note ? '<span class="note-dot">✎</span>' : '') +
+    `<span class="mono">${esc(initials(c.n))}</span><span class="nm">${esc(c.n)}</span>`;
+  const t = TIERS.find(x => x.key === tierOf(c));
+  b.setAttribute('aria-label', `${c.n}: ${t ? t.name : 'unrated'}`);
+  if (editing && draft && c.key in draft) b.classList.add('moved');
+  b.draggable = editing;
+  b.addEventListener('mouseenter', () => showTip(c, b)); b.addEventListener('mouseleave', hideTip);
+  b.addEventListener('focus', () => showTip(c, b)); b.addEventListener('blur', hideTip);
+  if (editing) {
+    b.addEventListener('click', () => openPicker(c, b));
+    b.addEventListener('keydown', e => { const n = '012345'.indexOf(e.key); if (n >= 0 && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setTier(c.key, n ? TIERS[n - 1].key : null); } });
+    b.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', c.key); e.dataTransfer.effectAllowed = 'move'; b.classList.add('dragging'); dragGroup = c.g; hideTip(); });
+    b.addEventListener('dragend', () => { b.classList.remove('dragging'); dragGroup = null; });
+  }
+  return b;
+}
+function cellEl(group, tier) {
+  const cell = document.createElement('div');
+  cell.className = 'cell' + (tier ? '' : ' unrated'); cell.style.setProperty('--tc', tierVar(tier));
+  const list = sortCards(cardsOf().filter(c => c.g === group && tierOf(c) === (tier || null)));
+  if (!list.length) cell.classList.add('empty');
+  let prevLord = null;
+  list.forEach(c => {
+    if (group === 'characters' && prevLord && !c.lord) { const s = document.createElement('span'); s.className = 'sep'; s.title = 'Lords | Heroes'; cell.append(s); }
+    prevLord = c.lord; cell.append(cardEl(c));
+  });
+  if (editing) {
+    cell.addEventListener('dragover', e => { if (dragGroup === group) { e.preventDefault(); cell.classList.add('drop-ok'); } });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drop-ok'));
+    cell.addEventListener('drop', e => { e.preventDefault(); cell.classList.remove('drop-ok'); const k = e.dataTransfer.getData('text/plain'); if (k) setTier(k, tier); });
+  }
+  return cell;
+}
+function labelEl(t) {
+  const d = document.createElement('div'); d.className = 'tl' + (t.key ? '' : ' unrated'); d.style.setProperty('--tc', tierVar(t.key));
+  d.innerHTML = `<span class="t">${t.name}</span><span class="d">${t.desc}</span>`; return d;
+}
+function headEl(g) {
+  const all = cardsOf().filter(c => c.g === g.key), n = all.filter(c => tierOf(c)).length;
+  const h = document.createElement('div'); h.className = 'gh';
+  h.innerHTML = `<span class="nm">${g.name}</span>` + (editing ? `<span class="cnt" title="Cards rated / cards in the roster">${n} / ${all.length} rated</span>` : '');
+  return h;
+}
+const narrow = matchMedia('(max-width: 860px)');
+function renderTiers() {
+  const host = $('matrixHost'); host.innerHTML = '';
+  $('exportPath').textContent = $('exportPath2').textContent = `config/tier_lists/${race.slug}.csv`;
+  $('dirty').textContent = changes() ? `${changes()} change${changes() > 1 ? 's' : ''} not exported yet.` : '';
+  if (!race.tiers && !editing) {
+    host.innerHTML = `<div class="empty-box"><b>No tier list for ${esc(race.name)} yet.</b> It will appear here once <code>config/tier_lists/${race.slug}.csv</code> exists.</div>`;
+    return;
+  }
+  const rows = editing ? [...TIERS, UNRATED] : TIERS;
+  if (!narrow.matches) {
+    const m = document.createElement('div'); m.className = 'matrix';
+    const corner = document.createElement('div'); corner.className = 'gh'; corner.innerHTML = '<span class="cnt">Tier</span>'; m.append(corner);
+    GROUPS.forEach(g => m.append(headEl(g)));
+    rows.forEach(t => { m.append(labelEl(t)); GROUPS.forEach(g => m.append(cellEl(g.key, t.key))); });
+    host.append(m);
+  } else {
+    const s = document.createElement('div'); s.className = 'stack';
+    GROUPS.forEach(g => {
+      const b = document.createElement('div'); b.className = 'gblock'; b.append(headEl(g));
+      rows.forEach(t => { const r = document.createElement('div'); r.className = 'row'; r.append(labelEl(t), cellEl(g.key, t.key)); b.append(r); });
+      s.append(b);
+    });
+    host.append(s);
+  }
+}
+narrow.addEventListener('change', () => { if (tab === 'tiers') renderTiers(); });
+
+function showTip(c, el) {
+  const t = $('tip'), tier = TIERS.find(x => x.key === tierOf(c));
+  t.innerHTML = `<h5>${esc(c.n)}</h5><div class="meta">${esc(c.grp || '')}${c.lord ? ' (lord)' : ''}</div>
+    <div class="meta">Cost <b>${c.min === c.max ? c.min : c.min + ' – ' + c.max}</b>${c.nopts > 1 ? `, <b>${c.nopts}</b> options` : ''}${!c.char && c.utier ? `, unit tier <b>${ROMAN[c.utier]}</b>` : ''}</div>` +
+    (c.note ? `<div class="note">${esc(c.note)}</div>` : '') +
+    (editing ? `<div class="tier-now" style="color:${tierVar(tier && tier.key)}">${tier ? tier.name : 'Unrated'}</div><div class="meta">Click or press 1–5 to change</div>` : '');
+  t.hidden = false;
+  const r = el.getBoundingClientRect();
+  t.style.left = Math.max(8, Math.min(innerWidth - t.offsetWidth - 8, r.right + 8)) + 'px';
+  t.style.top = Math.max(8, Math.min(innerHeight - t.offsetHeight - 8, r.top)) + 'px';
+}
+function hideTip() { $('tip').hidden = true; }
+function openPicker(c, el) {
+  hideTip();
+  const p = $('picker'), cur = tierOf(c);
+  p.innerHTML = `<div class="ttl">${esc(c.n)}</div>` + [...TIERS, UNRATED].map((t, i) =>
+    `<button type="button" role="menuitem" data-t="${t.key || ''}" aria-current="${t.key === cur}" style="--tc:${tierVar(t.key)}"><span class="sw-c"></span>${t.name}<kbd>${t.key ? i + 1 : 0}</kbd></button>`).join('');
+  p.hidden = false;
+  const r = el.getBoundingClientRect();
+  p.style.left = Math.max(8, Math.min(innerWidth - p.offsetWidth - 8, r.right + 6)) + 'px';
+  p.style.top = Math.max(8, Math.min(innerHeight - p.offsetHeight - 8, r.top)) + 'px';
+  p.querySelectorAll('button').forEach(b => b.onclick = () => { p.hidden = true; setTier(c.key, b.dataset.t || null); });
+  (p.querySelector('[aria-current="true"]') || p.querySelector('button')).focus();
+}
+document.addEventListener('mousedown', e => { if (!$('picker').hidden && !$('picker').contains(e.target) && !e.target.closest('.card')) $('picker').hidden = true; });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('picker').hidden = true; $('modal').hidden = true; toggleMenu(false); } });
+
+/* export au même format que config/tier_lists/<faction>.csv (et que le formulaire envoyé aux joueurs) */
+const q = v => { v = String(v ?? ''); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+function csvExport() {
+  const rows = [['race_key', 'root_unit_key', 'unit_name', 'group', 'tier', 'note', 'contributor', 'experience', 'patch']];
+  GROUPS.forEach(g => sortCards(cardsOf().filter(c => c.g === g.key)).forEach(c =>
+    rows.push([race.key, c.key, c.n, g.key, tierOf(c) || '', c.note || '', '', '', DATA.patch])));
+  return rows.map(r => r.map(q).join(',')).join('\r\n');
+}
+$('exportBtn').onclick = () => { $('csvOut').value = csvExport(); $('modal').hidden = false; $('copyBtn').focus(); };
+$('closeModal').onclick = () => { $('modal').hidden = true; };
+$('copyBtn').onclick = async () => {
+  try { await navigator.clipboard.writeText($('csvOut').value); $('copyBtn').textContent = 'Copied'; }
+  catch (e) { $('csvOut').select(); $('copyBtn').textContent = 'Press Ctrl+C'; }
+  setTimeout(() => { $('copyBtn').textContent = 'Copy'; }, 1600);
+};
+$('discardBtn').onclick = () => { draft = null; try { localStorage.removeItem(DRAFT_KEY()); } catch (e) {} renderTiers(); };
+
+/* ---------- Onglet Matchups ---------- */
+function renderMatchups() {
+  const m = page().meta, list = m ? Object.entries(m.matchups) : [];
+  $('muIntro').textContent = `An indicative estimate of how ${race.name} fares against each faction in ladder play, written for the guide rather than computed from results. Click a faction to open its page.`;
+  if (!list.length) { $('matchupBoard').innerHTML = `<div class="empty-box"><b>No matchup chart for ${esc(race.name)} yet.</b> Add <code>matchup</code> rows to <code>config/meta/${race.slug}.csv</code>.</div>`; return; }
+  $('matchupBoard').innerHTML = '<div class="mu">' + MU.map(x => {
+    const foes = list.filter(([, y]) => y.v === x.v).map(([k, y]) => ({ r: raceByKey(k), note: y.note })).filter(f => f.r).sort((a, b) => a.r.name.localeCompare(b.r.name));
+    return `<div class="mu-col" style="--mc:${x.c}"><div class="mu-h"><span class="sc">${x.v > 0 ? '+' + x.v : x.v}</span><span class="lb">${x.label}</span></div>
+      <div class="mu-list${foes.length ? '' : ' empty'}">${foes.map(f => `<a class="foe" href="?race=${f.r.slug}#matchups" ${f.note ? `data-note="${esc(f.note)}"` : ''}>
+        <span class="strip" style="--s:${cssUrl(f.r.strip)}"></span><span class="n">${esc(f.r.name)}</span>${f.note ? '<span class="nt">note</span>' : ''}</a>`).join('')}</div></div>`;
+  }).join('') + '</div>';
+  $('matchupBoard').querySelectorAll('.foe').forEach(el => {
+    if (el.dataset.note) {
+      const show = () => { const t = $('tip'); t.innerHTML = `<h5>${esc(el.querySelector('.n').textContent)}</h5><div>${esc(el.dataset.note)}</div>`; t.hidden = false;
+        const r = el.getBoundingClientRect(); t.style.left = Math.max(8, Math.min(innerWidth - t.offsetWidth - 8, r.left)) + 'px'; t.style.top = Math.min(innerHeight - t.offsetHeight - 8, r.bottom + 6) + 'px'; };
+      el.addEventListener('mouseenter', show); el.addEventListener('focus', show); el.addEventListener('mouseleave', hideTip); el.addEventListener('blur', hideTip);
+    }
+    el.addEventListener('click', e => { e.preventDefault(); hideTip(); setRace(DATA.races.find(r => r.slug === new URLSearchParams(el.getAttribute('href').split('#')[0]).get('race'))); window.scrollTo({ top: 0 }); });
+  });
+}
+
+/* ---------- Onglet Example armies (config/army_templates/, préparées par build_meta.py) ---------- */
+const armiesOf = rk => DATA.templates.filter(t => t.race === rk);
+const vsName = ([type, v]) => type === 'f' ? ((raceByKey(DATA.factionCodes[v]) || {}).name || v) : v;
+const vsChips = (list, cls) => list.map(x => {
+  const me = x[0] === 'f' && DATA.factionCodes[x[1]] === race.key;
+  return `<span class="vs-chip ${cls}${me ? ' me' : ''}"${x[0] === 'a' ? ` title="${esc(archDef(x[1]))}"` : ''}>${esc(vsName(x))}</span>`;
+}).join('');
+const meter = (n, label, color) => n ? `<span class="meter" title="${label} ${n}/5">${label}<span class="dots">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= n ? 'on' : ''}" style="--c:${color}"></i>`).join('')}</span></span>` : '';
+const mini = u => u.img ? `<img class="mini" src="${img(u.img)}" alt="" loading="lazy" title="${esc(u.n)}">`
+  : `<span class="mini txt" style="background:${DATA.tabColors[u.tab] || '#4a2c2a'}" title="${esc(u.n)}">${esc(initials(u.n))}</span>`;
+function builderLink(t) {
+  const p = new URLSearchParams({ v: '1', r: t.race, a: t.a, n: t.name });
+  if (t.desc && t.desc.length <= 500) p.set('m', t.desc);
+  return 'index.html#' + p.toString();
+}
+function armyTile(t, showRace) {
+  const S = DATA.skin;
+  return `<div class="ex">
+    <div class="ex-head">${t.archs.map(x => `<span class="arch${x === 'Cheese' ? ' cheese' : ''}" title="${esc(archDef(x))}">${esc(x)}</span>`).join('')}<b>${esc(t.name)}</b>
+      ${showRace ? `<span class="ex-race">${esc((raceByKey(t.race) || {}).name || '')}</span>` : ''}</div>
+    <div class="ex-strip">${t.units.map(mini).join('')}</div>
+    <div class="ex-meta"><span>${S.coin ? `<img src="${img(S.coin)}" alt="">` : ''}<b>${t.cost}</b></span>
+      <span>${S.entitySmall ? `<img src="${img(S.entitySmall)}" alt="">` : ''}<b>${t.models}</b> models</span><span><b>${t.units.length}</b> units</span></div>
+    <div class="meters">${meter(t.diff, 'Difficulty', '#e07a5f')}${meter(t.adapt, 'Adaptability', '#81b29a')}</div>
+    ${t.strong.length || t.weak.length ? `<div class="ex-vs">${t.strong.length ? `<span class="lbl">Strong vs</span>${vsChips(t.strong, 's')}` : ''}${t.weak.length ? `<span class="lbl">Weak vs</span>${vsChips(t.weak, 'w')}` : ''}</div>` : ''}
+    ${t.desc ? `<p class="ex-desc">${esc(t.desc)}</p>` : ''}
+    ${t.issues.length ? `<div class="ex-warn" title="${esc(t.issues.join('\n'))}">⚠ ${esc(t.issues[0])}${t.issues.length > 1 ? ` (+${t.issues.length - 1})` : ''}</div>` : ''}
+    <div class="ex-act"><a class="btn primary" href="${esc(builderLink(t))}">Open in builder</a></div></div>`;
+}
+function renderArmies() {
+  const all = armiesOf(race.key), counts = {};
+  all.forEach(t => t.archs.forEach(x => { counts[x] = (counts[x] || 0) + 1; }));
+  if (armyFilter && !counts[armyFilter]) armyFilter = '';
+  $('archFilter').innerHTML = all.length ? `<button class="fchip" type="button" data-f="" aria-pressed="${!armyFilter}">All <span class="n">${all.length}</span></button>` +
+    Object.keys(counts).sort().map(x => `<button class="fchip" type="button" data-f="${esc(x)}" aria-pressed="${armyFilter === x}" title="${esc(archDef(x))}">${esc(x)} <span class="n">${counts[x]}</span></button>`).join('') : '';
+  $('archFilter').querySelectorAll('.fchip').forEach(b => b.onclick = () => { armyFilter = b.dataset.f; renderArmies(); });
+  const list = all.filter(t => !armyFilter || t.archs.includes(armyFilter)).sort((a, b) => (a.diff || 9) - (b.diff || 9) || a.name.localeCompare(b.name));
+  $('armyGrid').innerHTML = list.length ? list.map(t => armyTile(t, false)).join('')
+    : `<div class="empty-box"><b>No example army for ${esc(race.name)} yet.</b> Armies saved in <code>config/army_templates/</code> appear here and in the builder.</div>`;
+  const counters = race.code ? DATA.templates.filter(t => t.race !== race.key && t.strong.some(x => x[0] === 'f' && x[1] === race.code)) : [];
+  $('countersBlock').innerHTML = counters.length ? `<h2 class="mt">Built to beat ${esc(race.name)}</h2>
+    <p class="intro">Example armies from other factions that list ${esc(race.name)} as a matchup they are strong against.</p>
+    <div class="ex-grid">${counters.map(t => armyTile(t, true)).join('')}</div>` : '';
+  $('armiesCount').textContent = all.length ? all.length : '';
+}
+
+/* ---------- Onglet Patch changes (history/units_<patch>.csv comparés par build_meta.py) ---------- */
+function statIcon(label) { const k = STAT_ICON[label]; const p = k && DATA.statIcons[k]; return p ? `<img src="${img(p)}" alt="">` : ''; }
+const sign = n => (n > 0 ? '+' : '') + (Math.round(n * 10) / 10);
+function renderPatch() {
+  const ch = page().changes, host = $('patchHost');
+  const n = ch ? ch.changed.length + ch.added.length + ch.removed.length : 0;
+  $('patchCount').textContent = n ? n : '';
+  if (!DATA.prev) {
+    host.innerHTML = `<div class="empty-box"><b>${esc(patchName(DATA.patch))} is the first patch tracked by the site.</b> From the next patch on, this tab lists the ${esc(race.name)} units whose cost or statistics changed.</div>`;
+    return;
+  }
+  if (!n) { host.innerHTML = `<div class="empty-box"><b>No change for ${esc(race.name)}</b> between ${esc(patchName(DATA.prev))} and ${esc(patchName(DATA.patch))}.</div>`; return; }
+  const pic = c => c.img ? `<img class="mini" src="${img(c.img)}" alt="" loading="lazy">` : `<span class="mini txt" style="background:${DATA.tabColors[c.tab] || '#4a2c2a'}">${esc(initials(c.n))}</span>`;
+  const row = c => {
+    const bits = [];
+    if (c.cost) {
+      const d = c.cost[2];
+      bits.push(`<span class="chg ${d < 0 ? 'buff' : 'nerf'}">${DATA.skin.coin ? `<img src="${img(DATA.skin.coin)}" alt="">` : 'Cost '}${c.cost[0] != null ? `${c.cost[0]} → ${c.cost[1]}` : 'Cost'}<span class="d">${sign(d)}</span></span>`);
+    }
+    (c.stats || []).forEach(([label, a, b]) => {
+      const both = a != null && b != null, d = both ? b - a : (b != null ? 1 : -1);
+      bits.push(`<span class="chg ${d > 0 ? 'buff' : 'nerf'}">${statIcon(label)}${esc(label)} ${a ?? 'none'} → ${b ?? 'none'}${both ? `<span class="d">${sign(d)}</span>` : ''}</span>`);
+    });
+    return `<div class="pc">${pic(c)}<div class="who"><b>${esc(c.n)}</b><span>${esc(c.opt || '')}</span></div><div class="what">${bits.join('')}</div></div>`;
+  };
+  const byGroup = GROUPS.map(g => ({ g, list: ch.changed.filter(c => c.g === g.key) })).filter(x => x.list.length);
+  host.innerHTML = `<p class="intro">Units of ${esc(race.name)} whose cost or statistics changed between ${esc(patchName(DATA.prev))} and ${esc(patchName(DATA.patch))}, read from the game files. Abilities, spells and items are not compared yet.</p>
+    <div class="pc-legend"><span><span class="up">Green</span>: cheaper or better stat</span><span><span class="down">Red</span>: more expensive or lower stat</span></div>` +
+    byGroup.map(x => `<div class="pc-group"><h3>${x.g.name}</h3><div class="pc-list">${x.list.map(row).join('')}</div></div>`).join('') +
+    (ch.added.length ? `<div class="pc-group"><h3>Added</h3><div class="pc-list">${ch.added.map(c => `<div class="pc">${pic(c)}<div class="who"><b>${esc(c.n)}</b></div><div class="what"><span class="chg buff">${esc(c.what)}</span></div></div>`).join('')}</div></div>` : '') +
+    (ch.removed.length ? `<div class="pc-group"><h3>Removed</h3><div class="pc-list">${ch.removed.map(c => `<div class="pc"><span class="mini txt" style="background:#333">${esc(initials(c.n))}</span><div class="who"><b>${esc(c.n)}</b></div><div class="what"><span class="chg nerf">${esc(c.what)}</span></div></div>`).join('')}</div></div>` : '');
+}
+
+/* ---------- Onglets (#guide, #tiers, #matchups, #armies, #patch) ---------- */
+const TABS = ['guide', 'tiers', 'matchups', 'armies', 'patch'];
+function openTab(t, push) {
+  tab = TABS.includes(t) ? t : 'guide';
+  document.querySelectorAll('.tabs [role=tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+  document.querySelectorAll('.pane').forEach(p => { p.hidden = p.dataset.pane !== tab; });
+  if (push) history.replaceState(null, '', location.search + '#' + tab);
+  hideTip(); $('picker').hidden = true;
+  if (tab === 'tiers') renderTiers();
+}
+document.querySelectorAll('.tabs [role=tab]').forEach(b => b.onclick = () => { openTab(b.dataset.tab, true); window.scrollTo({ top: 0 }); });
+addEventListener('hashchange', () => openTab(location.hash.slice(1)));
+
+function renderAll() { renderSide(); renderGuide(); renderTiers(); renderMatchups(); renderArmies(); renderPatch(); }
+setRace(race, false);
+openTab(location.hash.slice(1) || (editing ? 'tiers' : 'guide'));
+</script>
+</body>
+</html>
