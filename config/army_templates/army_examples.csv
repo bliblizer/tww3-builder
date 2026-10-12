@@ -1,0 +1,25 @@
+file,difficulty,adaptability,strong_vs,weak_vs,description
+BR - Balanced - Default Green Boy,3,4,,,
+DC - Balanced - Blue shit,3,4,,,
+DC - Blob+Elite - Soulcrushers Blob,1,2,,,
+DC - Rush - Default,3,4,,Air Superiority,
+DC - SFP - Horros Bullshit,2,3,NG|VC|Blob,,
+EM - Kite - Mobility,4,4,,,
+GS - Balanced - Arachn Gobelin,3,3,,,
+GS - Balanced - Giant Squig,3,3,,,
+HE - Balanced - Imrick,3,3,,,Heal Imrick
+HE - Balanced - Teclis,4,4,,,
+HE - Balanced+Combo - Loremaster Oceanids,5,4,,,Loremaster Object Oceanids 
+KI - Rush+Combo - Mamie Djym,4,2,,,
+LM - Monster Mash - Carn,2,3,,,
+LM - Balanced - Default,3,4,,,
+LM - Monster Mash - Dread Saurian,2,3,,,
+OK - Balanced - Default,2,4,,,
+TK - Balanced+Cheese - Reym Lord Snipe,4,4,,,Spam Spell and Item lord snipe
+TK - Kite+Horde - Reym MU Wood elves,5,3,WE,,All arount anti WE
+TK - SFP - Reym MU Vampire Coast,2,2,VP,Rush,"Use long rang to destroy every range threat, then focus Lord/hero, play slow"
+WC - Balanced - Default,3,4,,,
+WC - Balanced - MU Kite,4,3,EM|WE|Kite,,
+WC - Blob - MU Undead,1,1,VC,,
+WE - SFP - Default,3,3,,Rush|SK,
+WE - Kite - Basic Kite,4,3,NG|Blob,SFP,

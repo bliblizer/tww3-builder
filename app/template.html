@@ -331,13 +331,43 @@ body:not(.show-tiers) .card .tier, body:not(.show-tiers) .card img.tier-img { di
 .toast.ok { background: #1f3a1a; border-color: var(--ok); color: #d9f5cf; }
 @keyframes toast-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
 /* compositions modèles */
-.tpl { border: 1px solid rgba(140,106,59,.5); border-radius: 4px; padding: 8px 10px; margin-bottom: 8px; background: var(--panel-2); }
-.tpl .head { display: flex; align-items: center; gap: 8px; } .tpl .head b { flex: 1; font-size: 15px; }
-.tpl .arch { font: 700 11px "Cinzel", Georgia, serif; border: 1px solid var(--gold); color: var(--gold); border-radius: 3px; padding: 0 5px; }
-.tpl .meta { font-size: 12.5px; color: var(--muted); margin: 4px 0; } .tpl .meta b { color: var(--text); font-weight: 500; }
-.tpl .vs { font-size: 12.5px; } .tpl .vs .s { color: var(--ok); } .tpl .vs .w { color: var(--danger); }
-.tpl-filters { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.tpl-filters button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+.ex-btn .n { background: var(--gold); color: #211613; border-radius: 8px; padding: 0 6px; font: 700 12px system-ui; margin-left: 4px; }
+.ex-btn[hidden] { display: none; }
+/* galerie des armées d'exemple */
+.modal-box.wide { width: min(1180px, 100%); padding: 0; }
+.gal-head { padding: 18px 22px 14px; border-bottom: 2px solid var(--accent);
+  background: linear-gradient(90deg, rgba(31,23,20,.96) 35%, rgba(31,23,20,.45)), var(--gal-art, none) right 30% / cover; }
+.gal-head h3 { margin: 0; font-size: 22px; color: #f6d58a; } .gal-head p { margin: 4px 0 0; color: #d8cbb2; }
+.gal-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 22px; border-bottom: 1px solid rgba(140,106,59,.4); }
+.gal-tools select { margin-left: auto; background: #140f0d; color: var(--text); border: 1px solid var(--bronze); border-radius: 4px; padding: 3px 8px; font: inherit; }
+.gal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; padding: 16px 22px 20px; }
+.ex { display: flex; flex-direction: column; border: 1px solid rgba(140,106,59,.6); border-radius: 6px; background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(0,0,0,.2)); padding: 12px; }
+.ex:hover { border-color: var(--gold); }
+.ex-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; } .ex-head b { font: 700 16px "Cinzel", Georgia, serif; }
+.arch { font: 700 10.5px system-ui; letter-spacing: .05em; text-transform: uppercase; color: #211613; background: var(--gold); border-radius: 3px; padding: 1px 6px; cursor: help; }
+.strip { display: flex; gap: 2px; align-items: center; min-height: 58px; overflow: hidden; }
+.strip .mini { width: 26px; height: 56px; border: 1px solid #5b4630; border-radius: 2px; object-fit: cover; flex: 0 0 auto; }
+.strip .mini.txt { display: flex; align-items: center; justify-content: center; font: 700 9px "Cinzel", serif; color: #f4ead6; }
+.strip .more { color: var(--muted); font-size: 12px; margin-left: 4px; }
+.ex-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 8px 0; color: #d8cbb2; font-size: 13px; } .ex-meta img { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+.meter { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin: 3px 0; }
+.meter .dots { display: flex; gap: 3px; } .meter .dots i { width: 22px; height: 7px; border-radius: 2px; background: rgba(255,255,255,.1); } .meter .dots i.on { background: var(--c); }
+.ex-vs { display: flex; flex-wrap: wrap; gap: 4px 6px; font-size: 12px; margin-top: 6px; align-items: center; }
+.ex-vs .lbl { color: var(--muted); } .vs-chip { border-radius: 10px; padding: 0 7px; border: 1px solid; }
+.vs-chip.s { color: #8bd34a; border-color: rgba(139,211,74,.5); } .vs-chip.w { color: #ff7a6a; border-color: rgba(255,122,106,.5); }
+.vs-chip.a { font-style: italic; }
+.ex-desc { color: #d8cbb2; font-size: 13px; margin: 8px 0 10px; flex: 1; }
+.ex-warn { font-size: 12.5px; color: #ffd9d3; background: #4a1611; border: 1px solid var(--danger); border-radius: 4px; padding: 4px 8px; margin-bottom: 8px; }
+.ex-act { display: flex; gap: 8px; justify-content: flex-end; }
+/* armée vide : exemples proposés dans le bandeau */
+.ex-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--bronze); border-radius: 6px; background: rgba(0,0,0,.2); }
+.ex-empty h4 { margin: 0; font: 700 15px "Cinzel", Georgia, serif; color: #f6d58a; } .ex-empty p { margin: 0; color: var(--muted); font-size: 13px; flex-basis: 100%; }
+.ex-quick { display: flex; align-items: center; gap: 8px; border: 1px solid var(--bronze); border-radius: 6px; padding: 5px 10px; background: rgba(0,0,0,.3); cursor: pointer; color: var(--text); font: inherit; text-align: left; }
+.ex-quick:hover { border-color: var(--gold); } .ex-quick .strip { min-height: 0; } .ex-quick .strip .mini { width: 14px; height: 30px; }
+.ex-quick small { display: block; color: var(--muted); font-size: 11.5px; }
+/* aperçu d'un exemple */
+.preview-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; padding: 8px 12px; border: 1px solid var(--gold); border-radius: 6px; background: rgba(226,182,90,.12); }
+.preview-bar[hidden] { display: none; } .preview-bar b { color: #f6d58a; } .preview-bar span { flex: 1; }
 .card .xp-img { position: absolute; top: 18px; left: 1px; width: 20px; height: 20px; z-index: 6; filter: drop-shadow(0 0 2px #000); pointer-events: none; }
 .card.skinned .chevrons { z-index: 6; }
 .card.skinned .nm { margin-bottom: 22px; }   /* sans image : le nom reste lisible au-dessus du demi-cercle */
@@ -478,7 +508,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     </button>
     <ul class="race-list" id="raceList" role="listbox" aria-label="Races" hidden></ul>
   </div>
-  <button class="tb" id="templatesBtn" title="Example armies for this race">Example armies</button>
+  <button class="tb ex-btn" id="templatesBtn" title="Ready-made armies for this race">📖 Example armies <span class="n" id="exCount"></span></button>
   <span class="patch" id="patchPill"></span>
 </header>
 
@@ -521,6 +551,8 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
     <div class="army-main">
       <div class="slots" id="slots"></div>
       <div class="budget" id="budgetBar" aria-label="Budget by role"></div>
+      <div class="preview-bar" id="previewBar" hidden></div>
+      <div id="exEmpty"></div>
     </div>
     <div class="tiles">
       <div class="tile funds"><span class="ico" id="fundsIco"></span><span class="l">Funds remaining</span>
@@ -576,7 +608,7 @@ const DATA = /*__DATA__*/null;
 /* ---------- État ----------
    army  : unités de l'armée { card, opt, sel, rank } (sel = clés des sorts / capacités / objets cochés ; rank = 0 à 9)
    focus : unité affichée dans les panneaux { kind: 'army' | 'roster', unit } ('roster' = brouillon pas encore ajouté) */
-const state = { raceIndex: 0, army: [], focus: null, name: '', notes: '', enemy: '', filters: new Set() };
+const state = { raceIndex: 0, army: [], focus: null, name: '', notes: '', enemy: '', filters: new Set(), preview: null };
 const DIMS = ['lore', 'mark', 'spirit', 'other', 'mount'];
 const DIM_CAT = { lore: 'type_spell_lore', mark: 'type_mark', spirit: 'type_forest_spirit' };
 const UPGRADE_SECTIONS = [['s', 'Spells'], ['a', 'Abilities'], ['i', 'Items']];
@@ -961,42 +993,118 @@ function renderMatchup() {
   $('kpList').innerHTML = list;
 }
 
-/* ---------- Compositions modèles (config/army_templates.csv) ---------- */
-function showTemplates(filter = '') {
-  const rk = race().key, all = (DATA.templates || []).filter(t => t.race === rk);
-  const archs = [...new Set(all.map(t => t.arch))];
-  const raceName = k => (DATA.races.find(r => r.key === k) || {}).name || k;
-  const stars = (n, label) => `<span title="${label} ${n}/5">${'★'.repeat(n)}${'☆'.repeat(Math.max(0, 5 - n))}</span>`;
-  const list = all.filter(t => !filter || t.arch === filter);
-  openModal(`<h3 class="serif">Example armies · ${esc(race().name)}</h3>
-    ${archs.length > 1 ? `<div class="tpl-filters"><button class="tb" data-f="" aria-pressed="${!filter}">All</button>${archs.map(a =>
-      `<button class="tb" data-f="${esc(a)}" aria-pressed="${filter === a}">${esc(a)}</button>`).join('')}</div>` : ''}
-    ${list.length ? list.map((t, i) => `<div class="tpl"><div class="head"><span class="arch">${esc(t.arch)}</span><b>${esc(t.name)}</b>
-        <button class="tb primary" data-i="${all.indexOf(t)}">Load</button></div>
-      <div class="meta">Difficulty ${stars(t.diff, 'Difficulty')} · Adaptability ${stars(t.adapt, 'Adaptability')}</div>
-      ${t.strong.length || t.weak.length ? `<div class="vs">${t.strong.length ? `<span class="s">Strong vs ${t.strong.map(raceName).map(esc).join(', ')}</span>` : ''}
-        ${t.weak.length ? ` · <span class="w">Weak vs ${t.weak.map(raceName).map(esc).join(', ')}</span>` : ''}</div>` : ''}
-      ${t.desc ? `<p class="muted" style="margin:4px 0 0">${esc(t.desc)}</p>` : ''}</div>`).join('')
-      : '<p class="empty">No example army for this race yet.</p>'}`);
-  $('modalBody').querySelectorAll('.tpl-filters button').forEach(b => b.addEventListener('click', () => showTemplates(b.dataset.f)));
-  $('modalBody').querySelectorAll('.tpl button[data-i]').forEach(b => b.addEventListener('click', () => { closeModal(); loadTemplate(all[Number(b.dataset.i)]); }));
+/* ---------- Armées d'exemple (config/army_templates/) ----------
+   Chaque exemple : race, nom, archétypes, difficulté et adaptabilité (1–5), forces / faiblesses (codes faction ou
+   archétypes), description, unités. La galerie s'ouvre par le bouton du haut ; une armée vide propose aussi les exemples. */
+const archDef = a => ((DATA.archetypes || []).find(x => x[0] === a) || [])[1] || '';
+const examplesOf = rk => (DATA.templates || []).filter(t => t.race === rk);
+function templateArmy(t) {
+  const byKey = {};
+  (DATA.roster[t.race] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
+  const army = [], missing = [];
+  t.units.forEach(([u, rank, items]) => {
+    const hit = byKey[u]; if (!hit) { missing.push(u); return; }
+    army.push({ card: hit.card, opt: hit.opt, sel: new Set(items.filter(k => (hit.opt.up || []).includes(k))), rank: canRank(hit.opt) ? rank : 0 });
+  });
+  const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+  return { raceIndex: DATA.races.findIndex(r => r.key === t.race), army, missing };
+}
+function exampleIssues(t, d) {   // problèmes d'un exemple au patch actuel (budget, plafonds, unités disparues)
+  const out = d.missing.length ? [`${d.missing.length} unit(s) no longer available`] : [];
+  return out.concat(validate(t.race, d.army).map(e => e.text));
+}
+const vsName = ([type, v]) => type === 'f' ? ((DATA.races.find(r => r.key === DATA.factionCodes[v]) || {}).name || v) : v;
+const vsChips = (list, cls) => list.map(x => `<span class="vs-chip ${cls}${x[0] === 'a' ? ' a' : ''}"${x[0] === 'a' ? ` title="${esc(archDef(x[1]))}"` : ''}>${esc(vsName(x))}</span>`).join('');
+function cardStrip(army, max, w) {
+  return army.slice(0, max).map(u => {
+    const src = u.opt.img || u.card.img;
+    return src ? `<img class="mini" src="images/${esc(src)}" alt="" style="${w ? `width:${w}px;height:${Math.round(w * 130 / 60)}px` : ''}">`
+      : `<span class="mini txt" style="background:${TAB_COLORS[u.card.t] || '#4a2c2a'};${w ? `width:${w}px;height:${Math.round(w * 130 / 60)}px` : ''}">${esc(initials(u.card.n))}</span>`;
+  }).join('') + (army.length > max ? `<span class="more">+${army.length - max}</span>` : '');
+}
+const meter = (n, label, color) => n ? `<div class="meter" title="${label} ${n}/5"><span>${label}</span><span class="dots">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= n ? 'on' : ''}" style="--c:${color}"></i>`).join('')}</span></div>` : '';
+function showTemplates(filter = '', sort = 'diff') {
+  const rk = race().key, all = examplesOf(rk);
+  const counts = {}; all.forEach(t => t.archs.forEach(a => { counts[a] = (counts[a] || 0) + 1; }));
+  let list = all.filter(t => !filter || (filter === '__easy' ? t.diff && t.diff <= 2 : t.archs.includes(filter)));
+  const cost = t => templateArmy(t).army.reduce((s, u) => s + unitCost(u), 0);
+  const sorters = { diff: (a, b) => (a.diff || 9) - (b.diff || 9), diffd: (a, b) => b.diff - a.diff, adapt: (a, b) => b.adapt - a.adapt, name: (a, b) => a.name.localeCompare(b.name) };
+  list = list.slice().sort(sorters[sort] || sorters.diff);
+  const tile = t => {
+    const d = templateArmy(t), issues = exampleIssues(t, d);
+    const total = d.army.reduce((s, u) => s + unitCost(u), 0), models = d.army.reduce((s, u) => s + (statOf(u.opt.u, 'unit_size') || 0), 0);
+    return `<div class="ex">
+      <div class="ex-head">${t.archs.map(a => `<span class="arch" title="${esc(archDef(a))}">${esc(a)}</span>`).join('')}<b>${esc(t.name)}</b></div>
+      <div class="strip">${cardStrip(d.army, 12)}</div>
+      <div class="ex-meta"><span>${DATA.skin.coin ? `<img src="images/${esc(DATA.skin.coin)}" alt="">` : ''}${fmt(total)}</span>
+        <span>${DATA.skin.entitySmall ? `<img src="images/${esc(DATA.skin.entitySmall)}" alt="">` : ''}${fmt(models)} models</span><span>${d.army.length} units</span></div>
+      ${meter(t.diff, 'Difficulty', '#e07a5f')}${meter(t.adapt, 'Adaptability', '#81b29a')}
+      ${t.strong.length || t.weak.length ? `<div class="ex-vs">${t.strong.length ? `<span class="lbl">Strong vs</span>${vsChips(t.strong, 's')}` : ''}
+        ${t.weak.length ? `<span class="lbl">Weak vs</span>${vsChips(t.weak, 'w')}` : ''}</div>` : ''}
+      <p class="ex-desc">${esc(t.desc || '')}</p>
+      ${issues.length ? `<div class="ex-warn" title="${esc(issues.join('\n'))}">⚠ Not valid with the current patch: ${esc(issues[0])}${issues.length > 1 ? ` (+${issues.length - 1})` : ''}</div>` : ''}
+      <div class="ex-act"><button class="tb" data-act="preview" data-i="${all.indexOf(t)}">Preview</button>
+        <button class="tb prim" data-act="load" data-i="${all.indexOf(t)}">Load army</button></div></div>`;
+  };
+  openModal(`<div class="gal-head" style="--gal-art:${race().art ? `url('images/${esc(race().art)}')` : 'none'}">
+      <h3 class="serif">Example armies · ${esc(race().name)}</h3><p>Ready-made armies to learn the faction. Load one, then adapt it to your style.</p></div>
+    <div class="gal-tools">
+      <button class="fchip" data-f="" aria-pressed="${!filter}">All <span class="n">${all.length}</span></button>
+      ${Object.keys(counts).sort().map(a => `<button class="fchip" data-f="${esc(a)}" aria-pressed="${filter === a}" title="${esc(archDef(a))}">${esc(a)} <span class="n">${counts[a]}</span></button>`).join('')}
+      <button class="fchip" data-f="__easy" aria-pressed="${filter === '__easy'}">Beginner-friendly</button>
+      <select id="galSort" aria-label="Sort"><option value="diff">Easiest first</option><option value="diffd">Hardest first</option>
+        <option value="adapt">Most adaptable</option><option value="name">Name</option></select>
+    </div>
+    <div class="gal-grid">${list.length ? list.map(tile).join('') : '<p class="empty">No example army yet for this race.</p>'}</div>`, true);
+  $('galSort').value = sort;
+  $('galSort').addEventListener('change', e => showTemplates(filter, e.target.value));
+  $('modalBody').querySelectorAll('.gal-tools .fchip').forEach(b => b.addEventListener('click', () => showTemplates(b.dataset.f, sort)));
+  $('modalBody').querySelectorAll('.ex-act button').forEach(b => b.addEventListener('click', () => {
+    const t = all[Number(b.dataset.i)]; closeModal();
+    b.dataset.act === 'preview' ? previewTemplate(t) : loadTemplate(t);
+  }));
 }
 function loadTemplate(t) {
-  const ri = DATA.races.findIndex(r => r.key === t.race);
-  let d;
-  if (t.code) d = decodeArmy(t.race, t.code);
-  else {   // composition issue d'un fichier .army_setup
-    const byKey = {};
-    (DATA.roster[t.race] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
-    const army = [], missing = [];
-    t.units.forEach(([u, rank, items]) => {
-      const hit = byKey[u]; if (!hit) { missing.push(u); return; }
-      army.push({ card: hit.card, opt: hit.opt, sel: new Set(items.filter(k => (hit.opt.up || []).includes(k))), rank: canRank(hit.opt) ? rank : 0 });
-    });
-    const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
-    d = { raceIndex: ri, army, missing };
-  }
-  if (d) applyDecoded(d, t.name, t.desc || '');
+  if (state.preview) endPreview(false);
+  if (state.army.length && !confirm('Replace your current army with this example? (You can undo with Ctrl+Z.)')) return;
+  const d = templateArmy(t);
+  applyDecoded(d, t.name, t.desc || '');
+}
+/* aperçu : l'exemple s'affiche dans le builder ; « Keep » le garde (Ctrl+Z possible), « Back » rend l'armée d'avant */
+function previewTemplate(t) {
+  if (state.preview) endPreview(false);
+  state.preview = { snap: snapshot(), t };
+  const d = templateArmy(t);
+  state.army = d.army; state.name = t.name; state.notes = t.desc || ''; state.focus = null;
+  setRace(d.raceIndex, { keepArmy: true, record: false });
+}
+function endPreview(keep) {
+  const p = state.preview; if (!p) return;
+  state.preview = null;
+  if (keep) { history.past.push(p.snap); history.future = []; renderAll(); }
+  else restore(p.snap);
+}
+function renderPreviewBar() {
+  const bar = $('previewBar'), p = state.preview;
+  bar.hidden = !p;
+  if (!p) { bar.innerHTML = ''; return; }
+  bar.innerHTML = `<span>Previewing the example <b>${esc(p.t.name)}</b>. Keep it to start from it, or go back to your army.</span>
+    <button class="tb" id="pvBack">Back to my army</button><button class="tb prim" id="pvKeep">Keep this army</button>`;
+  $('pvBack').onclick = () => endPreview(false); $('pvKeep').onclick = () => endPreview(true);
+}
+function renderExampleSuggestions() {
+  const box = $('exEmpty'), list = examplesOf(race().key);
+  $('exCount').textContent = list.length; $('templatesBtn').hidden = !list.length;
+  if (state.army.length || !list.length || state.preview) { box.innerHTML = ''; return; }
+  const pick = list.slice().sort((a, b) => (a.diff || 9) - (b.diff || 9)).slice(0, 3);
+  box.innerHTML = `<div class="ex-empty"><h4>Start from an example army</h4>
+    ${pick.map(t => `<button class="ex-quick" data-file="${esc(t.file)}"><span class="strip">${cardStrip(templateArmy(t).army, 4, 14)}</span>
+      <span>${t.archs.map(a => `<span class="arch" title="${esc(archDef(a))}">${esc(a)}</span>`).join(' ')}<b style="display:block">${esc(t.name)}</b>
+      ${t.diff ? `<small>Difficulty ${'●'.repeat(t.diff)}${'○'.repeat(5 - t.diff)}</small>` : ''}</span></button>`).join('')}
+    ${list.length > pick.length ? `<button class="ex-quick" id="exAll">See all ${list.length} ›</button>` : `<button class="ex-quick" id="exAll">Browse ›</button>`}
+    <p>Pick a ready-made ${esc(race().name)} army and adapt it, or drag units from the roster below.</p></div>`;
+  box.querySelectorAll('.ex-quick[data-file]').forEach(b => b.addEventListener('click', () => loadTemplate(list.find(t => t.file === b.dataset.file))));
+  $('exAll').addEventListener('click', () => showTemplates());
 }
 
 /* ---------- Rendu : roster (avec alerte de plafond sur les cartes) ---------- */
@@ -1268,7 +1376,7 @@ function renderComposition() {
     <p class="muted" style="margin-top:8px">Infantry: tier I = trash, II = line, III+ = elite. Lords and heroes are left out of the elite index.</p>`;
 }
 
-function renderAll() { renderTop(); renderArmy(); renderFilters(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); renderTools(); }
+function renderAll() { renderTop(); renderArmy(); renderPreviewBar(); renderExampleSuggestions(); renderFilters(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); renderTools(); }
 
 /* changement d'unité affichée : panneaux et surbrillance mis à jour sans reconstruire les cartes */
 function setFocus(focus) {
@@ -1310,7 +1418,9 @@ function setupDragAndDrop() {
    Les unités sont immuables (chaque modification crée un nouvel objet) : un instantané = une copie de la liste. */
 const history = { past: [], future: [] };
 const snapshot = () => ({ raceIndex: state.raceIndex, army: state.army.slice(), name: state.name, notes: state.notes });
-function commit() { history.past.push(snapshot()); if (history.past.length > 100) history.past.shift(); history.future = []; }
+function commit() {
+  if (state.preview) { const p = state.preview; state.preview = null; history.past.push(p.snap); }
+  history.past.push(snapshot()); if (history.past.length > 100) history.past.shift(); history.future = []; }
 function restore(snap) {
   const raceChanged = snap.raceIndex !== state.raceIndex;
   state.army = snap.army.slice(); state.name = snap.name; state.notes = snap.notes; state.focus = null;
@@ -1427,7 +1537,10 @@ function showFavourites() {
 }
 
 /* ---------- Fenêtre ---------- */
-function openModal(html) { $('modalBody').innerHTML = html; $('modal').hidden = false; $('modalClose').focus(); }
+function openModal(html, wide = false) {
+  $('modalBody').innerHTML = html; $('modal').querySelector('.modal-box').classList.toggle('wide', wide);
+  $('modal').hidden = false; $('modalClose').focus();
+}
 function closeModal() { $('modal').hidden = true; }
 
 /* ---------- Export / import .army_setup (format du jeu, version 8) ----------

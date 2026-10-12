@@ -341,8 +341,20 @@ for r in rows("""
     rk = r.pop('race_key')
     race_profiles[rk] = {k: round(float(v), 1) for k, v in r.items() if v is not None}
 
-# ---------- compositions modèles (config/army_templates.csv) ----------
-# colonne army : lien de partage du builder (…#v=1&r=…&a=…) ou file:<fichier .army_setup dans config/army_templates/>
+# faction -> race (import des fichiers .army_setup)
+faction_race = {r['f']: r['r'] for r in rows("""select faction_key as f, race_key as r from intermediate.int_faction_race
+                                                where race_key in (select race_key from marts.pvp_races)""")}
+
+# ---------- armées d'exemple (config/army_templates/) ----------
+# Fichiers .army_setup nommés « Code faction - Archétype(s) - Nom » (2 archétypes reliés par +), plus un CSV d'infos
+# facultatif, army_examples.csv : file (nom sans extension), difficulty, adaptability, strong_vs, weak_vs, description.
+# strong_vs / weak_vs : codes faction et/ou archétypes séparés par |. Séparateur du CSV « , » ou « ; » (Excel français).
+FACTION_CODES = {'BM': 'Beastmen', 'BR': 'Bretonnia', 'CD': 'Chaos Dwarfs', 'DC': 'Daemons of Chaos', 'DE': 'Dark Elves',
+                 'DW': 'Dwarfs', 'EM': 'The Empire', 'GC': 'Grand Cathay', 'GS': 'Greenskins', 'HE': 'High Elves', 'KH': 'Khorne',
+                 'KI': 'Kislev', 'LM': 'Lizardmen', 'NR': 'Norsca', 'NG': 'Nurgle', 'OK': 'Ogre Kingdoms', 'SK': 'Skaven',
+                 'SL': 'Slaanesh', 'TK': 'Tomb Kings', 'TZ': 'Tzeentch', 'UL': 'Undead Legions', 'VP': 'Vampire Coast',
+                 'VC': 'Vampire Counts', 'WC': 'Warriors of Chaos', 'WE': 'Wood Elves'}
+TEMPLATES_DIR = os.path.join(ROOT, 'config', 'army_templates')
 def parse_setup(path):
     d = open(path, 'rb').read(); p = 0
     def take(n):
@@ -355,29 +367,70 @@ def parse_setup(path):
         items = [(take(1)[0], st())[1] for _ in range(u32())]; st()
         units.append([key, block[7], items])
     return faction, units
+def read_csv_any(path):
+    text = open(path, encoding='utf-8-sig').read()
+    delim = ';' if text.split('\n', 1)[0].count(';') > text.split('\n', 1)[0].count(',') else ','
+    return list(csv.DictReader(text.splitlines(), delimiter=delim))
+archetypes = [[r['archetype'].strip(), r['definition'].strip()]
+              for r in read_csv_any(os.path.join(ROOT, 'config', 'archetypes.csv'))] \
+    if os.path.exists(os.path.join(ROOT, 'config', 'archetypes.csv')) else []
+arch_by_lower = {a.lower(): a for a, _ in archetypes}
+race_by_name = {r['name']: r['key'] for r in races}
+code_race = {c: race_by_name.get(n) for c, n in FACTION_CODES.items()}
 templates, template_issues = [], []
-tpl_file = os.path.join(ROOT, 'config', 'army_templates.csv')
-if os.path.exists(tpl_file):
-    for i, t in enumerate(csv.DictReader(open(tpl_file, encoding='utf-8'))):
-        entry = {'race': t['race_key'], 'name': t['name'], 'arch': t['archetype'], 'diff': int(t['difficulty'] or 0),
-                 'adapt': int(t['adaptability'] or 0), 'strong': [x for x in (t['strong_vs'] or '').split('|') if x],
-                 'weak': [x for x in (t['weak_vs'] or '').split('|') if x], 'desc': t['description']}
-        army = (t['army'] or '').strip()
-        if army.startswith('file:'):
-            path = os.path.join(ROOT, 'config', 'army_templates', army[5:])
-            if not os.path.exists(path):
-                template_issues.append(f"ligne {i + 2} : fichier introuvable {army[5:]}"); continue
-            entry['units'] = parse_setup(path)[1]
-        elif '#' in army and 'a=' in army:
-            from urllib.parse import parse_qs
-            q = parse_qs(army.split('#', 1)[1]); entry['code'] = q.get('a', [''])[0]
-        else:
-            template_issues.append(f"ligne {i + 2} : colonne army vide ou invalide"); continue
-        templates.append(entry)
-
-# faction -> race (import des fichiers .army_setup)
-faction_race = {r['f']: r['r'] for r in rows("""select faction_key as f, race_key as r from intermediate.int_faction_race
-                                                where race_key in (select race_key from marts.pvp_races)""")}
+infos = {}
+info_file = os.path.join(TEMPLATES_DIR, 'army_examples.csv')
+if os.path.exists(info_file):
+    for r in read_csv_any(info_file):
+        if (r.get('file') or '').strip():
+            infos[r['file'].strip().removesuffix('.army_setup').lower()] = dict(r, file=r['file'].strip().removesuffix('.army_setup'))
+def tokens(text, where):
+    out = []
+    for t in [x.strip() for x in (text or '').split('|') if x.strip()]:
+        if t.upper() in FACTION_CODES and code_race.get(t.upper()): out.append(['f', t.upper()])
+        elif t.lower() in arch_by_lower: out.append(['a', arch_by_lower[t.lower()]])
+        else: template_issues.append(f"{where} : « {t} » n'est ni un code faction ni un archétype")
+    return out
+def note(v):
+    try: return max(0, min(5, int(float(str(v).replace(',', '.')))))
+    except (TypeError, ValueError): return 0
+options_by_race = {}
+for o in options: options_by_race.setdefault(o['race_key'], set()).add(o['unit_key'])
+if os.path.isdir(TEMPLATES_DIR):
+    for fname in sorted(os.listdir(TEMPLATES_DIR)):
+        if not fname.lower().endswith('.army_setup'): continue
+        stem = fname[:-len('.army_setup')]
+        parts = stem.split(' - ', 2)
+        if len(parts) < 3:
+            template_issues.append(f"{fname} : nom hors convention « Code - Archétype(s) - Nom »"); parts = ['', 'Other', stem]
+        code, arch_text, name = parts[0].strip().upper(), parts[1].strip(), parts[2].strip()
+        archs = []
+        for a in [x.strip() for x in arch_text.split('+') if x.strip()]:
+            if a.lower() in arch_by_lower: archs.append(arch_by_lower[a.lower()])
+            else: template_issues.append(f"{fname} : archétype inconnu « {a} »"); archs.append(a)
+        try:
+            faction, units = parse_setup(os.path.join(TEMPLATES_DIR, fname))
+        except Exception:
+            template_issues.append(f"{fname} : fichier illisible"); continue
+        race_from_file = faction_race.get(faction)
+        race = code_race.get(code) or race_from_file
+        if code and code not in FACTION_CODES:
+            template_issues.append(f"{fname} : code faction inconnu « {code} »")
+        elif race_from_file and code_race.get(code) and race_from_file != code_race[code]:
+            template_issues.append(f"{fname} : le code {code} ne correspond pas à la faction du fichier ({faction})")
+        if not race:
+            template_issues.append(f"{fname} : race introuvable"); continue
+        missing = [u for u, _, _ in units if u not in options_by_race.get(race, set())]
+        if missing:
+            template_issues.append(f"{fname} : {len(missing)} unité(s) non jouable(s) en PvP")
+        info = infos.pop(stem.lower(), {})
+        templates.append({'race': race, 'file': stem, 'name': name, 'archs': archs,
+                          'diff': note(info.get('difficulty')), 'adapt': note(info.get('adaptability')),
+                          'strong': tokens(info.get('strong_vs'), stem), 'weak': tokens(info.get('weak_vs'), stem),
+                          'desc': (info.get('description') or '').strip(), 'units': units})
+for info in infos.values():
+    template_issues.append(f"army_examples.csv : ligne « {info['file']} » sans fichier .army_setup correspondant")
+    tokens(info.get('strong_vs'), info['file']); tokens(info.get('weak_vs'), info['file'])
 
 # ---------- forces / faiblesses, rangs d'expérience, catégories de variantes ----------
 tags = {}
@@ -427,7 +480,8 @@ data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, '
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
         'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
-        'raceProfiles': race_profiles, 'templates': templates}
+        'raceProfiles': race_profiles, 'templates': templates, 'archetypes': archetypes,
+        'factionCodes': {c: r for c, r in code_race.items() if r}}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
 html = open(TEMPLATE, encoding='utf-8').read()
@@ -443,7 +497,8 @@ a_cards = sum(1 for k, _ in available if k == 'card'); a_portraits = len(availab
 print(f"Images des cartes : {a_cards} / {n_cards} | portraits des personnages : {a_portraits} / {n_portraits} "
       f"| manquantes listées dans exports/missing_unit_cards.csv")
 n_icons = len({o['category_icon'] for o in options if o['category_icon']})
-print(f"Compositions modèles : {len(templates)}" + (" | à corriger : " + " ; ".join(template_issues) if template_issues else ""))
+print(f"Armées d'exemple : {len(templates)}" + (f" | {len(template_issues)} point(s) à vérifier :" if template_issues else ""))
+for issue in template_issues: print("  - " + issue)
 with open(os.path.join(ROOT, 'exports', 'stat_icons.csv'), 'w', encoding='utf-8', newline='') as f:
     w = csv.writer(f, lineterminator='\r\n'); w.writerow(['statistic', 'icon_found', 'names_searched']); w.writerows(stat_report)
 print(f"Icônes de statistiques : {len(stat_icons)} / {len(STAT_ICONS)} (détail : exports/stat_icons.csv) | "

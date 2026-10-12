@@ -307,20 +307,33 @@ python -m playwright install chromium
 - **Taille** : l'icône d'entité est celle des grandes entités dès que le soldat ou la monture dépasse la taille *small* du jeu. La cavalerie, montée sur des chevaux *medium*, compte donc comme grande, comme pour les bonus anti-large.
 - Comme dans le jeu, une ligne n'apparaît que si elle concerne l'unité (tir, résistances, capacités, attributs). Pour un personnage, la fiche liste aussi les capacités, objets et sorts cochés. Les barres sont relatives au 95e centile de chaque statistique dans le roster PvP.
 
-## Compositions modèles (« Example armies »)
+## Armées d'exemple (« Example armies »)
 
-Elles sont définies dans `config/army_templates.csv`, une ligne par composition :
+Tout est dans **`config/army_templates/`** :
+- **les fichiers `.army_setup`**, sauvegardés en jeu et nommés selon la convention **`Code faction - Archétype(s) - Nom`**, par exemple `LM - Balanced - Default.army_setup` ou `WC - Elite+Combo - Chosen.army_setup` (deux archétypes au plus, reliés par `+`) ;
+- **`army_examples.csv`**, facultatif, avec une ligne par armée :
 
 | Colonne | Contenu |
 |---|---|
-| `race_key` | Race (clé de `pvp_races`, ex. `wh_main_sc_chs_chaos`) |
-| `name`, `archetype` | Nom et archétype (Blob, Balanced, Kite, Rush…) : libres, chaque race a les siens |
-| `difficulty`, `adaptability` | Note de 1 à 5 (difficulté à jouer, capacité d'adaptation), affichée en étoiles |
-| `strong_vs`, `weak_vs` | Races contre lesquelles la composition est forte ou faible, clés séparées par `|` |
-| `description` | Texte libre (plus tard : lien vers une fiche tactique) |
-| `army` | Le **lien de partage** du builder (bouton Share), ou `file:<nom>.army_setup`, un fichier placé dans `config/army_templates/` (par exemple sauvegardé en jeu) |
+| `file` | Nom du fichier sans `.army_setup` |
+| `difficulty`, `adaptability` | Note de 1 à 5, affichée en jauge |
+| `strong_vs`, `weak_vs` | Codes faction et/ou archétypes, séparés par `\|` (ex. `NG\|VC\|Blob`) |
+| `description` | Une ou deux phrases (en anglais) |
 
-Pour en ajouter une, monte l'armée dans le builder, clique sur Share, colle le lien dans la colonne `army`, puis lance `python scripts/build_app.py`. Le résumé indique le nombre de compositions et les lignes à corriger. Une composition d'exemple (Warriors of Chaos) est fournie pour montrer le format : remplace-la par les tiennes.
+Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Une armée sans ligne dans le CSV apparaît quand même, sans jauges ni description.
+
+**Codes faction** : BM Beastmen, BR Bretonnia, CD Chaos Dwarfs, DC Daemons of Chaos, DE Dark Elves, DW Dwarfs, EM Empire, GC Grand Cathay, GS Greenskins, HE High Elves, KH Khorne, KI Kislev, LM Lizardmen, NR Norsca, NG Nurgle, OK Ogre Kingdoms, SK Skaven, SL Slaanesh, TK Tomb Kings, TZ Tzeentch, UL Undead Legions, VP Vampire Coast, VC Vampire Counts, WC Warriors of Chaos, WE Wood Elves.
+
+**Archétypes et leurs définitions** (affichées au survol) : `config/archetypes.csv`, modifiable. Rush, Balanced, Blob, Kite, Box, Horde, Elite, Cheese, Combo, Monster Mash, SFP.
+
+**Contrôles au build** (`build_app.py`) : nom hors convention, code faction inconnu ou différent de la faction inscrite dans le fichier, archétype inconnu, valeur inconnue dans `strong_vs` / `weak_vs`, ligne du CSV sans fichier, unités non jouables en PvP. Rien n'est bloquant : chaque point est listé dans le résumé.
+
+**Dans le builder** :
+- le bouton **📖 Example armies** affiche le nombre d'exemples de la race. Il est masqué quand il n'y en a aucun ;
+- la **galerie** propose des filtres par archétype et « Beginner-friendly » (difficulté 1 ou 2), un tri, et une tuile par armée : archétypes (définition au survol), cartes, coût, modèles, unités, jauges, forces et faiblesses, description, et un **avertissement** si l'armée n'est plus valide au patch actuel ;
+- **Preview** affiche l'exemple dans le builder, avec un bandeau « Back to my army / Keep this army ». Toute modification pendant l'aperçu le garde, et l'armée d'avant reste récupérable par Ctrl+Z ;
+- **Load army** demande confirmation si une armée est en cours (Ctrl+Z possible) ;
+- **une armée vide** propose directement les 3 exemples les plus faciles de la race.
 
 ## Outils de l'armée (barre au-dessus de l'armée)
 
