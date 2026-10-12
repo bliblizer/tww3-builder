@@ -363,9 +363,12 @@ def parse_setup(path):
     st = lambda: take(u16()).decode('utf-8')
     u32(); faction = st(); st(); take(1); units = []
     for _ in range(u32()):
-        key = st().split(':')[0]; block = take(15)
-        items = [(take(1)[0], st())[1] for _ in range(u32())]; st()
-        units.append([key, block[7], items])
+        # unité : texte « clé:faction:général », 11 octets (octet 7 = rang), pièces du Daemon Prince personnalisable
+        # (u32 nombre de paires de textes), éléments (u32, puis u8 type + texte), texte final
+        key = st().split(':')[0]; block = take(11)
+        parts = [[st(), st()] for _ in range(u32())]
+        items = [[take(1)[0], st()] for _ in range(u32())]; st()   # [type, clé] : 0 = sort / capacité, 2 = objet
+        units.append([key, block[7], items, parts])
     return faction, units
 def read_csv_any(path):
     text = open(path, encoding='utf-8-sig').read()
@@ -408,6 +411,7 @@ if os.path.isdir(TEMPLATES_DIR):
         for a in [x.strip() for x in arch_text.split('+') if x.strip()]:
             if a.lower() in arch_by_lower: archs.append(arch_by_lower[a.lower()])
             else: template_issues.append(f"{fname} : archétype inconnu « {a} »"); archs.append(a)
+        info = infos.pop(stem.lower(), {})
         try:
             faction, units = parse_setup(os.path.join(TEMPLATES_DIR, fname))
         except Exception:
@@ -420,10 +424,9 @@ if os.path.isdir(TEMPLATES_DIR):
             template_issues.append(f"{fname} : le code {code} ne correspond pas à la faction du fichier ({faction})")
         if not race:
             template_issues.append(f"{fname} : race introuvable"); continue
-        missing = [u for u, _, _ in units if u not in options_by_race.get(race, set())]
+        missing = [unit[0] for unit in units if unit[0] not in options_by_race.get(race, set())]
         if missing:
             template_issues.append(f"{fname} : {len(missing)} unité(s) non jouable(s) en PvP")
-        info = infos.pop(stem.lower(), {})
         templates.append({'race': race, 'file': stem, 'name': name, 'archs': archs,
                           'diff': note(info.get('difficulty')), 'adapt': note(info.get('adaptability')),
                           'strong': tokens(info.get('strong_vs'), stem), 'weak': tokens(info.get('weak_vs'), stem),

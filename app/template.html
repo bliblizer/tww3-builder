@@ -1002,9 +1002,11 @@ function templateArmy(t) {
   const byKey = {};
   (DATA.roster[t.race] || []).forEach(card => card.opts.forEach(opt => { byKey[opt.u] = { card, opt }; }));
   const army = [], missing = [];
-  t.units.forEach(([u, rank, items]) => {
+  t.units.forEach(([u, rank, items, parts]) => {
     const hit = byKey[u]; if (!hit) { missing.push(u); return; }
-    army.push({ card: hit.card, opt: hit.opt, sel: new Set(items.filter(k => (hit.opt.up || []).includes(k))), rank: canRank(hit.opt) ? rank : 0 });
+    const up = hit.opt.up || [];
+    army.push({ card: hit.card, opt: hit.opt, sel: new Set(items.map(i => i[1]).filter(k => up.includes(k))), rank: canRank(hit.opt) ? rank : 0,
+                parts: parts && parts.length ? parts : undefined, extra: items.filter(i => !up.includes(i[1])) });
   });
   const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
   return { raceIndex: DATA.races.findIndex(r => r.key === t.race), army, missing };
@@ -1233,7 +1235,7 @@ function renderCustom() {
   // choix uniques (variantes, monture) : chaque valeur = une autre option de la carte
   const sameOther = (o, k) => DIMS.every(d => d === k || (o[d] ?? '') === (opt[d] ?? ''));
   const targetFor = (k, v) => card.opts.find(o => (o[k] ?? '') === v && sameOther(o, k)) || card.opts.find(o => (o[k] ?? '') === v);
-  const carry = next => ({ card, opt: next, rank: unit.rank,
+  const carry = next => ({ card, opt: next, rank: unit.rank, parts: unit.parts,
     sel: new Set((next.up || []).filter(x => unit.sel.has(x))) });   // on garde ce qui reste disponible
   const radioGroup = k => {
     const values = [...new Set(card.opts.map(o => o[k] ?? ''))];
@@ -1545,7 +1547,8 @@ function closeModal() { $('modal').hidden = true; }
 
 /* ---------- Export / import .army_setup (format du jeu, version 8) ----------
    en-tête : u32 version, texte faction, texte mode, u8 drapeau, u32 nombre d'unités
-   unité   : texte « clé:faction:général », 15 octets (octet 7 = rang), u32 nombre d'éléments,
+   unité   : texte « clé:faction:général », 11 octets (octet 7 = rang), u32 nombre de pièces du Daemon Prince
+             personnalisable puis les pièces (paires de textes), u32 nombre d'éléments,
              éléments (u8 type : 0 = sort / capacité, 2 = objet ; texte clé), texte final « none »
    fin     : 9 octets nuls ; texte = u16 longueur + UTF-8 */
 const SETUP_DIR = '%APPDATA%\\The Creative Assembly\\Warhammer3\\army_setups';
@@ -1565,9 +1568,12 @@ function buildArmySetup() {
   const ups = upgradesOf(race().key), general = generalOf(state.army);
   state.army.forEach(u => {
     str(`${u.opt.u}:${faction}:${u === general ? 1 : 0}`);
-    const block = new Uint8Array(15); block[7] = canRank(u.opt) ? u.rank : 0; parts.push(block);
+    const block = new Uint8Array(11); block[7] = canRank(u.opt) ? u.rank : 0; parts.push(block);
+    const dp = u.parts || []; u32(dp.length); dp.forEach(([a, b]) => { str(a); str(b); });   // apparence du Daemon Prince
     // capacités innées : le jeu ne les enregistre que pour les lords et héros (sans celles de la monture)
-    const innate = isChar(u.opt) ? (DATA.exportInnate[u.opt.u] || []).map(k => [0, k]) : [];
+    // éléments non sélectionnables : ceux du fichier d'origine s'il y en a un (import, exemple) — le jeu peut en ajouter
+    // que nos données ne connaissent pas, comme pour le Daemon Prince — sinon les capacités innées connues
+    const innate = u.extra ? u.extra : isChar(u.opt) ? (DATA.exportInnate[u.opt.u] || []).map(k => [0, k]) : [];
     const chosen = [...u.sel].filter(k => ups[k]).map(k => [ups[k][1] === 'i' ? 2 : 0, k]);
     const items = [...innate, ...chosen];
     u32(items.length); items.forEach(([t, k]) => { u8(t); str(k); });
@@ -1620,10 +1626,11 @@ function parseArmySetup(buffer) {
   const units = [];
   for (let i = 0, n = u32(); i < n; i++) {
     const [unitKey, faction, general] = str().split(':');
-    const block = new Uint8Array(buffer, p, 15); p += 15;
+    const block = new Uint8Array(buffer, p, 11); p += 11;
+    const dparts = []; for (let j = 0, m = u32(); j < m; j++) dparts.push([str(), str()]);   // pièces du Daemon Prince
     const items = []; for (let j = 0, m = u32(); j < m; j++) { const type = u8(); items.push({ type, key: str() }); }
     str();
-    units.push({ unitKey, faction, general: general === '1', rank: block[7], items });
+    units.push({ unitKey, faction, general: general === '1', rank: block[7], items, parts: dparts });
   }
   return { head, units };
 }
@@ -1641,7 +1648,8 @@ async function importArmySetup(file) {
     const hit = byKey[x.unitKey];
     if (!hit) { missing.push(x.unitKey); return; }
     const sel = new Set(x.items.map(i => i.key).filter(k => (hit.opt.up || []).includes(k)));
-    army.push({ card: hit.card, opt: hit.opt, sel, rank: canRank(hit.opt) ? Math.min(9, x.rank) : 0 });
+    army.push({ card: hit.card, opt: hit.opt, sel, rank: canRank(hit.opt) ? Math.min(9, x.rank) : 0, parts: x.parts.length ? x.parts : undefined,
+                extra: x.items.filter(i => !(hit.opt.up || []).includes(i.key)).map(i => [i.type, i.key]) });
   });
   const lord = army.findIndex(u => u.opt.l);
   if (lord > 0) army.unshift(army.splice(lord, 1)[0]);

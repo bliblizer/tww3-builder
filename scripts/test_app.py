@@ -48,9 +48,10 @@ async def main():
             st = lambda: take(u16()).decode('utf-8')
             head = (u32(), st(), st(), take(1)[0]); units = []
             for _ in range(u32()):
-                key, fac, gen = st().split(':'); block = take(15)
+                key, fac, gen = st().split(':'); block = take(11)
+                parts = tuple((st(), st()) for _ in range(u32()))   # pièces du Daemon Prince personnalisable
                 items = sorted((take(1)[0], st()) for _ in range(u32())); st()
-                units.append((key, gen, block[7], tuple(items)))
+                units.append((key, gen, block[7], parts, tuple(items)))
             return head, units
         await pg.evaluate("localStorage.setItem('tww3-builder:help-seen', '1')")
         pg.on('dialog', lambda dlg: asyncio.ensure_future(dlg.accept()))
