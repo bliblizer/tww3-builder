@@ -53,6 +53,11 @@ button { font: inherit; color: inherit; }
   border-bottom: 2px solid var(--accent);
 }
 .race-picker { position: relative; width: 340px; max-width: 100%; }
+/* navigation entre les pages du site (même style sur meta.html) */
+.site-nav { display: flex; gap: 2px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.6); border-radius: 4px; padding: 2px; }
+.site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
+.site-nav a:hover { color: var(--text); }
+.site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
 /* menu des races : chaque race est représentée par son illustration du jeu (fondue à gauche) */
 .race-btn, .race-opt { position: relative; display: block; width: 100%; height: 56px; padding: 0; border: 1px solid var(--bronze);
   background: #140f0d; color: var(--text); cursor: pointer; text-align: left; overflow: hidden; }
@@ -502,6 +507,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 <body>
 
 <header class="topbar">
+  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Meta</a></nav>
   <div class="race-picker">
     <button class="race-btn" id="raceButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select race">
       <span class="race-strip" id="raceStrip"></span><span class="race-label serif" id="raceName">—</span><span class="caret">▾</span>
@@ -2010,8 +2016,11 @@ function setRace(i, { keepArmy = false, record = true } = {}) {
   if (r.accent) root.style.setProperty('--accent', '#' + r.accent); else root.style.removeProperty('--accent');
   if (r.art) root.style.setProperty('--race-art', `url("images/${r.art}")`); else root.style.removeProperty('--race-art');
   document.body.classList.toggle('has-art', !!r.art);
+  $('metaLink').href = 'meta.html?race=' + raceSlug(r);
   renderAll();
 }
+/* identifiant de race dans les adresses, partagé avec meta.html : « The Empire » -> the-empire */
+const raceSlug = r => r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 /* menu déroulant des races (liste personnalisée : une illustration par race) — clavier : ↑ ↓ Entrée Échap */
 function setupRacePicker() {
@@ -2055,7 +2064,10 @@ function init() {
   setupDragAndDrop();
   setupTooltips();
   trackArmyHeight();
-  if (!loadFromHash()) setRace(0, { record: false });
+  if (!loadFromHash()) {
+    const wanted = new URLSearchParams(location.search).get('race');
+    setRace(Math.max(0, DATA.races.findIndex(r => raceSlug(r) === wanted || r.key === wanted)), { record: false });
+  }
 }
 init();
 </script>

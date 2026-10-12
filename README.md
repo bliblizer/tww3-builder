@@ -393,6 +393,8 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 
 Un guide PvP par faction, publié à côté du builder : `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#tiers`, `#matchups`, `#armies`, `#patch`).
 
+**Navigation** : les deux pages ont le même bouton « Army Builder / Faction Meta » en haut à gauche, et chacune ouvre l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`.
+
 ```
 app/meta_template.html        mise en page et code de la page (HTML + CSS + JavaScript, sans bibliothèque)
 scripts/build_meta.py         assemble la page à partir des données du builder et des fichiers ci-dessous
