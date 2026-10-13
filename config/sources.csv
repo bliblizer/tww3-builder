@@ -74,3 +74,6 @@ db/special_ability_phases_to_additional_ui_effects_junctions_tables/data__.tsv,c
 db/unit_stat_localisations_tables/data__.tsv,capacites,Statistiques -> clé de texte,confirmé
 text/db/unit_stat_localisations__.loc.tsv,textes,Noms des statistiques,confirmé
 text/db/unit_abilities_additional_ui_effects__.loc.tsv,textes,Lignes d effet des info-bulles de capacités,confirmé
+db/battlefield_engines_tables/data__.tsv,statistiques,Engins de guerre (artillerie) : arme de tir de l'engin (land_units.engine),confirmé
+db/projectile_bombardments_tables/data__.tsv,sorts,Bombardements des sorts : nombre et type de projectiles,confirmé
+db/battle_vortexs_tables/data__.tsv,sorts,Vortex des sorts : dégâts (normaux et perforants) et durée,confirmé

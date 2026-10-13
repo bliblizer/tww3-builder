@@ -110,13 +110,19 @@ table.mx { border-collapse: separate; border-spacing: 0; font-variant-numeric: t
   .fac { width: 84px; } .fac img, .fac .ph { width: 44px; height: 44px; }
   .mx thead th.corner { min-width: 140px; } .mx tbody th a span.nm { max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
 }
+.wip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 12px 20px; text-align: center;
+  background: repeating-linear-gradient(135deg, rgba(226,182,90,.22) 0 18px, rgba(29,22,20,0) 18px 36px), #2b1d14; border-bottom: 2px solid var(--gold); }
+.wip strong { font: 700 clamp(22px, 3.2vw, 34px) "Cinzel", Georgia, serif; letter-spacing: .06em; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,.8); text-transform: uppercase; }
+.wip span { font-size: 16px; color: #f4ead6; max-width: 62ch; text-shadow: 0 1px 4px #000; }
+.fac .ban { font-size: 11px; font-weight: 700; color: #ffd2cb; background: #6b1d17; border: 1px solid var(--danger, #ff6b5a); border-radius: 3px; padding: 0 4px; }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="meta.html">Faction Meta</a><a href="overview.html" aria-current="page">Meta Overview</a></nav>
+  <nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="meta.html">Faction Guide</a><a href="overview.html" aria-current="page">Meta Overview</a></nav>
   <span class="pill">Game data <b id="patchTxt"></b></span>
 </header>
+<div class="wip" role="note"><strong>🚧 Work in progress</strong><span>This page is under construction: the faction tier list and the matchup matrix are provisional and will change.</span></div>
 
 <main>
   <h1>Meta Overview</h1>
@@ -147,6 +153,7 @@ const DATA = {"patch":"patch_9.0","races":[{"key":"wh_dlc03_sc_bst_beastmen","na
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const img = p => p ? 'images/' + p.split('/').map(encodeURIComponent).join('/') : '';
+const TOURNAMENT_BANNED = ['UL'];   // codes des factions interdites dans la plupart des tournois
 const MU = { 2: ['Very favoured', 'v2'], 1: ['Favoured', 'v1'], 0: ['Even', 'v0'], '-1': ['Unfavoured', 'vm1'], '-2': ['Very unfavoured', 'vm2'] };
 const sign = v => v > 0 ? '+' + v : String(v);
 const icon = (r, cls = '') => r.icon ? `<img src="${img(r.icon)}" alt="" class="${cls}" loading="lazy">` : `<span class="ph ${cls}">${esc(r.code || r.name.slice(0, 2))}</span>`;
@@ -160,7 +167,7 @@ $('patchTxt').textContent = DATA.patch.replace('patch_', 'patch ');
   const rows = DATA.tiers.map(t => ({ t, list: DATA.races.filter(r => r.ftier === t).sort((a, b) => a.name.localeCompare(b.name)) })).filter(x => x.list.length);
   const unranked = DATA.races.filter(r => !r.ftier);
   $('tierHost').innerHTML = '<div class="ftl">' + rows.map(x => `<div class="ftl-row" style="--tc:var(--ft-${x.t})"><div class="ftl-t">${x.t}</div>
-    <div class="ftl-list">${x.list.map(r => `<a class="fac" href="${metaLink(r)}" title="${esc(r.name)} guide">${icon(r)}<span>${esc(r.name)}</span></a>`).join('')}</div></div>`).join('') + '</div>' +
+    <div class="ftl-list">${x.list.map(r => `<a class="fac" href="${metaLink(r)}" title="${esc(r.name)} guide">${icon(r)}<span>${esc(r.name)}</span>${TOURNAMENT_BANNED.includes(r.code) ? '<span class="ban" title="Banned in most tournaments">⚠ Banned</span>' : ''}</a>`).join('')}</div></div>`).join('') + '</div>' +
     (unranked.length ? `<p class="note">Not ranked yet: ${esc(unranked.map(r => r.name).join(', '))}.</p>` : '');
 })();
 

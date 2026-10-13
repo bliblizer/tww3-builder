@@ -50,14 +50,15 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .site-nav a:hover { color: var(--text); }
 .site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
 @media (max-width: 640px) { .site-nav a { padding: 5px 8px; font-size: 14px; } }
-.race-pick { position: relative; }
-.race-btn { position: relative; display: block; width: 300px; max-width: 100%; height: 48px; padding: 0; border: 1px solid var(--bronze); border-radius: 4px;
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; justify-content: flex-end; }
+.race-pick { position: relative; width: 340px; max-width: 100%; }
+.race-btn { position: relative; display: block; width: 100%; height: 56px; padding: 0; border: 1px solid var(--bronze); border-radius: 4px;
   background: #140f0d; cursor: pointer; overflow: hidden; text-align: left; }
 .strip { position: absolute; inset: 0; background: var(--s) right center / cover no-repeat; opacity: .85;
   -webkit-mask-image: linear-gradient(90deg, transparent 18%, #000 55%); mask-image: linear-gradient(90deg, transparent 18%, #000 55%); }
-.race-btn .lbl { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; font-weight: 700; text-shadow: 0 1px 3px #000; }
+.race-btn .lbl { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font: 700 19px "Cinzel", Georgia, serif; text-shadow: 0 1px 3px #000; }
 .race-btn .caret { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); text-shadow: 0 0 3px #000; }
-.race-menu { position: absolute; top: calc(100% + 6px); left: 0; width: 340px; max-width: calc(100vw - 24px); max-height: min(70vh, 640px); overflow-y: auto;
+.race-menu { position: absolute; top: calc(100% + 6px); right: 0; width: 340px; max-width: calc(100vw - 24px); max-height: min(70vh, 640px); overflow-y: auto;
   background: var(--panel); border: 1px solid var(--bronze); border-radius: 6px; padding: 6px; box-shadow: 0 10px 30px rgba(0,0,0,.6); display: grid; gap: 4px; }
 .race-menu[hidden] { display: none; }
 .race-opt { position: relative; height: 40px; border: 1px solid rgba(140,106,59,.6); border-radius: 4px; background: #140f0d; cursor: pointer; overflow: hidden; text-align: left; padding: 0; }
@@ -68,7 +69,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .race-opt .ico, .foe .ico { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 1px 3px #000); }
 .race-opt .has { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; }
 .race-opt .has span { font-size: 10.5px; background: rgba(0,0,0,.7); border: 1px solid rgba(226,182,90,.6); color: var(--gold); border-radius: 3px; padding: 0 4px; }
-.pills { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
 .pill { font-size: 13px; color: var(--muted); border: 1px solid rgba(140,106,59,.7); border-radius: 12px; padding: 2px 10px; background: rgba(0,0,0,.3); }
 .pill b { color: var(--text); font-weight: 500; }
 .pill.ok b { color: var(--ok); } .pill.stale { border-color: var(--gold); } .pill.stale b { color: var(--gold); }
@@ -187,8 +188,6 @@ body.editing .cell.empty::after { content: "Drop here"; font-size: 12px; }
 .card .nm { position: absolute; left: 0; right: 0; bottom: 22px; font-size: 9px; line-height: 1.15; padding: 2px 3px; background: rgba(0,0,0,.35);
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .card.has-img .mono, .card.has-img .nm { display: none; }
-.card .crown { position: absolute; top: 18px; left: 2px; z-index: 7; font-size: 11px; color: var(--gold); text-shadow: 0 0 3px #000; }
-.card img.utier { position: absolute; top: 17px; right: 1px; width: 17px; height: 17px; z-index: 7; }
 .card .note-dot { position: absolute; top: 34px; right: 2px; z-index: 8; font-size: 10px; background: var(--gold); color: #1d1614; border-radius: 3px; padding: 0 3px; line-height: 1.3; }
 body.editing .card { cursor: grab; }
 body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; }
@@ -295,26 +294,39 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
   .mu-list { flex-direction: row; flex-wrap: wrap; } .foe { flex: 1 1 200px; }
 }
 @media (max-width: 640px) {
-  .topbar { padding: 10px 12px; } .pills { margin-left: 0; }
+  .topbar { padding: 10px 12px; } .topbar-right { margin-left: 0; width: 100%; justify-content: flex-start; } .race-pick { width: 100%; }
   .pc { grid-template-columns: 34px 1fr; } .pc .what { grid-column: 1 / -1; }
   .ex-grid { grid-template-columns: 1fr; }
 }
+/* bandeau « Work in progress » : à retirer (bloc .wip dans le HTML) quand le contenu sera stabilisé */
+.wip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 12px 20px; text-align: center;
+  background: repeating-linear-gradient(135deg, rgba(226,182,90,.22) 0 18px, rgba(29,22,20,0) 18px 36px), #2b1d14; border-bottom: 2px solid var(--gold); }
+.wip strong { font: 700 clamp(22px, 3.2vw, 34px) "Cinzel", Georgia, serif; letter-spacing: .06em; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,.8); text-transform: uppercase; }
+.wip span { font-size: 16px; color: #f4ead6; max-width: 62ch; text-shadow: 0 1px 4px #000; }
+/* factions interdites dans la plupart des tournois */
+.ban-warn { display: flex; align-items: center; gap: 4px 16px; flex-wrap: wrap; margin-bottom: 16px; padding: 14px 18px; border-radius: 6px;
+  background: repeating-linear-gradient(135deg, rgba(255,107,90,.18) 0 16px, transparent 16px 32px), #4a1410; border: 2px solid var(--danger); }
+.ban-warn[hidden] { display: none; }
+.ban-warn strong { font: 700 clamp(18px, 2.4vw, 26px) "Cinzel", Georgia, serif; color: #ffd2cb; letter-spacing: .04em; text-transform: uppercase; }
+.ban-warn span { color: #f4ead6; font-size: 15px; }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="meta.html" aria-current="page">Faction Meta</a><a href="overview.html">Meta Overview</a></nav>
-  <div class="race-pick">
-    <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
-    <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
+  <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="meta.html" aria-current="page">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
+  <div class="topbar-right">
+    <div class="pills"><span class="pill" id="reviewedPill" hidden></span><span class="pill">Game data <b id="patchTxt"></b></span></div>
+    <div class="race-pick">
+      <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
+      <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
+    </div>
   </div>
-  <div class="pills"><span class="pill" id="reviewedPill" hidden></span><span class="pill">Game data <b id="patchTxt"></b></span></div>
 </header>
+<div class="wip" role="note"><strong>🚧 Work in progress</strong><span>This page is under construction: faction guides, tier lists and matchups are provisional and will change.</span></div>
 
 <div class="layout">
   <aside class="side" aria-label="Faction summary">
-    <div class="id-card"><div class="id-strip"></div><img class="id-icon" id="raceIcon" alt="" hidden><h1 id="raceTitle"></h1><p class="sub">PvP faction guide</p>
-      <a class="ftier" id="raceTier" href="overview.html#tiers" hidden title="Faction tier list"></a></div>
+    <div class="id-card"><div class="id-strip"></div><img class="id-icon" id="raceIcon" alt="" hidden><h1 id="raceTitle"></h1><p class="sub">PvP faction guide</p></div>
     <div class="ratings" id="ratings" hidden></div>
     <p class="lede" id="summary" hidden></p>
     <div class="side-block">
@@ -326,6 +338,7 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
   </aside>
 
   <main>
+    <div class="ban-warn" id="banWarn" role="alert" hidden></div>
     <nav class="tabs" role="tablist" aria-label="Guide sections">
       <button role="tab" type="button" data-tab="guide" id="tab-guide">Guide</button>
       <button role="tab" type="button" data-tab="tiers" id="tab-tiers">Tier list</button>
@@ -410,6 +423,7 @@ const STAT_ICON = { 'Health': 'health', 'Armour': 'armour', 'Leadership': 'leade
   'Melee defence': 'melee_defence', 'Weapon strength': 'weapon_strength', 'Charge bonus': 'charge_bonus', 'Ammunition': 'ammunition',
   'Range': 'range', 'Missile damage': 'missile_strength', 'Bonus vs large': 'bonus_v_large', 'Bonus vs infantry': 'bonus_v_infantry', 'AP damage': 'ap', 'Shield': 'shield', 'Barrier': 'barrier' };
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
+const TOURNAMENT_BANNED = ['UL'];   // codes des factions interdites dans la plupart des tournois
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const img = p => p ? 'images/' + p.split('/').map(encodeURIComponent).join('/') : '';
@@ -432,7 +446,7 @@ const page = () => DATA.pages[race.key];
 function setRace(r, push = true) {
   race = r; armyFilter = '';
   if (push) { const p = new URLSearchParams(location.search); p.set('race', r.slug); history.replaceState(null, '', '?' + p + location.hash); }
-  document.title = `${r.name} – Faction Meta – TWW3`;
+  document.title = `${r.name} – Faction Guide – TWW3`;
   const root = document.documentElement.style;
   root.setProperty('--accent', r.accent ? '#' + r.accent : '#a3261e');
   root.setProperty('--strip', cssUrl(r.strip));
@@ -441,8 +455,8 @@ function setRace(r, push = true) {
   $('raceBtnLbl').textContent = r.name; $('raceBtn').setAttribute('aria-label', `Faction: ${r.name}. Change faction`);
   $('raceTitle').textContent = r.name; $('legendRace').textContent = r.name;
   $('raceIcon').hidden = !r.icon; if (r.icon) $('raceIcon').src = img(r.icon);
-  $('raceTier').hidden = !r.ftier;
-  if (r.ftier) { $('raceTier').style.setProperty('--tc', `var(--ft-${r.ftier})`); $('raceTier').innerHTML = `<b>${r.ftier}</b><span>Faction tier</span>`; }
+  $('banWarn').hidden = !TOURNAMENT_BANNED.includes(r.code);
+  if (!$('banWarn').hidden) $('banWarn').innerHTML = `<strong>⚠ Banned in most tournaments</strong><span>${esc(r.name)} is not allowed in the majority of tournaments. Check the rules of your event before playing it.</span>`;
   $('builderLink').href = 'index.html?race=' + r.slug;
   loadDraft(); renderAll();
 }
@@ -479,8 +493,7 @@ function renderSide() {
   const r = $('ratings');
   r.hidden = !(m && (m.difficulty || m.adaptability));
   if (!r.hidden) r.innerHTML = (m.difficulty ? `<span class="lbl">Difficulty</span>${stars(m.difficulty)}` : '') +
-    (m.adaptability ? `<span class="lbl">Adaptability</span>${stars(m.adaptability)}` : '') +
-    '<span class="hint">Difficulty: how hard the roster is to play well. Adaptability: how well it adjusts to any opponent.</span>';
+    (m.adaptability ? `<span class="lbl">Adaptability</span>${stars(m.adaptability)}` : '');
   $('summary').hidden = !(m && m.summary); $('summary').textContent = m ? m.summary : '';
   $('facts').innerHTML = FACTS.filter(([k]) => k in p).map(([k, label, how]) => {
     const max = SCALE[k] || 100, f = fmtFact(k), q = a[k] ? p[k] / a[k] : 1;
@@ -493,17 +506,10 @@ function renderSide() {
 /* ---------- Onglet Guide ---------- */
 function renderGuide() {
   const m = page().meta;
-  const pos = [], neg = [], p = DATA.profiles[race.key] || {}, a = DATA.avg;
-  FACTS.filter(([k]) => k !== 'tier' && k in p).forEach(([k, label]) => {
-    const q = p[k] / a[k], f = fmtFact(k);
-    const txt = k === 'speed' ? `${label}: ${f(p[k])}, against ${f(a[k])} on average` : `${label}: ${f(p[k])} of unit cards, against ${f(a[k])} on average`;
-    if (q >= 1.2) pos.push(txt); else if (q <= .8) neg.push(txt);
-  });
   const written = list => list.map(x => `<li>${x.title && x.text ? `<b>${esc(x.title)}.</b> ${esc(x.text)}` : esc(x.title || x.text)}</li>`).join('');
-  const block = (list, data, cls) => (list && list.length ? `<h4 class="w">Analysis</h4><ul class="${cls}">${written(list)}</ul>` : '') +
-    `<h4>From game data</h4><ul class="${cls}">${data.map(t => `<li>${esc(t)}</li>`).join('') || '<li class="empty">Nothing stands out from the average.</li>'}</ul>`;
-  $('swPos').innerHTML = block(m && m.strengths, pos, 'pos');
-  $('swNeg').innerHTML = block(m && m.weaknesses, neg, 'neg');
+  const block = (list, cls) => list && list.length ? `<ul class="${cls}">${written(list)}</ul>` : '<p class="empty">Not written yet.</p>';
+  $('swPos').innerHTML = block(m && m.strengths, 'pos');
+  $('swNeg').innerHTML = block(m && m.weaknesses, 'neg');
   const used = {}; armiesOf(race.key).forEach(t => t.archs.forEach(x => { used[x] = (used[x] || 0) + 1; }));
   const names = Object.keys(used).sort((x, y) => used[y] - used[x] || x.localeCompare(y));
   $('archIntro').textContent = names.length ? `The archetypes used by the ${race.name} example armies. Pick one to see its armies.`
@@ -537,8 +543,7 @@ function cardEl(c) {
   b.innerHTML = (c.img ? `<img class="art" src="${img(c.img)}" alt="" loading="lazy" draggable="false">` : '') +
     `<img class="ov" src="${img(S.frame)}" alt="" draggable="false"><img class="ov ov-hover" src="${img(S.hover)}" alt="" draggable="false">` +
     `<img class="semi" src="${img(semi)}" alt="" draggable="false">` + (c.ic ? `<img class="cat" src="${img(c.ic)}" alt="" draggable="false">` : '') +
-    `<span class="cost">${c.min === c.max ? c.min : c.min + '+'}</span>` + (c.lord ? '<span class="crown" title="Lord">♛</span>' : '') +
-    (!c.char && c.utier && S.tier ? `<img class="utier" src="${img(S.tier[c.utier])}" alt="">` : '') +
+    `<span class="cost">${c.min === c.max ? c.min : c.min + '+'}</span>` +
     (c.note ? '<span class="note-dot">✎</span>' : '') +
     `<span class="mono">${esc(initials(c.n))}</span><span class="nm">${esc(c.n)}</span>`;
   const t = TIERS.find(x => x.key === tierOf(c));

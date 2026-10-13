@@ -360,3 +360,9 @@ models:
           column_name: "loc_key"
       - not_null:
           column_name: "loc_key"
+  - name: stg_dump__battlefield_engines
+    description: "Engins de guerre (artillerie) : arme de tir de l'engin (land_units.engine) (source : db/battlefield_engines_tables/data__.tsv)"
+  - name: stg_dump__projectile_bombardments
+    description: "Bombardements des sorts : nombre et type de projectiles (source : db/projectile_bombardments_tables/data__.tsv)"
+  - name: stg_dump__battle_vortexs
+    description: "Vortex des sorts : dégâts (normaux et perforants) et durée (source : db/battle_vortexs_tables/data__.tsv)"

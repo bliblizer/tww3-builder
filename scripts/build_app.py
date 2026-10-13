@@ -292,9 +292,16 @@ for r in rows("select unit_key, kind, trait_key, trait_name, icon_name from mart
     traits.setdefault(r['unit_key'], []).append(['p' if r['kind'] == 'ability' else 't', r['trait_name'], ability_icon(r['icon_name']),
                                                  r['trait_key']])
 
-# info-bulles : [nom, description, mana, recharge, durée, utilisations, passif (0/1), effets « a | b »]
+# info-bulles : [nom, description, mana, recharge, durée, utilisations, passif (0/1), effets « a | b », portée,
+#               dégâts [type, normaux, perforants, impacts, durée du vortex, magiques (0/1), enflammés (0/1)] ou None,
+#               dégâts par tick des phases]
+def damage(r):
+    if r['dmg_base'] is None and r['dmg_ap'] is None: return None
+    return [r['dmg_kind'], compact(r['dmg_base']), compact(r['dmg_ap']), compact(r['dmg_hits']), compact(r['dmg_duration']),
+            int(bool(r['dmg_magical'])), int(bool(r['dmg_flaming']))]
 details = {r['key']: [r['name'], r['description'], compact(r['mana_cost']), compact(r['cooldown']), compact(r['duration']),
-                      compact(r['uses']), int(bool(r['is_passive'])), r['effects']]
+                      compact(r['uses']), int(bool(r['is_passive'])), r['effects'], compact(r['range']), damage(r),
+                      compact(r['damage_per_tick'])]
            for r in rows("select * from marts.pvp_ability_details")}
 
 # capacités innées écrites dans un fichier .army_setup : le jeu ne les enregistre que pour les lords et héros,

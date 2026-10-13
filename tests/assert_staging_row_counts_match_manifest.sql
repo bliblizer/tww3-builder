@@ -147,6 +147,12 @@ with staged as (
     select 'text/db/unit_stat_localisations__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_stat_localisations') }}
     union all
     select 'text/db/unit_abilities_additional_ui_effects__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_abilities_additional_ui_effects') }}
+    union all
+    select 'db/battlefield_engines_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battlefield_engines') }}
+    union all
+    select 'db/projectile_bombardments_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__projectile_bombardments') }}
+    union all
+    select 'db/battle_vortexs_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battle_vortexs') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

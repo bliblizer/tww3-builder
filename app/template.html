@@ -53,7 +53,14 @@ button { font: inherit; color: inherit; }
   border-bottom: 2px solid var(--accent);
 }
 .race-picker { position: relative; width: 340px; max-width: 100%; }
-/* navigation entre les pages du site (même style sur meta.html) */
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px 18px; }
+/* factions interdites dans la plupart des tournois : bandeau d'avertissement sous le bandeau du haut */
+.ban-warn { display: flex; align-items: center; justify-content: center; gap: 4px 16px; flex-wrap: wrap; padding: 12px 20px; text-align: center;
+  background: repeating-linear-gradient(135deg, rgba(255,107,90,.18) 0 16px, transparent 16px 32px), #4a1410; border-bottom: 2px solid var(--danger); }
+.ban-warn[hidden] { display: none; }
+.ban-warn strong { font: 700 clamp(18px, 2.4vw, 26px) "Cinzel", Georgia, serif; color: #ffd2cb; letter-spacing: .04em; text-transform: uppercase; }
+.ban-warn span { color: #f4ead6; font-size: 15px; }
+/* navigation entre les pages du site (même style sur meta.html et overview.html) */
 .site-nav { display: flex; gap: 2px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.6); border-radius: 4px; padding: 2px; }
 .site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
 .site-nav a:hover { color: var(--text); }
@@ -73,7 +80,6 @@ button { font: inherit; color: inherit; }
 .race-opt { border: none; border-top: 1px solid rgba(140,106,59,.4); }
 .race-opt:hover .race-strip, .race-opt.active .race-strip, .race-btn:hover .race-strip { opacity: 1; }
 .race-opt[aria-selected="true"] { outline: 2px solid var(--gold); outline-offset: -2px; }
-.funds { margin-left: auto; display: flex; align-items: baseline; gap: 18px; }
 .funds .value { font-size: 24px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
 .funds .value.over { color: var(--danger); }
 .coin-img { width: 20px; height: 20px; margin-right: 6px; vertical-align: -3px; }
@@ -119,7 +125,11 @@ button { font: inherit; color: inherit; }
 .tip h5 { margin: 0 0 4px; font: 700 15px "Cinzel", Georgia, serif; color: var(--gold); }
 .tip .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: 12.5px; margin-bottom: 6px; }
 .tip .meta b { color: var(--text); font-weight: 500; }
-.tip .desc { font-style: italic; color: #d8cbb2; margin: 0 0 6px; }
+.tip .dmg { margin: 0 0 6px; padding: 5px 8px; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.45); }
+.tip .dmg .k { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.tip .dmg .v { display: flex; flex-wrap: wrap; gap: 2px 12px; } .tip .dmg .v span { display: inline-flex; align-items: center; gap: 4px; }
+.tip .dmg .v img { width: 15px; height: 15px; } .tip .dmg .v b { color: #f6d58a; }
+.tip .dmg .per { font-size: 12.5px; color: var(--muted); }
 .tip ul { margin: 0; padding-left: 16px; } .tip li { margin: 1px 0; }
 .tip li.pos { color: #8bd34a; } .tip li.neg { color: #ff7a6a; }
 [data-tip] { cursor: help; }
@@ -127,6 +137,8 @@ button { font: inherit; color: inherit; }
 .slot { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 /* cartes de l'armée au format du jeu (60 x 130) ; le roster garde des cartes plus petites */
 .slots .card { --cw: 60px; --ch: 130px; }
+.slots .card.skinned .semi { width: 55px; left: 2px; }
+.slots .card.skinned .cat-icon { width: 22px; height: 22px; left: 19px; }
 .slot .card { flex: none; }
 .slot-empty.skin { border: none; opacity: 1; background: var(--slot-img) center / 100% 100% no-repeat; }
 .slots .slot-empty { width: 60px; height: 130px; }
@@ -192,10 +204,14 @@ button { font: inherit; color: inherit; }
 .tags.icons li::before { content: none; }
 .stat .lbl { display: flex; align-items: center; gap: 6px; } .stat .lbl img { width: 20px; height: 20px; }
 .size-line img { width: 20px; height: 20px; vertical-align: -5px; margin-right: 4px; }
-.hpbar { display: flex; align-items: center; justify-content: center; gap: 14px; height: 22px; margin: 10px 0 6px; border-radius: 2px;
-  background: linear-gradient(#8bd34a, #3f8a16); border: 1px solid #6a8f3a; box-shadow: inset 0 3px 0 rgba(125, 211, 252, .55);
-  font: 700 13.5px system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px #000; }
-.hpbar span { display: inline-flex; align-items: center; gap: 3px; } .hpbar img { width: 16px; height: 16px; }
+.hpbar { position: relative; display: flex; align-items: center; justify-content: center; gap: 16px; height: 26px; margin: 10px 0 6px;
+  border-radius: 3px; overflow: hidden; border: 1px solid #0b0806; box-shadow: 0 0 0 1px rgba(140,106,59,.55), inset 0 1px 0 rgba(255,255,255,.25);
+  background: linear-gradient(180deg, #8fd24c 0%, #5aa524 45%, #2f6b12 100%);
+  font: 700 14px system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px #000, 0 0 3px #000; }
+.hpbar::before { content: ""; position: absolute; left: 0; top: 0; height: 46%; width: var(--barrier, 0%);
+  background: linear-gradient(180deg, #a9ecff, #3aa6d6); box-shadow: 0 1px 0 rgba(0,0,0,.35); }
+.hpbar span { position: relative; display: inline-flex; align-items: center; gap: 4px; } .hpbar img { width: 16px; height: 16px; }
+.hpbar .barrier { color: #d9f6ff; }
 .stat > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .stat { grid-template-columns: minmax(0, 1fr) auto 46px; }
 .stat .v { display: inline-flex; align-items: center; justify-content: flex-end; white-space: nowrap; }
@@ -337,7 +353,12 @@ body:not(.show-tiers) .card .tier, body:not(.show-tiers) .card img.tier-img { di
 .toast.ok { background: #1f3a1a; border-color: var(--ok); color: #d9f5cf; }
 @keyframes toast-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
 /* compositions modèles */
-.ex-btn .n { background: var(--gold); color: #211613; border-radius: 8px; padding: 0 6px; font: 700 12px system-ui; margin-left: 4px; }
+.ex-btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 10px; cursor: pointer; border-radius: 6px;
+  border: 1px solid var(--gold); background: linear-gradient(180deg, rgba(226,182,90,.22), rgba(0,0,0,.35)); color: #f4ead6;
+  font: 700 14.5px "Cinzel", Georgia, serif; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 6px rgba(0,0,0,.35); }
+.ex-btn:hover { filter: brightness(1.15); }
+.ex-btn .ex-ico { font-size: 18px; line-height: 1; }
+.ex-btn .n { background: var(--gold); color: #211613; border-radius: 9px; padding: 1px 7px; font: 700 12px system-ui; }
 .ex-btn[hidden] { display: none; }
 /* galerie des armées d'exemple */
 .modal-box.wide { width: min(1180px, 100%); padding: 0; }
@@ -409,6 +430,7 @@ body:not(.show-tiers) .card .tier, body:not(.show-tiers) .card img.tier-img { di
 .hp i { position: absolute; inset: 0; background: linear-gradient(#8bd34a, #4f9a1e); width: var(--w, 100%); }
 .hp span { position: relative; display: block; text-align: center; font-size: 12px; font-weight: 700; line-height: 16px; color: #fff; text-shadow: 0 0 3px #000; }
 .size-line { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+.size-line .size-n { color: var(--text); font-size: 15px; }
 .stat { display: grid; grid-template-columns: 1fr auto 52px; align-items: center; gap: 8px; padding: 3px 6px; font-size: 14.5px;
   background: linear-gradient(90deg, rgba(127,26,21,.28), rgba(127,26,21,.08)); margin-bottom: 2px; }
 .stat .v { font-variant-numeric: tabular-nums; text-align: right; }
@@ -472,14 +494,6 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .card.skinned .mono { margin-top: 18px; font-size: 16px; }
 .comp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin: 2px 0 2px; }
 .comp-head b { font-size: 19px; color: var(--gold); }
-.elite { display: flex; justify-content: space-between; align-items: baseline; }
-.elite b { font-size: 21px; color: var(--gold); }
-.tiers { display: flex; height: 11px; border-radius: 2px; overflow: hidden; margin: 6px 0 3px; background: rgba(0,0,0,.4); }
-.tiers i { display: block; height: 100%; }
-.tl { display: flex; gap: 8px; font-size: 11.5px; color: var(--muted); }
-.tl i, .tiers i.t1, .tiers i.t2, .tiers i.t3, .tiers i.t4, .tiers i.t5 { display: inline-block; }
-.tl i { width: 9px; height: 9px; margin-right: 3px; vertical-align: -1px; }
-.t1 { background: #6b6155; } .t2 { background: #8c7a4f; } .t3 { background: #b08a3c; } .t4 { background: #cf9a2e; } .t5 { background: #f2c94c; }
 .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
 .kpi { background: var(--panel-2); border: 1px solid rgba(140,106,59,.5); border-radius: 3px; padding: 5px 7px; }
 .kpi b { display: block; font-size: 16px; color: var(--gold); font-variant-numeric: tabular-nums; }
@@ -499,8 +513,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
   .layout { grid-template-columns: 1fr; }
   .custom { height: auto; max-height: 70vh; }
   .side { position: static; max-height: none; min-height: 0 !important; border: none !important; border-bottom: 1px solid var(--bronze) !important; }
-  .race-picker { width: 100%; }
-  .funds { margin-left: 0; }
+  .race-picker { width: 100%; } .topbar-right { margin-left: 0; width: 100%; } .topbar-right .race-picker { flex: 1; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -508,16 +521,19 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 <body>
 
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Meta</a><a href="overview.html">Meta Overview</a></nav>
+  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
+  <button class="ex-btn" id="templatesBtn" title="Ready-made armies for this race"><span class="ex-ico" aria-hidden="true">📖</span><span class="ex-lbl">Example armies</span><span class="n" id="exCount"></span></button>
+  <div class="topbar-right">
+  <span class="patch" id="patchPill"></span>
   <div class="race-picker">
     <button class="race-btn" id="raceButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select race">
       <span class="race-strip" id="raceStrip"></span><span class="race-label serif" id="raceName">—</span><span class="caret">▾</span>
     </button>
     <ul class="race-list" id="raceList" role="listbox" aria-label="Races" hidden></ul>
   </div>
-  <button class="tb ex-btn" id="templatesBtn" title="Ready-made armies for this race">📖 Example armies <span class="n" id="exCount"></span></button>
-  <span class="patch" id="patchPill"></span>
+  </div>
 </header>
+<div class="ban-warn" id="banWarn" role="alert" hidden></div>
 
 <div class="layout" id="layout">
 <section class="army" id="armyZone" aria-label="Army">
@@ -1208,10 +1224,10 @@ function renderUnitStats() {
     ${tags.length ? `<ul class="tags${DATA.skin.effPos ? ' icons' : ''}">${tags.map(([n, s]) => {
         const neg = s.includes('negative'), img = neg ? DATA.skin.effNeg : DATA.skin.effPos;
         return `<li class="${neg ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(n)}</li>`; }).join('')}</ul>` : ''}
-    ${st.health != null ? `<div class="hpbar" title="${st.barrier_health ? `Barrier ${fmt(st.barrier_health)} · ` : ''}Health ${fmt(st.health)}">
+    ${st.health != null ? `<div class="hpbar" title="${st.barrier_health ? `Barrier ${fmt(st.barrier_health)} · ` : ''}Health ${fmt(st.health)}"${st.barrier_health ? ` style="--barrier:${Math.min(100, 100 * st.barrier_health / st.health).toFixed(1)}%"` : ''}>
       ${st.barrier_health ? `<span class="barrier">${DATA.statIcons.barrier ? `<img src="images/${esc(DATA.statIcons.barrier)}" alt="">` : '◈ '}${fmt(st.barrier_health)}</span>` : ''}
       <span>${DATA.statIcons.health_bar ? `<img src="images/${esc(DATA.statIcons.health_bar)}" alt="">` : '✚ '}${fmt(st.health)}</span></div>` : ''}
-    ${st.unit_size != null ? `<p class="size-line">${(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall) ? `<img src="images/${esc(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall)}" alt="" title="${st.is_large ? 'Large' : 'Small'} entity">` : ''}Unit size: ${fmt(st.unit_size)}${st.is_large ? ' · large' : ''}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
+    ${st.unit_size != null ? `<p class="size-line">${(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall) ? `<img src="images/${esc(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall)}" alt="" title="${st.is_large ? 'Large' : 'Small'} entity">` : ''}<b class="size-n">${fmt(st.unit_size)}</b>${st.is_large ? ' <span class="muted">large</span>' : ''}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
     ${row('Armour', 'armour', st.shield_block_chance ? mod('shield', `Shield: ${st.shield_block_chance}% chance to block missiles`, `${st.shield_block_chance}%`) || `<small>shield ${st.shield_block_chance}%</small>` : '')}
     ${row('Leadership', 'leadership')}
     ${row('Speed', 'speed')}
@@ -1351,24 +1367,11 @@ function renderComposition() {
       `<div class="bar"><i style="width:${pc.toFixed(1)}%"></i></div>` +
       `<div class="det">${n} unit${n === 1 ? '' : 's'} · ${fmt(m)} model${m === 1 ? '' : 's'} · ${fmt(c)} gold</div></div>`;
   };
-  // indice d'élite : tier moyen pondéré par le coût, sur les unités hors lords et héros
-  const troops = army.filter(u => !isChar(u.opt) && statOf(u.opt.u, 'tier'));
-  const troopCost = sum(troops, unitCost);
-  const elite = troopCost ? sum(troops, u => statOf(u.opt.u, 'tier') * unitCost(u)) / troopCost : 0;
-  const level = !troopCost ? '' : elite >= 3.6 ? 'Elite' : elite >= 2.6 ? 'Balanced' : 'Horde';
-  const tierBar = [1, 2, 3, 4, 5].map(t => {
-    const c = sum(troops.filter(u => statOf(u.opt.u, 'tier') === t), unitCost);
-    return c ? `<i class="t${t}" style="width:${(100 * c / troopCost).toFixed(1)}%" title="Tier ${ROMAN[t]}: ${fmt(c)}"></i>` : '';
-  }).join('');
   const hp = sum(army, u => statOf(u.opt.u, 'health') || 0);
   const speedAvg = total ? sum(army, u => (statOf(u.opt.u, 'speed') || 0) * unitCost(u)) / total : 0;
   p.innerHTML = `<h3 class="serif">Composition</h3>
     <div class="comp-head"><b>${army.length} / ${DATA.maxUnits} units</b><span class="muted">${fmt(sum(army, models))} models</span></div>
     <p class="sub">${fmt(total)} / ${fmt(DATA.budget)} spent</p>
-    <h4 class="block-title serif">Elite index (troops)</h4>
-    ${troopCost ? `<div class="elite"><b>${elite.toFixed(1)} <span class="muted">/ 5</span></b><span class="muted">${level}</span></div>
-      <div class="tiers">${tierBar}</div><div class="tl">${[1, 2, 3, 4, 5].map(t => `<span><i class="t${t}"></i>${ROMAN[t]}</span>`).join('')}</div>`
-      : '<p class="empty">No troops yet.</p>'}
     <h4 class="block-title serif">By role</h4>
     ${BY_ROLE.filter(([, f]) => army.some(f)).map(([label, f]) => row(label, f)).join('')}
     <h4 class="block-title serif">Overall</h4>
@@ -1381,8 +1384,7 @@ function renderComposition() {
     <div style="margin-top:8px">${COMP_SPEED.map(([l, f]) => row(l, f)).join('')}</div>
     <h4 class="block-title serif">Health</h4>
     <div class="kpis"><div class="kpi"><b>${fmt(hp)}</b><span>Total health</span></div>
-      <div class="kpi"><b>${fmt(total ? hp * 1000 / total : 0)}</b><span>Health per 1000 gold</span></div></div>
-    <p class="muted" style="margin-top:8px">Infantry: tier I = trash, II = line, III+ = elite. Lords and heroes are left out of the elite index.</p>`;
+      <div class="kpi"><b>${fmt(total ? hp * 1000 / total : 0)}</b><span>Health per 1000 gold</span></div></div>`;
 }
 
 function renderAll() { renderTop(); renderArmy(); renderPreviewBar(); renderExampleSuggestions(); renderFilters(); renderRoster(); renderUnitStats(); renderCustom(); renderComposition(); renderTools(); }
@@ -1825,15 +1827,29 @@ async function exportPng() {
 function tipHtml(key) {
   const d = DATA.details[key];
   if (!d) return '';
-  const [name, desc, mana, cooldown, duration, uses, passive, effects] = d;
+  const [name, , mana, cooldown, duration, uses, passive, effects, range, dmg, dpt] = d;
   const meta = [passive ? '<span><b>Passive</b></span>' : '', mana ? `<span>Mana <b>${mana}</b></span>` : '',
     cooldown ? `<span>Cooldown <b>${Math.round(cooldown)}s</b></span>` : '', duration ? `<span>Duration <b>${Math.round(duration)}s</b></span>` : '',
-    uses ? `<span>Uses <b>${uses}</b></span>` : ''].filter(Boolean).join('');
+    range ? `<span>Range <b>${Math.round(range)}m</b></span>` : '', uses ? `<span>Uses <b>${uses}</b></span>` : ''].filter(Boolean).join('');
+  // dégâts : [type, normaux, perforants, impacts, durée du vortex, magiques, enflammés]
+  let dmgHtml = '';
+  if (dmg) {
+    const [kind, base, ap, hits, vdur, magical, flaming] = dmg;
+    const ico = k => DATA.statIcons[k] ? `<img src="images/${esc(DATA.statIcons[k])}" alt="">` : '';
+    const parts = [base ? `<span>${ico('weapon_strength')}<b>${fmt(base)}</b> damage</span>` : '',
+      ap ? `<span>${ico('ap')}<b>${fmt(ap)}</b> armour-piercing</span>` : ''].filter(Boolean).join('');
+    const per = kind === 'vortex' ? `per hit${hits > 1 ? `, ${hits} vortexes` : ''}${vdur ? `, lasts ${Math.round(vdur)}s` : ''}`
+      : hits > 1 ? `per impact, ${hits} impacts` : kind === 'bombardment' ? 'per impact' : '';
+    const kindName = { projectile: 'Projectile', bombardment: 'Bombardment', vortex: 'Vortex' }[kind] || 'Damage';
+    const flags = [magical ? `<span>${ico('magical')}Magical</span>` : '', flaming ? `<span>${ico('flaming')}Flaming</span>` : ''].join('');
+    dmgHtml = `<div class="dmg"><div class="k">${kindName}</div><div class="v">${parts}</div>${per ? `<div class="per">${per}</div>` : ''}${flags ? `<div class="v">${flags}</div>` : ''}</div>`;
+  }
+  if (dpt) dmgHtml += `<div class="dmg"><div class="k">Damage over time</div><div class="v"><span><b>${fmt(dpt)}</b> per tick</span></div></div>`;
   const lines = (effects || '').split(' | ').filter(Boolean).map(l => {
     const cls = /^-|Inflicts/.test(l) ? 'neg' : /^\+|Gains/.test(l) ? 'pos' : '';
     const img = cls === 'neg' ? DATA.skin.effNeg : cls === 'pos' ? DATA.skin.effPos : null;
     return `<li class="${cls}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(l)}</li>`; }).join('');
-  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${desc ? `<p class="desc">${esc(desc)}</p>` : ''}${lines ? `<ul${DATA.skin.effPos ? ' class="icons"' : ''}>${lines}</ul>` : ''}`;
+  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${dmgHtml}${lines ? `<ul${DATA.skin.effPos ? ' class="icons"' : ''}>${lines}</ul>` : ''}`;
 }
 function setupTooltips() {
   const tip = $('tip');
@@ -2008,6 +2024,9 @@ function setupTools() {
 }
 
 /* ---------- Race : changement, couleur d'accent et illustration ---------- */
+/* factions interdites dans la plupart des tournois (codes de faction) : un bandeau d'avertissement s'affiche */
+const TOURNAMENT_BANNED = ['UL'];
+const isBanned = r => TOURNAMENT_BANNED.some(c => (DATA.factionCodes || {})[c] === r.key);
 function setRace(i, { keepArmy = false, record = true } = {}) {
   if (record && (state.army.length || state.raceIndex !== i)) commit();
   state.raceIndex = (i + DATA.races.length) % DATA.races.length;
@@ -2018,6 +2037,8 @@ function setRace(i, { keepArmy = false, record = true } = {}) {
   if (r.art) root.style.setProperty('--race-art', `url("images/${r.art}")`); else root.style.removeProperty('--race-art');
   document.body.classList.toggle('has-art', !!r.art);
   $('metaLink').href = 'meta.html?race=' + raceSlug(r);
+  $('banWarn').hidden = !isBanned(r);
+  if (isBanned(r)) $('banWarn').innerHTML = `<strong>⚠ Banned in most tournaments</strong><span>${esc(r.name)} is not allowed in the majority of tournaments. Check the rules of your event before building with it.</span>`;
   renderAll();
 }
 /* identifiant de race dans les adresses, partagé avec meta.html : « The Empire » -> the-empire */

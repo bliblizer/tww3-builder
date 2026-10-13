@@ -3,7 +3,8 @@
 -- à la construction, contre les valeurs d'un export tiers (tww3 stats card) :
 --   armure, commandement, attaque/défense de mêlée, charge, portée, rechargement : 100 % identiques
 --   taille d'unité 99,8 %, vitesse 96 %, points de vie 88 %, puissance de tir 100 % (écarts : chars, machines de guerre, personnages
---   montés sur un char ou un engin, dont les engins ne sont pas encore pris en compte)
+--   montés sur un char ou un engin)
+--   tir de l'artillerie : arme de l'engin (battlefield_engines.missile_weapon) quand l'unité n'a pas d'arme de tir propre
 
 with units as (
     select distinct unit_key from {{ ref('pvp_roster_options') }}
@@ -41,7 +42,10 @@ missile as (
            (p.damage + p.ap_damage + coalesce(e.detonation_damage, 0) + coalesce(e.detonation_damage_ap, 0))
              * p.projectile_number * coalesce(nullif(p.shots_per_volley, 0), 1) * coalesce(nullif(p.burst_size, 0), 1) as volley_damage
     from base b
-    join {{ ref('stg_dump__missile_weapons') }} mw on mw.missile_weapon_key = b.primary_missile_weapon
+    -- artillerie : l'arme de tir est portée par l'engin (land_units.engine -> battlefield_engines), pas par l'unité
+    left join {{ ref('stg_dump__battlefield_engines') }} en on en.key = b.engine
+    join {{ ref('stg_dump__missile_weapons') }} mw
+      on mw.missile_weapon_key = coalesce(nullif(b.primary_missile_weapon, ''), nullif(en.missile_weapon, ''))
     join {{ ref('stg_dump__projectiles') }} p on p.projectile_key = mw.projectile_key
     left join {{ ref('stg_dump__projectiles_explosions') }} e on e.explosion_key = p.explosion_key
 ),

@@ -182,7 +182,6 @@ Limites de la V0 :
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
-  - **l'indice d'élite** : tier moyen pondéré par le coût (`main_units.tier`, de 1 à 5), calculé **sans les lords et héros**. Il est lu « Horde » sous 2,6, « Balanced » jusqu'à 3,6, « Elite » au-delà, avec une barre de répartition des fonds par tier ;
   - **By role** : lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre ;
   - **Overall** :
     - volants sans arme de tir, volants tireurs ;
@@ -356,7 +355,7 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 
   Les images sont incluses quand le site est servi par un serveur (GitHub Pages). En ouvrant le fichier local, le navigateur peut les bloquer : l'image est alors produite avec les initiales.
 
-**Info-bulles des sorts, capacités et objets** (`pvp_ability_details`) : au survol d'une ligne du panneau de personnalisation ou de la fiche d'unité, on voit le nom, passif ou non, mana, recharge, durée, nombre d'utilisations, la description du jeu et **les effets**. Les effets sont calculés à partir des phases de la capacité : effets chiffrés sur les statistiques (« +10 Melee Attack »), attributs donnés (« Gains: Immune to Psychology ») et lignes d'effet propres au jeu.
+**Info-bulles des sorts, capacités et objets** (`pvp_ability_details`) : au survol d'une ligne du panneau de personnalisation ou de la fiche d'unité, on voit le nom, passif ou non, mana, recharge, durée, portée, nombre d'utilisations, **les dégâts** et **les effets** (le texte d'ambiance du jeu n'est plus affiché). Les dégâts viennent du projectile lancé (`unit_special_abilities.activated_projectile`), du bombardement (`projectile_bombardments`) ou du vortex (`battle_vortexs`) : dégâts normaux et perforants d'un impact (explosion comprise), nombre d'impacts, durée d'un vortex, dégâts magiques ou enflammés ; les dégâts par tick des phases s'affichent en « Damage over time ». Les effets sont calculés à partir des phases de la capacité : effets chiffrés sur les statistiques (« +10 Melee Attack »), attributs donnés (« Gains: Immune to Psychology ») et lignes d'effet propres au jeu.
 
 ## Personnalisation des personnages (sorts, capacités, objets)
 
@@ -389,15 +388,19 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 - **Comme en jeu**, le prix n'est affiché que sur les éléments non cochés : c'est le surcoût de leur ajout.
 - **Le clic simple attend une fraction de seconde** avant d'ouvrir les panneaux. Sans ce délai, l'apparition du panneau déplacerait le roster entre les deux clics d'un double-clic.
 
-## Pages Faction Meta (`docs/meta.html`) et Meta Overview (`docs/overview.html`)
+**Artillerie** : son arme de tir est portée par l'engin (`land_units.engine` → `battlefield_engines.missile_weapon`) et non par l'unité. `pvp_unit_stats` la prend quand l'unité n'a pas d'arme de tir propre : portée, munitions, puissance de tir et attributs de tir des pièces d'artillerie s'affichent dans la fiche d'unité.
 
-- **Faction Meta** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#tiers`, `#matchups`, `#armies`, `#patch`).
+**Barre de vie** : comme en jeu, une barre verte avec la vie au centre et, pour les unités qui en ont une, un bandeau bleu de barrière (longueur proportionnelle à la barrière). La taille d'unité suit, en icône + nombre.
+
+## Pages Faction Guide (`docs/meta.html`) et Meta Overview (`docs/overview.html`)
+
+- **Faction Guide** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#tiers`, `#matchups`, `#armies`, `#patch`).
 - **Meta Overview** : la tier list des factions (`overview.html#tiers`) et la matrice des matchups (`overview.html#matrix`).
 
-**Navigation** : les trois pages du site ont le même bouton « Army Builder / Faction Meta / Meta Overview » en haut à gauche. Le builder et la page Faction Meta s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
+**Navigation** : les trois pages du site ont le même bouton « Army Builder / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
 
 ```
-app/meta_template.html             page Faction Meta (HTML + CSS + JavaScript, sans bibliothèque)
+app/meta_template.html             page Faction Guide (HTML + CSS + JavaScript, sans bibliothèque)
 app/overview_template.html         page Meta Overview
 scripts/build_meta.py              assemble les deux pages à partir des données du builder et des fichiers ci-dessous
 config/meta/faction_breakdown.csv  synthèse des factions, une ligne par faction (notes, résumé, forces, faiblesses)
@@ -410,6 +413,10 @@ history/units_<patch>.csv          instantané des unités d'un patch (coûts et
 
 Les trois fichiers de `config/meta/` sont des exports CSV d'un tableur (Google Sheets : Fichier > Télécharger > CSV). S'ils sont absents de `config/meta/`, le build les cherche dans `assets/meta/`, mais ils n'y sont pas versionnés : `config/meta/` est leur place. `<faction>` est le nom de la faction en minuscules, mots reliés par des tirets : `skaven`, `the-empire`, `daemons-of-chaos`… Les fichiers qui commencent par `_` sont des modèles et sont ignorés.
 
+**Work in progress** : les deux pages affichent un bandeau « Work in progress » sous la barre de navigation, tant que les guides, tier lists et matchups sont provisoires. Pour le retirer, supprimer le bloc `<div class="wip">` (et le style `.wip`) dans `app/meta_template.html` et `app/overview_template.html`, puis relancer `build_meta.py`.
+
+**Factions interdites en tournoi** : la constante `TOURNAMENT_BANNED` (codes de faction, aujourd'hui `['UL']`) se trouve dans `app/template.html`, `app/meta_template.html` et `app/overview_template.html`. Pour ces factions, le builder et la page Faction Guide affichent un bandeau « Banned in most tournaments », et la tier list des factions une étiquette « ⚠ Banned ».
+
 **Build** : `build_meta.py` réutilise les données de `docs/index.html` et écrit dans `docs/images/faction_icons/`, que `build_app.py` vide à chaque construction. Il se lance donc **après** le builder :
 
 ```
@@ -417,8 +424,8 @@ python scripts/build_app.py
 python scripts/build_meta.py
 ```
 
-**Mise en page** : une fiche de faction à gauche (bandeau, icône, tier de la faction, difficulté et adaptabilité en étoiles, résumé, profil du roster comparé à la moyenne des factions), et cinq onglets :
-- **Guide** : forces et faiblesses (partie écrite, puis lignes calculées quand la faction s'écarte d'au moins 20 % de la moyenne), archétypes utilisés par ses armées d'exemple ;
+**Mise en page** : une fiche de faction à gauche (bandeau, icône, difficulté et adaptabilité en étoiles, résumé, profil du roster comparé à la moyenne des factions), et cinq onglets :
+- **Guide** : forces et faiblesses écrites (`faction_breakdown.csv`), archétypes utilisés par ses armées d'exemple ;
 - **Tier list** : Meta / Strong / Viable / Situational / Weak (couleurs classiques) × Lords & Heroes / Infantry / Range / Cavalry & Monsters. Une carte non notée n'apparaît pas ;
 - **Matchups** : la ligne de la faction dans la matrice des matchups, de +2 (Very favoured) à -2 (Very unfavoured), avec la liste des adversaires non évalués. Un clic sur une faction ouvre sa page ;
 - **Example armies** : les armées de `config/army_templates/` (mêmes données que la galerie du builder), filtrables par archétype, avec un bouton **Open in builder**. En dessous, « Built to beat … » liste les armées des autres factions dont `strong_vs` contient cette faction ;
@@ -456,7 +463,7 @@ La page de chaque faction affiche sa ligne. La page Meta Overview affiche le tab
 
 ### Tier list des factions : `config/meta/global_tier_list.csv`
 
-Deux colonnes : `Tier` (`S`, `A`, `B`, `C`, `D`, et au besoin `E`, `F`) et `Faction code`. Une faction absente est listée « Not ranked yet ». Le tier apparaît aussi dans la fiche de la faction et dans la matrice.
+Deux colonnes : `Tier` (`S`, `A`, `B`, `C`, `D`, et au besoin `E`, `F`) et `Faction code`. Une faction absente est listée « Not ranked yet ». Le tier apparaît aussi dans la matrice des matchups.
 
 ### Icônes des factions : `assets/faction_icons/`
 
@@ -500,7 +507,7 @@ Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fic
 **Ce qui ne l'est pas** (voir `.gitignore`) : `tww3.duckdb`, `target/`, `logs/`, `exports/`, `.venv/`, ainsi que les images originales extraites du jeu (`assets/`).
 
 **Routine après une modification**, avec GitHub Desktop :
-1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages Faction Meta et Meta Overview).
+1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages Faction Guide et Meta Overview).
 2. Dans GitHub Desktop, onglet **Changes** : relis les fichiers modifiés.
 3. Écris un résumé en bas à gauche, par exemple « Roster : ajout des images », puis clique sur **Commit to main**.
 4. Clique sur **Push origin**. Le code est sauvegardé sur GitHub, et le site en ligne se met à jour en une à deux minutes.
