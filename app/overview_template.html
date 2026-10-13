@@ -139,7 +139,7 @@ table.mx { border-collapse: separate; border-spacing: 0; font-variant-numeric: t
     <h2 id="matrixTitle">Matchup matrix</h2>
     <p class="intro">Read a row from left to right: how the faction on the left fares against each faction in the columns. Hover a cell for the details, click it to open the faction guide.</p>
     <div class="tools">
-      <label>Order <select id="order"><option value="tier">By faction tier</option><option value="name">By name</option><option value="avg">By average matchup</option></select></label>
+      <label>Order <select id="order"><option value="tier">By faction tier list</option><option value="name">By name</option><option value="avg">By average matchup</option></select></label>
       <div class="legend" id="legend"></div>
     </div>
     <div id="matrixHost"></div>
@@ -164,7 +164,8 @@ $('patchTxt').textContent = DATA.patch.replace('patch_', 'patch ');
 /* ---------- Tier list des factions ---------- */
 (function renderTiers() {
   if (!DATA.hasTiers) { $('tierHost').innerHTML = '<div class="empty-box"><b>No faction tier list yet.</b> It comes from <code>config/meta/global_tier_list.csv</code>.</div>'; return; }
-  const rows = DATA.tiers.map(t => ({ t, list: DATA.races.filter(r => r.ftier === t).sort((a, b) => a.name.localeCompare(b.name)) })).filter(x => x.list.length);
+  // ordre du CSV dans chaque tier, de gauche à droite (le premier de la liste à gauche)
+  const rows = DATA.tiers.map(t => ({ t, list: DATA.races.filter(r => r.ftier === t).sort((a, b) => a.forder - b.forder) })).filter(x => x.list.length);
   const unranked = DATA.races.filter(r => !r.ftier);
   $('tierHost').innerHTML = '<div class="ftl">' + rows.map(x => `<div class="ftl-row" style="--tc:var(--ft-${x.t})"><div class="ftl-t">${x.t}</div>
     <div class="ftl-list">${x.list.map(r => `<a class="fac" href="${metaLink(r)}" title="${esc(r.name)} guide">${icon(r)}<span>${esc(r.name)}</span>${TOURNAMENT_BANNED.includes(r.code) ? '<span class="ban" title="Banned in most tournaments">⚠ Banned</span>' : ''}</a>`).join('')}</div></div>`).join('') + '</div>' +
@@ -185,7 +186,7 @@ function ordered(mode) {
   const list = DATA.races.slice();
   if (mode === 'name') return list.sort((a, b) => a.name.localeCompare(b.name));
   if (mode === 'avg') return list.sort((a, b) => ((average(b.key) || { avg: -9 }).avg - (average(a.key) || { avg: -9 }).avg) || a.name.localeCompare(b.name));
-  return list.sort((a, b) => tierRank(a) - tierRank(b) || a.name.localeCompare(b.name));
+  return list.sort((a, b) => tierRank(a) - tierRank(b) || (a.forder ?? 99) - (b.forder ?? 99) || a.name.localeCompare(b.name));
 }
 function renderMatrix() {
   if (!DATA.hasMatrix) { $('matrixHost').innerHTML = '<div class="empty-box"><b>No matchup matrix yet.</b> It comes from <code>config/meta/matchup_chart.csv</code>.</div>'; return; }

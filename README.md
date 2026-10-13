@@ -166,7 +166,7 @@ Limites de la V0 :
 - **Bandeau de l'armée**, **toujours visible** : il reste collé en haut de l'écran pendant qu'on fait défiler le roster, et la fiche d'unité se place juste dessous. Il contient :
   - le nom de l'armée en titre, et une **alerte rouge « ⚠ n issues »** à côté quand l'armée n'est pas valide (détail au survol et au clic) ;
   - à droite des cartes, deux **tuiles** : **fonds restants** en or (pièce du jeu, barre du budget dépensé) et **modèles** en acier (icône d'entité, nombre d'unités) ;
-  - la barre d'outils, avec des boutons homogènes (36 × 36) regroupés par usage : **Export to game** mis en avant, puis Import ; Save, My armies, Share ; Clear, More. Les icônes sont celles du jeu (`icon_load`, `icon_quick_save`, `icon_player`, `icon_delete`, `icon_menu` dans `assets/ui_skins/`), avec une icône de lien dessinée pour Share ;
+  - la barre d'outils, en quatre groupes nommés selon ce sur quoi ils agissent : **Game** (Import, et **Export to game** mis en avant), **My armies** (Save, Open), **Share** (Copy link, image PNG), **Edit** (Undo, Redo, Clear, More : notes, dossier du jeu, affichage, aide). Les icônes sont dessinées dans un même style ; chaque bouton a un libellé ou une info-bulle avec son raccourci, un bouton inutilisable est grisé, et une confirmation s'affiche après l'action. Sous 1 250 px de large, seuls les icônes restent ;
   - le menu **More** contient Undo / Redo (aussi Ctrl+Z / Ctrl+Y), Notes, l'image PNG, le dossier du jeu, l'aide, et la bascule des **icônes de tier** sur les cartes (désactivées par défaut, mémorisé dans le navigateur).
 - **Cartes de l'armée à leur taille native (60 × 130)**, donc nettes, avec 3 px d'écart (3 px aussi dans le roster). Dessous, la **barre de budget** : un segment par rôle avec son icône (couronne, épée, arc, cheval, créature, patte, canon) et sa couleur. Un segment d'au moins 11 % affiche le rôle, le montant et le % ; de 5 à 11 %, le % ; en dessous, l'icône seule (détail au survol). Les fonds restants forment un segment hachuré.
 - **Le panneau de droite remonte jusqu'en haut du bandeau de l'armée**, qui occupe les deux premières colonnes. Sous 1 750 px de large, l'armée reprend toute la largeur et le panneau redescend.
@@ -180,18 +180,13 @@ Limites de la V0 :
   - **le choix d'une race adverse** ;
   - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py`. Dans ce profil, l'artillerie compte comme Ranged : sa portée est absente des statistiques pour la plupart des pièces (correction provisoire) ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
-- **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. Chaque ligne indique la part des fonds, le nombre d'unités, le **nombre de modèles** (soldats, ou 1 pour une entité unique) et le coût. On y trouve :
+- **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
-  - **By role** : lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre ;
-  - **Overall** :
-    - volants sans arme de tir, volants tireurs ;
-    - tireurs à courte portée (< 150) et à longue portée (≥ 150), hors artillerie ;
-    - cavalerie de tir et chars (onglet « Missile Cavalry & Chariots »), artillerie, cavalerie et cavalerie monstrueuse ;
-    - grandes entités uniques (taille 1, hors personnages) ;
-    - infanterie **trash (tier I), de ligne (tier II), d'élite (tier III+)** ;
-  - **Damage & traits** : perforant, anti-large, dégâts magiques, dégâts de feu, démoniaque ou mort-vivant, bouclier ou résistance au tir (indicateurs de `pvp_unit_stats`) ;
-  - **Speed** : vitesse moyenne pondérée par le coût, part des volants, unités rapides (≥ 80) et lentes (≤ 30) ;
-  - **Health** : PV totaux et PV pour 1 000 pièces d'or.
+  - **Funds by role** : une barre empilée de la part des fonds par rôle (lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), avec unités, modèles et or au survol ;
+  - **Damage profile** : puissance de mêlée et puissance de tir totales (statistique × nombre de modèles) et pour 1 000 pièces d'or, répartition mêlée / tir, et part perforante, magique et enflammée de chacune ;
+  - **Answers to threats** : une jauge par besoin, en part des fonds — anti-large (`is_anti_large`), anti-armure (`is_armour_piercing`), anti-volants (unités de tir et volants), magie (attaques magiques, domaine de magie ou sort choisi). Un repère marque un minimum habituel (15 %, 20 %, 15 %, 10 %, constante `THREAT_ANSWERS`) : vert au-dessus, or en dessous, rouge et alerte à zéro ;
+  - **Speed** : vitesse moyenne pondérée par le coût, part des volants, une **bande de vitesse** (un point par unité, couleur de son rôle) et les unités rapides (≥ 80) et lentes (≤ 30) ;
+  - **Health** : vie totale et vie pour 1 000 pièces d'or.
 - **Le roster est sur 2 colonnes**, dans l'ordre des onglets du jeu : Lords | Heroes, puis Infantry | Missile Infantry ou Cavalry, etc.
 - **Les cartes mesurent 50 × 108** pour voir plus de cartes par ligne. Le **tier** de l'unité (I à V) est affiché en haut à droite, sauf pour les lords et les héros.
 - **Alertes de plafond** : une carte du roster affiche un badge « n/plafond » quand l'un de ses groupes est plein ou n'a plus qu'une place.
@@ -394,7 +389,7 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 
 ## Pages Faction Guide (`docs/meta.html`) et Meta Overview (`docs/overview.html`)
 
-- **Faction Guide** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#tiers`, `#matchups`, `#armies`, `#patch`).
+- **Faction Guide** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#guide`, `#tiers`, `#matchups`, `#patch` ; l'ancien `#armies` ouvre l'onglet Guide).
 - **Meta Overview** : la tier list des factions (`overview.html#tiers`) et la matrice des matchups (`overview.html#matrix`).
 
 **Navigation** : les trois pages du site ont le même bouton « Army Builder / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
@@ -424,11 +419,10 @@ python scripts/build_app.py
 python scripts/build_meta.py
 ```
 
-**Mise en page** : une fiche de faction à gauche (bandeau, icône, difficulté et adaptabilité en étoiles, résumé, profil du roster comparé à la moyenne des factions), et cinq onglets :
-- **Guide** : forces et faiblesses écrites (`faction_breakdown.csv`), archétypes utilisés par ses armées d'exemple ;
+**Mise en page** : une fiche de faction à gauche (bandeau, icône, difficulté et adaptabilité en étoiles, résumé, profil du roster comparé à la moyenne des factions), et quatre onglets :
+- **Guide** : forces et faiblesses écrites (`faction_breakdown.csv`), puis les **armées d'exemple** de la faction (filtrables par archétype, bouton **Open in builder**) et « Built to beat … » ;
 - **Tier list** : Meta / Strong / Viable / Situational / Weak (couleurs classiques) × Lords & Heroes / Infantry / Range / Cavalry & Monsters. Une carte non notée n'apparaît pas ;
 - **Matchups** : la ligne de la faction dans la matrice des matchups, de +2 (Very favoured) à -2 (Very unfavoured), avec la liste des adversaires non évalués. Un clic sur une faction ouvre sa page ;
-- **Example armies** : les armées de `config/army_templates/` (mêmes données que la galerie du builder), filtrables par archétype, avec un bouton **Open in builder**. En dessous, « Built to beat … » liste les armées des autres factions dont `strong_vs` contient cette faction ;
 - **Patch changes** : les cartes dont le coût ou une statistique a changé depuis le patch précédent, les cartes ajoutées et retirées.
 
 Une faction sans fichier a quand même sa page : profil du roster, armées d'exemple et changements de patch viennent des données du jeu. Les onglets sans contenu l'indiquent.
@@ -463,7 +457,7 @@ La page de chaque faction affiche sa ligne. La page Meta Overview affiche le tab
 
 ### Tier list des factions : `config/meta/global_tier_list.csv`
 
-Deux colonnes : `Tier` (`S`, `A`, `B`, `C`, `D`, et au besoin `E`, `F`) et `Faction code`. Une faction absente est listée « Not ranked yet ». Le tier apparaît aussi dans la matrice des matchups.
+Deux colonnes : `Tier` (`S`, `A`, `B`, `C`, `D`, et au besoin `E`, `F`) et `Faction code`. **L'ordre des lignes compte** : dans chaque tier, les factions s'affichent de gauche à droite dans l'ordre du CSV (la première à gauche), et la matrice suit le même ordre. Une faction absente est listée « Not ranked yet ». Le tier apparaît aussi dans la matrice des matchups.
 
 ### Icônes des factions : `assets/faction_icons/`
 

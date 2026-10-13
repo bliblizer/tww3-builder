@@ -240,7 +240,7 @@ if MATCHUPS:
 
 # ---------- tier list des factions ----------
 TIERLIST = meta_source('global_tier_list.csv')
-faction_tier = {}
+faction_tier, faction_order = {}, {}
 if TIERLIST:
     GT = os.path.relpath(TIERLIST, ROOT).replace(os.sep, '/')
     if GT.startswith('assets'): check('info', GT, 'lu dans assets/meta/ : déplace-le dans config/meta/ pour le versionner')
@@ -253,6 +253,7 @@ if TIERLIST:
         if t not in FACTION_TIERS: check('error', f'{GT}:{i}', f"tier « {t} » invalide pour {f['name']} (attendu : {', '.join(FACTION_TIERS)})"); continue
         if f['key'] in faction_tier: check('warning', f'{GT}:{i}', f"{f['name']} apparaît deux fois, la dernière ligne est gardée")
         faction_tier[f['key']] = t
+        faction_order[f['key']] = len(faction_order)   # ordre du CSV : affiché de gauche à droite dans chaque tier
     for r in races:
         if r['key'] not in faction_tier: check('info', GT, f"{r['name']} absente de la tier list des factions")
 
@@ -426,7 +427,7 @@ for r in races:
         if n < len(cards): check('info', f"config/tier_lists/{slug(r['name'])}.csv", f'{n} / {len(cards)} cartes notées')
 
 race_list = [{'key': r['key'], 'name': r['name'], 'slug': slug(r['name']), 'accent': r.get('accent'), 'strip': r.get('race_image'),
-              'art': r.get('art'), 'code': code_of.get(r['key']), 'icon': icons.get(r['key']), 'ftier': faction_tier.get(r['key']),
+              'art': r.get('art'), 'code': code_of.get(r['key']), 'icon': icons.get(r['key']), 'ftier': faction_tier.get(r['key']), 'forder': faction_order.get(r['key']),
               'guide': r['key'] in metas, 'tiers': r['key'] in tier_files} for r in races]
 payload = {
     'patch': PATCH, 'prev': PREV, 'budget': D['budget'],
