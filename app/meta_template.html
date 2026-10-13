@@ -49,6 +49,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; }
 .site-nav a:hover { color: var(--text); }
 .site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
+@media (max-width: 640px) { .site-nav a { padding: 5px 8px; font-size: 14px; } }
 .race-pick { position: relative; }
 .race-btn { position: relative; display: block; width: 300px; max-width: 100%; height: 48px; padding: 0; border: 1px solid var(--bronze); border-radius: 4px;
   background: #140f0d; cursor: pointer; overflow: hidden; text-align: left; }
@@ -63,6 +64,8 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .race-opt:hover, .race-opt:focus-visible { border-color: var(--gold); }
 .race-opt[aria-current="true"] { border-color: var(--gold); box-shadow: inset 0 0 0 1px var(--gold); }
 .race-opt .lbl { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-weight: 700; text-shadow: 0 1px 3px #000; }
+.race-opt .lbl.with-ico { left: 44px; }
+.race-opt .ico, .foe .ico { position: absolute; left: 6px; top: 50%; transform: translateY(-50%); width: 30px; height: 30px; object-fit: contain; filter: drop-shadow(0 1px 3px #000); }
 .race-opt .has { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; }
 .race-opt .has span { font-size: 10.5px; background: rgba(0,0,0,.7); border: 1px solid rgba(226,182,90,.6); color: var(--gold); border-radius: 3px; padding: 0 4px; }
 .pills { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
@@ -81,6 +84,13 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
   -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent 100%); mask-image: linear-gradient(180deg, #000 30%, transparent 100%); }
 .id-card h1 { position: relative; margin: 0; font: 700 36px "Cinzel", Georgia, serif; line-height: 1.05; color: #f4ead6; text-shadow: 0 2px 12px #000; }
 .id-card .sub { position: relative; margin: 2px 0 0; font: 500 15px "Cinzel", Georgia, serif; color: var(--gold); }
+.id-icon { position: absolute; top: 10px; left: 14px; width: 56px; height: 56px; object-fit: contain; filter: drop-shadow(0 2px 6px #000); }
+.id-icon[hidden], .ftier[hidden] { display: none; }
+.ftier { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; align-items: center; text-decoration: none;
+  background: rgba(0,0,0,.6); border: 1px solid var(--tc); border-radius: 6px; padding: 3px 10px 4px; color: #f4ead6; }
+.ftier b { font: 700 24px "Cinzel", Georgia, serif; line-height: 1; color: var(--tc); }
+.ftier span { font-size: 10.5px; color: var(--muted); }
+:root { --ft-S: #ff7f7f; --ft-A: #ffbf7f; --ft-B: #ffdf7f; --ft-C: #ffff7f; --ft-D: #bfff7f; --ft-E: #7fffff; --ft-F: #7fbfff; }
 .ratings { margin: 14px 18px 0; padding: 12px 14px; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; align-items: center;
   background: rgba(0,0,0,.25); border: 1px solid rgba(140,106,59,.6); border-radius: 6px; }
 .ratings[hidden] { display: none; }
@@ -118,7 +128,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 /* ---------- Guide ---------- */
 .prose p { margin: 0 0 10px; max-width: 75ch; }
 .prose p:last-child { margin-bottom: 0; }
-.sw { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.sw { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .sw ul { list-style: none; margin: 0; padding: 0; }
 .sw li { padding: 8px 0 8px 22px; border-top: 1px solid rgba(140,106,59,.3); position: relative; }
 .sw li:first-child { border-top: none; }
@@ -198,6 +208,7 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
 .foe { position: relative; display: block; height: 40px; border: 1px solid var(--bronze); border-radius: 4px; background: #140f0d; overflow: hidden; text-decoration: none; color: var(--text); }
 .foe:hover, .foe:focus-visible { border-color: var(--gold); }
 .foe .strip { opacity: .9; -webkit-mask-image: linear-gradient(90deg, transparent 10%, #000 60%); mask-image: linear-gradient(90deg, transparent 10%, #000 60%); }
+.foe .n.with-ico { left: 42px; }
 .foe .n { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px #000; }
 .foe .nt { position: absolute; right: 5px; top: 4px; font-size: 10.5px; background: var(--gold); color: #1d1614; border-radius: 3px; padding: 0 4px; }
 
@@ -292,7 +303,7 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
 </head>
 <body>
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="meta.html" aria-current="page">Faction Meta</a></nav>
+  <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="meta.html" aria-current="page">Faction Meta</a><a href="overview.html">Meta Overview</a></nav>
   <div class="race-pick">
     <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
     <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
@@ -302,7 +313,8 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
 
 <div class="layout">
   <aside class="side" aria-label="Faction summary">
-    <div class="id-card"><div class="id-strip"></div><h1 id="raceTitle"></h1><p class="sub">PvP faction guide</p></div>
+    <div class="id-card"><div class="id-strip"></div><img class="id-icon" id="raceIcon" alt="" hidden><h1 id="raceTitle"></h1><p class="sub">PvP faction guide</p>
+      <a class="ftier" id="raceTier" href="overview.html#tiers" hidden title="Faction tier list"></a></div>
     <div class="ratings" id="ratings" hidden></div>
     <p class="lede" id="summary" hidden></p>
     <div class="side-block">
@@ -323,7 +335,6 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
     </nav>
 
     <section class="pane" data-pane="guide" role="tabpanel" aria-labelledby="tab-guide">
-      <div class="panel"><h2>Playstyle</h2><div class="prose" id="playstyle"></div></div>
       <div class="sw">
         <div class="panel"><h3>Strengths</h3><div id="swPos"></div></div>
         <div class="panel"><h3>Weaknesses</h3><div id="swNeg"></div></div>
@@ -429,6 +440,9 @@ function setRace(r, push = true) {
   $('raceBtnStrip').style.setProperty('--s', cssUrl(r.strip));
   $('raceBtnLbl').textContent = r.name; $('raceBtn').setAttribute('aria-label', `Faction: ${r.name}. Change faction`);
   $('raceTitle').textContent = r.name; $('legendRace').textContent = r.name;
+  $('raceIcon').hidden = !r.icon; if (r.icon) $('raceIcon').src = img(r.icon);
+  $('raceTier').hidden = !r.ftier;
+  if (r.ftier) { $('raceTier').style.setProperty('--tc', `var(--ft-${r.ftier})`); $('raceTier').innerHTML = `<b>${r.ftier}</b><span>Faction tier</span>`; }
   $('builderLink').href = 'index.html?race=' + r.slug;
   loadDraft(); renderAll();
 }
@@ -436,7 +450,7 @@ function setRace(r, push = true) {
 /* ---------- Menu des factions ---------- */
 function renderRaceMenu() {
   $('raceMenu').innerHTML = DATA.races.map(r => `<button class="race-opt" role="menuitem" type="button" data-slug="${r.slug}" aria-current="${r.key === race.key}">
-    <span class="strip" style="--s:${cssUrl(r.strip)}"></span><span class="lbl">${esc(r.name)}</span>
+    <span class="strip" style="--s:${cssUrl(r.strip)}"></span>${r.icon ? `<img class="ico" src="${img(r.icon)}" alt="">` : ''}<span class="lbl${r.icon ? ' with-ico' : ''}">${esc(r.name)}</span>
     <span class="has">${r.guide ? '<span>Guide</span>' : ''}${r.tiers ? '<span>Tiers</span>' : ''}</span></button>`).join('');
   $('raceMenu').querySelectorAll('.race-opt').forEach(b => b.onclick = () => { toggleMenu(false); setRace(DATA.races.find(r => r.slug === b.dataset.slug)); window.scrollTo({ top: 0 }); });
 }
@@ -479,15 +493,13 @@ function renderSide() {
 /* ---------- Onglet Guide ---------- */
 function renderGuide() {
   const m = page().meta;
-  $('playstyle').innerHTML = m && m.playstyle.length ? m.playstyle.map(t => `<p>${esc(t)}</p>`).join('')
-    : `<p class="empty">No written guide for ${esc(race.name)} yet. The roster profile and the example armies are already available.</p>`;
   const pos = [], neg = [], p = DATA.profiles[race.key] || {}, a = DATA.avg;
   FACTS.filter(([k]) => k !== 'tier' && k in p).forEach(([k, label]) => {
     const q = p[k] / a[k], f = fmtFact(k);
     const txt = k === 'speed' ? `${label}: ${f(p[k])}, against ${f(a[k])} on average` : `${label}: ${f(p[k])} of unit cards, against ${f(a[k])} on average`;
     if (q >= 1.2) pos.push(txt); else if (q <= .8) neg.push(txt);
   });
-  const written = list => list.map(x => `<li>${x.title ? `<b>${esc(x.title)}.</b> ` : ''}${esc(x.text)}</li>`).join('');
+  const written = list => list.map(x => `<li>${x.title && x.text ? `<b>${esc(x.title)}.</b> ${esc(x.text)}` : esc(x.title || x.text)}</li>`).join('');
   const block = (list, data, cls) => (list && list.length ? `<h4 class="w">Analysis</h4><ul class="${cls}">${written(list)}</ul>` : '') +
     `<h4>From game data</h4><ul class="${cls}">${data.map(t => `<li>${esc(t)}</li>`).join('') || '<li class="empty">Nothing stands out from the average.</li>'}</ul>`;
   $('swPos').innerHTML = block(m && m.strengths, pos, 'pos');
@@ -645,14 +657,16 @@ $('discardBtn').onclick = () => { draft = null; try { localStorage.removeItem(DR
 /* ---------- Onglet Matchups ---------- */
 function renderMatchups() {
   const m = page().meta, list = m ? Object.entries(m.matchups) : [];
-  $('muIntro').textContent = `An indicative estimate of how ${race.name} fares against each faction in ladder play, written for the guide rather than computed from results. Click a faction to open its page.`;
-  if (!list.length) { $('matchupBoard').innerHTML = `<div class="empty-box"><b>No matchup chart for ${esc(race.name)} yet.</b> Add <code>matchup</code> rows to <code>config/meta/${race.slug}.csv</code>.</div>`; return; }
+  $('muIntro').innerHTML = `An indicative estimate of how ${esc(race.name)} fares against each faction in ladder play, written for the guide rather than computed from results. Click a faction to open its page, or see <a href="overview.html#matrix">the full matchup matrix</a>.`;
+  if (!list.length) { $('matchupBoard').innerHTML = `<div class="empty-box"><b>No matchup evaluated for ${esc(race.name)} yet.</b> They come from <code>config/meta/matchup_chart.csv</code>.</div>`; return; }
   $('matchupBoard').innerHTML = '<div class="mu">' + MU.map(x => {
     const foes = list.filter(([, y]) => y.v === x.v).map(([k, y]) => ({ r: raceByKey(k), note: y.note })).filter(f => f.r).sort((a, b) => a.r.name.localeCompare(b.r.name));
     return `<div class="mu-col" style="--mc:${x.c}"><div class="mu-h"><span class="sc">${x.v > 0 ? '+' + x.v : x.v}</span><span class="lb">${x.label}</span></div>
       <div class="mu-list${foes.length ? '' : ' empty'}">${foes.map(f => `<a class="foe" href="?race=${f.r.slug}#matchups" ${f.note ? `data-note="${esc(f.note)}"` : ''}>
-        <span class="strip" style="--s:${cssUrl(f.r.strip)}"></span><span class="n">${esc(f.r.name)}</span>${f.note ? '<span class="nt">note</span>' : ''}</a>`).join('')}</div></div>`;
+        <span class="strip" style="--s:${cssUrl(f.r.strip)}"></span>${f.r.icon ? `<img class="ico" src="${img(f.r.icon)}" alt="">` : ''}<span class="n${f.r.icon ? ' with-ico' : ''}">${esc(f.r.name)}</span>${f.note ? '<span class="nt">note</span>' : ''}</a>`).join('')}</div></div>`;
   }).join('') + '</div>';
+  const unrated = DATA.races.filter(r => r.key !== race.key && !m.matchups[r.key]).map(r => r.name);
+  if (unrated.length) $('matchupBoard').insertAdjacentHTML('beforeend', `<p class="intro" style="margin-top:12px">Not evaluated yet: ${esc(unrated.join(', '))}.</p>`);
   $('matchupBoard').querySelectorAll('.foe').forEach(el => {
     if (el.dataset.note) {
       const show = () => { const t = $('tip'); t.innerHTML = `<h5>${esc(el.querySelector('.n').textContent)}</h5><div>${esc(el.dataset.note)}</div>`; t.hidden = false;

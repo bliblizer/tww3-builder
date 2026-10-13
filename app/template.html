@@ -58,6 +58,7 @@ button { font: inherit; color: inherit; }
 .site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
 .site-nav a:hover { color: var(--text); }
 .site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
+@media (max-width: 640px) { .site-nav a { padding: 5px 8px; font-size: 14px; } }
 /* menu des races : chaque race est représentée par son illustration du jeu (fondue à gauche) */
 .race-btn, .race-opt { position: relative; display: block; width: 100%; height: 56px; padding: 0; border: 1px solid var(--bronze);
   background: #140f0d; color: var(--text); cursor: pointer; text-align: left; overflow: hidden; }
@@ -507,7 +508,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 <body>
 
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Meta</a></nav>
+  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Meta</a><a href="overview.html">Meta Overview</a></nav>
   <div class="race-picker">
     <button class="race-btn" id="raceButton" aria-haspopup="listbox" aria-expanded="false" aria-label="Select race">
       <span class="race-strip" id="raceStrip"></span><span class="race-label serif" id="raceName">—</span><span class="caret">▾</span>
