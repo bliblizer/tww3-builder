@@ -1,0 +1,49 @@
+﻿race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cha_spellweaver_beasts_0,Spellweaver,characters,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_glade_lord_0,Glade Lord,characters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_female_glade_lord_0,Glade Lord,characters,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cha_drycha_0,Drycha,characters,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_ancient_treeman_0,Ancient Treeman,characters,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_orion_0,Orion,characters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cha_sisters_of_twilight_0,Sisters of Twilight,characters,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_durthu_0,Durthu,characters,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_spellsinger_beasts_0,Spellsinger,characters,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_branchwraith_0,Branchwraith,characters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cha_waystalker_0,Waystalker,characters,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_twa02_wef_cha_glade_captain_0,Glade Captain,characters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cha_ariel_0,Ariel,characters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_eternal_guard_0,Eternal Guard,infantry,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_dryads_0,Dryads,infantry,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_eternal_guard_1,Eternal Guard (Shields),infantry,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_wardancers_0,Wardancers,infantry,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_inf_eternal_guard_ror_0,Winterheart Guard (Eternal Guard – Shields),infantry,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_inf_dryads_ror_0,Wraiths of the Frozen Heart (Dryads),infantry,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_wardancers_1,Wardancers (Asrai Spears),infantry,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_wildwood_rangers_0,Wildwood Rangers,infantry,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_inf_wardancers_ror_0,Loec's Tricksters (Wardancers – Asrai Spears),infantry,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_inf_bladesingers_0,Bladesingers,infantry,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_inf_wildwood_rangers_ror_0,Wardens of Cythral (Wildwood Rangers),infantry,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_glade_guard_0,Glade Guard,range,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_glade_guard_2,Glade Guard (Hagbane Tips),range,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_glade_riders_0,Glade Riders,range,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_glade_guard_1,Glade Guard (Starfire Shafts),range,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_deepwood_scouts_0,Deepwood Scouts,range,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_glade_riders_1,Glade Riders (Hagbane Tips),range,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_deepwood_scouts_1,Deepwood Scouts (Swiftshiver Shards),range,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_hawk_riders_0,Hawk Riders,range,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_inf_waywatchers_0,Waywatchers,range,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_sisters_thorn_0,Sisters of the Thorn,range,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_inf_waywatchers_ror_0,Hawk-Eyes of Drakira (Waywatchers),range,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cav_glade_riders_2,Glade Riders (Spears),monsters,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_mon_great_eagle_0,Great Eagle,monsters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_mon_treekin_0,Tree Kin,monsters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_wild_riders_0,Wild Riders,monsters,meta,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_mon_treekin_ror_0,Firebark Elders (Tree Kin),monsters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_cav_wild_riders_1,Wild Riders (Shields),monsters,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cav_great_stag_knights_0,Great Stag Knights,monsters,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_mon_treeman_0,Treeman,monsters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_mon_zoats,Zoats,monsters,strong,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_pro04_wef_cav_wild_riders_ror_0,Wild Hunters of Kurnous (Wild Riders – Shields),monsters,viable,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh_dlc05_wef_forest_dragon_0,Forest Dragon,monsters,weak,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_cav_great_stag_knights_ror_0,Lost Sylvan Knights (Great Stag Knights),monsters,situational,,Alex,ee,patch_9.0
+wh_dlc05_sc_wef_wood_elves,wh2_dlc16_wef_mon_zoats_ror_0,Enigmas of Ghyran (Zoats),monsters,weak,,Alex,ee,patch_9.0
