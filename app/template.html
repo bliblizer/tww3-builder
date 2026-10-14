@@ -125,6 +125,10 @@ button { font: inherit; color: inherit; }
 .tip h5 { margin: 0 0 4px; font: 700 15px "Cinzel", Georgia, serif; color: var(--gold); }
 .tip .meta { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: 12.5px; margin-bottom: 6px; }
 .tip .meta b { color: var(--text); font-weight: 500; }
+.tip p.help { margin: 0 0 5px; font-size: 13px; color: #e6dbc4; max-width: 300px; }
+.info-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 4px; border-radius: 50%;
+  border: 1px solid rgba(168,151,125,.8); color: var(--muted); font: 700 10px/1 Georgia, serif; font-style: italic; cursor: help; vertical-align: 1px; }
+.info-i:hover, .info-i:focus-visible { border-color: var(--gold); color: var(--gold); }
 .tip .dmg { margin: 0 0 6px; padding: 5px 8px; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.45); }
 .tip .dmg .k { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .tip .dmg .v { display: flex; flex-wrap: wrap; gap: 2px 12px; } .tip .dmg .v span { display: inline-flex; align-items: center; gap: 4px; }
@@ -557,9 +561,20 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 .cp-need .why { grid-column: 2 / 4; font-size: 12px; color: var(--muted); }
 .cp-need.zero .nm, .cp-need.zero .pcv { color: var(--danger); }
 .cp-alert { display: flex; gap: 8px; margin-top: 6px; padding: 6px 9px; border-radius: 5px; background: #4a1410; border: 1px solid var(--danger); color: #ffd2cb; font-size: 13px; }
-.cp-dots { position: relative; height: 56px; margin-top: 8px; border-bottom: 1px solid rgba(140,106,59,.5); overflow: hidden; }
-.cp-dots i { position: absolute; width: 10px; height: 10px; border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 0 1px rgba(0,0,0,.5); }
-.cp-axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.sp-chart { margin-top: 10px; }
+.sp-row { display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 6px; min-height: 24px; }
+.sp-lbl { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; border-left: 3px solid var(--c); }
+.sp-track { position: relative; height: 24px; margin-right: 8px; border-bottom: 1px dotted rgba(140,106,59,.35); }
+.sp-track .g { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(244,234,214,.18); }
+.sp-track .g.avg { background: rgba(226,182,90,.55); }
+.sp-track .pt { position: absolute; top: 50%; width: 10px; height: 10px; border-radius: 50%; transform: translate(-50%, -50%); cursor: help;
+  box-shadow: 0 0 0 1.5px rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; font: 700 10px/1 system-ui, sans-serif; color: #120d0b; }
+.sp-track .pt.many { width: 17px; height: 17px; }
+.sp-track .pt:hover, .sp-track .pt:focus-visible { box-shadow: 0 0 0 2px var(--gold); z-index: 2; }
+.sp-axis .sp-track { height: 30px; border-bottom: none; }
+.sp-axis .tk { position: absolute; top: 2px; transform: translateX(-50%); font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.sp-axis .tk[style*="left:0"] { transform: none; } .sp-axis .tk.end { right: 0; transform: none; }
+.sp-axis .tk.avg { top: 15px; color: var(--gold); }
 .stars5 { display: inline-flex; gap: 1px; vertical-align: -1px; } .stars5 i { font-style: normal; color: rgba(168,151,125,.35); } .stars5 i.on { color: var(--gold); }
 </style>
 </head>
@@ -1428,16 +1443,25 @@ function renderComposition() {
     <span class="cp-gauge"><i style="width:${Math.min(100, n.v * 2)}%;background:${n.v ? (n.v >= n.ref ? 'var(--ok)' : 'var(--gold)') : 'var(--danger)'}"></i><u style="left:${n.ref * 2}%" title="Usual minimum: ${n.ref}%"></u></span>
     <span class="why">${n.why}</span></div>`).join('') +
     needs.filter(n => !n.v).map(n => `<div class="cp-alert">⚠ <span><b>No ${n.nm.toLowerCase()} answer.</b> Nothing in the army covers it.</span></div>`).join('');
-  // bande de vitesse : un point par unité, couleur du rôle
-  const speeds = army.map(u => ({ u, s: statOf(u.opt.u, 'speed') || 0 }));
-  const vmax = Math.max(140, ...speeds.map(x => x.s));
-  const placed = [];
-  const dots = speeds.map(({ u, s }) => {
-    const x = 100 * s / vmax, lvl = placed.filter(px => Math.abs(px - x) < 2.2).length; placed.push(x);
-    return `<i style="left:${x.toFixed(1)}%;bottom:${4 + 11 * lvl}px;background:${roleOf(u)[1]}" title="${esc(u.opt.n)}: speed ${s}"></i>`;
-  }).join('');
-  const hp = sum(army, u => statOf(u.opt.u, 'health') || 0);
+  // bande de vitesse : une ligne par rôle (le nom du rôle sert de légende), un point par vitesse avec le nombre d'unités
   const speedAvg = total ? sum(army, u => (statOf(u.opt.u, 'speed') || 0) * unitCost(u)) / total : 0;
+  const vmax = Math.max(140, ...army.map(u => statOf(u.opt.u, 'speed') || 0));
+  const xs = v => (100 * v / vmax).toFixed(1) + '%';
+  const guides = `<span class="g" style="left:${xs(30)}"></span><span class="g" style="left:${xs(80)}"></span><span class="g avg" style="left:${xs(speedAvg)}"></span>`;
+  const speedRows = ROLE_GROUPS.map(([label, col, f]) => {
+    const groups = {};
+    army.filter(f).forEach(u => { const v = statOf(u.opt.u, 'speed') || 0; (groups[v] = groups[v] || []).push(u.opt.n); });
+    const pts = Object.entries(groups).map(([v, names]) => {
+      const list = Object.entries(names.reduce((m, n) => (m[n] = (m[n] || 0) + 1, m), {})).map(([n, k]) => (k > 1 ? `${k} × ` : '') + n);
+      return `<span class="pt${names.length > 1 ? ' many' : ''}" style="left:${xs(+v)};background:${col}" tabindex="0" data-tip="txt:Speed ${v}|${list.join('|').replace(/"/g, '&quot;')}">${names.length > 1 ? names.length : ''}</span>`;
+    }).join('');
+    return pts ? `<div class="sp-row"><span class="sp-lbl" style="--c:${col}" title="${esc(label)}">${esc(label.replace(' & chariots', ''))}</span><div class="sp-track">${guides}${pts}</div></div>` : '';
+  }).join('');
+  const speedChart = `<div class="sp-chart">${speedRows}
+    <div class="sp-row sp-axis"><span></span><div class="sp-track">
+      <span class="tk" style="left:0">0</span><span class="tk" style="left:${xs(30)}">30 slow</span><span class="tk" style="left:${xs(80)}">80 fast</span><span class="tk end">${vmax}</span>
+      <span class="tk avg" style="left:${xs(speedAvg)}">▲ avg ${Math.round(speedAvg)}</span></div></div></div>`;
+  const hp = sum(army, u => statOf(u.opt.u, 'health') || 0);
   p.innerHTML = `<h3 class="serif">Composition</h3>
     <div class="comp-head"><b>${army.length} / ${DATA.maxUnits} units</b><span class="muted">${fmt(sum(army, models))} models</span></div>
     <p class="sub">${fmt(total)} / ${fmt(DATA.budget)} spent</p>
@@ -1445,25 +1469,25 @@ function renderComposition() {
     <div class="cp-stack">${rolesBar}</div><div class="cp-leg">${rolesLeg}</div>
     <h4 class="block-title serif">Damage profile</h4>
     <div class="cp-dmg">
-      <div class="cp-card"><span class="k">Melee power</span><b>${fmt(mel)}</b><span class="p">${fmt(pc(mel * 10, total))} per 1000 gold</span></div>
-      <div class="cp-card"><span class="k">Missile power</span><b>${fmt(mis)}</b><span class="p">${fmt(pc(mis * 10, total))} per 1000 gold</span></div>
+      <div class="cp-card"><span class="k">Melee power<span class="info-i" tabindex="0" data-tip="help:melee" aria-label="How melee power is calculated">i</span></span><b>${fmt(mel)}</b><span class="p">${fmt(pc(mel * 10, total))} per 1000 gold</span></div>
+      <div class="cp-card"><span class="k">Missile power<span class="info-i" tabindex="0" data-tip="help:missile" aria-label="How missile power is calculated">i</span></span><b>${fmt(mis)}</b><span class="p">${fmt(pc(mis * 10, total))} per 1000 gold</span></div>
     </div>
     <div class="cp-stack thin" title="Melee vs missile power"><i style="width:${pc(mel, mel + mis).toFixed(1)}%;background:#c98a3a"></i><i style="width:${pc(mis, mel + mis).toFixed(1)}%;background:#5b8fd6"></i></div>
-    <div class="cp-leg"><span><i style="background:#c98a3a"></i>Melee ${Math.round(pc(mel, mel + mis))}%</span><span><i style="background:#5b8fd6"></i>Missile ${Math.round(pc(mis, mel + mis))}%</span></div>
+    <div class="cp-leg"><span><i style="background:#c98a3a"></i>Melee ${Math.round(pc(mel, mel + mis))}%</span><span><i style="background:#5b8fd6"></i>Missile ${Math.round(pc(mis, mel + mis))}%</span><span class="info-i" tabindex="0" data-tip="help:dmgsplit" aria-label="About the melee vs missile split">i</span></div>
     <div class="cp-mini">
       <span>Melee armour-piercing</span>${mbar(melAP, 'var(--gold)')}<b>${Math.round(melAP)}%</b>
       <span>Missile armour-piercing</span>${mbar(misAP, 'var(--gold)')}<b>${mis ? Math.round(misAP) + '%' : '–'}</b>
       <span>Magical (melee / missile)</span>${mbar(Math.max(...mag), '#a07ce0')}<b>${Math.round(mag[0])}% / ${mis ? Math.round(mag[1]) + '%' : '–'}</b>
       <span>Flaming (melee / missile)</span>${mbar(Math.max(...fire), '#e0703a')}<b>${Math.round(fire[0])}% / ${mis ? Math.round(fire[1]) + '%' : '–'}</b>
     </div>
-    <p class="muted cp-note">Power = weapon or missile strength × models. Shares are shares of that power.</p>
+    <p class="muted cp-note">Shares are shares of each power.</p>
     <h4 class="block-title serif">Answers to threats</h4>
     ${needHtml}
     <p class="muted cp-note">Share of the funds. The white mark is a usual minimum: green above, gold below, red at zero.</p>
     <h4 class="block-title serif">Speed</h4>
     <div class="kpis"><div class="kpi"><b>${Math.round(speedAvg)}</b><span>Average speed (by cost)</span></div>
       <div class="kpi"><b>${fmt(sum(army.filter(u => u.opt.fly), unitCost) * 100 / (total || 1))}%</b><span>Flying (share of funds)</span></div></div>
-    <div class="cp-dots" aria-label="Speed of each unit">${dots}</div><div class="cp-axis"><span>0</span><span>speed</span><span>${vmax}</span></div>
+    ${speedChart}
     <div style="margin-top:8px">${COMP_SPEED.map(([l, f]) => row(l, f)).join('')}</div>
     <h4 class="block-title serif">Health</h4>
     <div class="kpis"><div class="kpi"><b>${fmt(hp)}</b><span>Total health</span></div>
@@ -1907,7 +1931,18 @@ async function exportPng() {
 }
 
 /* ---------- Info-bulles des sorts, capacités et objets ---------- */
+const HELP = {
+  melee: ['Melee power', 'Sum over the army of Weapon Strength × number of models.',
+    'Weapon Strength is the damage of one hit, base + armour-piercing, as shown on the unit card.',
+    'Not counted: hit chance, time between hits, mount attacks, bonus vs large or infantry, charge.'],
+  missile: ['Missile power', 'Sum over the army of Missile Strength × number of models.',
+    'Missile Strength is the damage of one volley × 10 ÷ reload time, as shown on the unit card (artillery: the weapon of the gun).',
+    'Not counted: accuracy, ammunition, range.'],
+  dmgsplit: ['Melee vs missile', 'Share of each power in their total. Melee power is the damage of one hit, missile power a rate over 10 seconds: the split is an order of magnitude, not a damage-per-second comparison.'],
+};
 function tipHtml(key) {
+  if (key && key.startsWith('help:')) { const h = HELP[key.slice(5)]; return h ? `<h5>${esc(h[0])}</h5>${h.slice(1).map(l => `<p class="help">${esc(l)}</p>`).join('')}` : ''; }
+  if (key && key.startsWith('txt:')) { const [t, ...ls] = key.slice(4).split('|'); return `<h5>${esc(t)}</h5>${ls.map(l => `<p class="help">${esc(l)}</p>`).join('')}`; }
   const d = DATA.details[key];
   if (!d) return '';
   const [name, , mana, cooldown, duration, uses, passive, effects, range, dmg, dpt] = d;

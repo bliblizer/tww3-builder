@@ -11,7 +11,7 @@ La mise en page et le code de l'application sont dans app/template.html ; ce scr
 
 Images des cartes (facultatif) :
 - ui/units/icons/ du jeu        -> assets/unit_cards/      (cartes des unités : <unit_card>.png)
-- ui/portraits/units/ du jeu    -> assets/portraits_units/ (personnages dont la carte du jeu est « placeholder » :
+- ui/portraits/units/ du jeu    -> assets/portraits_units/ (personnages : leur carte est construite à partir du portrait :
                                                              <portrait>.png, en ignorant les masques *_maskN.png
                                                              et les morceaux de Daemon Prince du dossier dae_prince/)
 - ui/common ui/unit_category_icons/ -> assets/unit_category_icons/ (icône de catégorie en bas de carte)
@@ -111,14 +111,14 @@ races = rows("""select race_key as key, race_name as name, nb_cards, accent_hex 
                 from marts.pvp_races order by race_name""")
 
 cards = rows("""
-    select race_key, card_id, card_name, root_unit_card, root_portrait_image, root_image_source, tab_key, ui_group_name, can_be_general,
+    select race_key, card_id, card_name, root_unit_key, root_unit_card, root_portrait_image, root_portrait_images, root_image_source, tab_key, ui_group_name, can_be_general,
            nb_options, has_variant_choice, has_mount_choice, min_cost, max_cost
     from marts.pvp_roster_cards
     order by race_key, tab_order, min_cost, card_name""")
 
 options = rows("""
     select race_key, card_id, unit_key, unit_name, lore, mark, forest_spirit, other_variant, other_variant_category, mount,
-           can_be_general, is_lord, role, is_flying, multiplayer_cost, unit_card, portrait_image, image_source,
+           can_be_general, is_lord, role, is_flying, multiplayer_cost, unit_card, portrait_image, portrait_images, image_source,
            category_icon, is_renown, lore_icon, lore_colour, mount_icon, faction_keys
     from marts.pvp_roster_options
     order by card_id, multiplayer_cost, unit_key""")
@@ -143,39 +143,79 @@ def is_campaign_only_portrait(path):
 card_found = scan(ASSETS)
 portrait_found = scan(PORTRAIT_ASSETS, is_campaign_only_portrait)
 
-def wanted(source, card, portrait):
-    """(type, nom de fichier) de l'image à afficher pour une option ou une carte"""
-    if source == 'portrait' or card in PLACEHOLDERS:
-        return ('portrait', portrait) if portrait else None
-    return ('card', card)
+# Choix de l'image d'une carte. Dans le jeu, la carte d'un personnage est le plus souvent construite à partir de son
+# portrait (ui/portraits/units) : le nom de carte donné par la table des variantes n'existe pas dans ui/units/icons.
+# On essaie donc, dans l'ordre :
+#   1. la carte du jeu (sauf carte générique « placeholder ») ;
+#   2. le portrait du personnage ;
+#   3. une autre variante du même portrait (ex. chs_sorcerer_campaign_02_0 si la variante 03 n'est pas extraite) ;
+# et chaque nom est cherché dans les deux dossiers (une même image est parfois rangée dans l'autre).
+def portrait_variants(portrait):
+    """autres variantes d'un même portrait présentes dans les assets, dans un ordre stable"""
+    base = re.sub(r'_campaign_\d+_0$', '', portrait)
+    base = re.sub(r'_\d+$', '', base)
+    names = set(portrait_found) | set(card_found)
+    return sorted(n for n in names if n != portrait and n.startswith(base + '_') and re.fullmatch(r'(_campaign_\d+)?_\d+', n[len(base):]))
 
-needed = {wanted(c['root_image_source'], c['root_unit_card'], c['root_portrait_image']) for c in cards} \
-       | {wanted(o['image_source'], o['unit_card'], o['portrait_image']) for o in options}
-needed.discard(None)
+PORTRAITS_OF = {}   # portrait retenu -> toutes les variantes déclarées par le jeu (permissions de bataille)
+def candidates(source, card, portrait):
+    """noms de fichier à essayer, dans l'ordre"""
+    card, portrait = (card or '').lower(), (portrait or '').lower()
+    out = [] if (source == 'portrait' or card in PLACEHOLDERS or not card) else [card]
+    if portrait:
+        declared = PORTRAITS_OF.get(portrait, [portrait])
+        out += declared + [v for p in declared for v in portrait_variants(p)]
+    return list(dict.fromkeys(out))
+
+def find_image(name):
+    """(dossier de sortie, chemin source) : cartes d'abord, puis portraits"""
+    if name in card_found: return '', card_found[name]
+    if name in portrait_found: return 'portraits', portrait_found[name]
+    return None
+
 if os.path.isdir(IMAGES_OUT):                       # on repart d'un dossier propre à chaque construction
     shutil.rmtree(IMAGES_OUT)
-available = set()
-copied = {}   # (type, nom) -> chemin relatif à docs/images/, extension comprise
 def copy_image(src, sub, name):
     ext = os.path.splitext(src)[1].lower()
     out_dir = os.path.join(IMAGES_OUT, sub) if sub else IMAGES_OUT
     os.makedirs(out_dir, exist_ok=True)
     shutil.copyfile(src, os.path.join(out_dir, name + ext))
     return (sub + '/' if sub else '') + name + ext
-for kind, name in sorted(needed):
-    src = (card_found if kind == 'card' else portrait_found).get(name.lower())
-    if src:
-        copied[(kind, name)] = copy_image(src, '' if kind == 'card' else 'portraits', name)
-        available.add((kind, name))
-missing = sorted(needed - available)
+
+for row in list(cards) + list(options):
+    first = (row.get('root_portrait_image') or row.get('portrait_image') or '').lower()
+    alls = (row.get('root_portrait_images') or row.get('portrait_images') or '')
+    if first: PORTRAITS_OF[first] = [p.lower() for p in alls.split('|') if p] or [first]
+chosen = {}     # (source, carte, portrait) -> chemin relatif à docs/images/ (None si aucune image)
+copied = {}     # nom de fichier -> chemin relatif (une image n'est copiée qu'une fois)
+needs = [(c['root_image_source'], c['root_unit_card'], c['root_portrait_image'], c['card_name'], c['root_unit_key']) for c in cards] + \
+        [(o['image_source'], o['unit_card'], o['portrait_image'], o['unit_name'], o['unit_key']) for o in options]
+missing_rows, fallbacks = {}, 0
+for source, card, portrait, name, unit in needs:
+    key = (source, card, portrait)
+    if key in chosen: continue
+    tried = candidates(source, card, portrait)
+    hit = next(((n, find_image(n)) for n in tried if find_image(n)), None)
+    if hit:
+        n, (sub, src) = hit
+        if n not in copied: copied[n] = copy_image(src, sub, n)
+        chosen[key] = copied[n]
+        if tried and n != tried[0]: fallbacks += 1
+    else:
+        chosen[key] = None
+        if tried: missing_rows[key] = (name, unit, tried)
+n_images = len(chosen); a_images = sum(1 for v in chosen.values() if v)
 os.makedirs(os.path.join(ROOT, 'exports'), exist_ok=True)
 with open(os.path.join(ROOT, 'exports', 'missing_unit_cards.csv'), 'w', encoding='utf-8', newline='') as f:
-    w = csv.writer(f, lineterminator='\r\n'); w.writerow(['type', 'file', 'game_folder'])
-    w.writerows([k, n + '.png', 'ui/units/icons' if k == 'card' else 'ui/portraits/units'] for k, n in missing)
+    w = csv.writer(f, lineterminator='\r\n')
+    w.writerow(['unit', 'unit_key', 'file', 'game_folder', 'tried'])
+    for (source, card, portrait), (name, unit, tried) in sorted(missing_rows.items(), key=lambda x: x[1][0] or ''):
+        is_card = tried[0] == (card or '').lower() and source != 'portrait' and card not in PLACEHOLDERS
+        w.writerow([name, unit, tried[0] + '.png', 'ui/units/icons' if is_card else 'ui/portraits/units', ' | '.join(tried)])
 
 def img(source, card, portrait):
-    """chemin relatif à docs/images/ (avec extension) de l'image disponible, sinon None"""
-    return copied.get(wanted(source, card, portrait))
+    """chemin relatif à docs/images/ (avec extension) de l'image retenue, sinon None"""
+    return chosen.get((source, card, portrait))
 
 # icônes de catégorie et habillage des cartes
 icon_found = scan(ICON_ASSETS)
@@ -503,9 +543,7 @@ os.makedirs(os.path.dirname(OUT), exist_ok=True)
 open(OUT, 'w', encoding='utf-8').write(html.replace(marker, payload))
 print(f"{OUT}\n{len(races)} races, {len(cards)} cartes, {len(options)} options, budget {budget}, {max_units} unités max ({patch})")
 print(f"Illustrations de race : {sum(1 for r in races if r['race_image'])} / {len(races)} (dossier assets/race_images/)")
-n_cards = sum(1 for k, _ in needed if k == 'card'); n_portraits = len(needed) - n_cards
-a_cards = sum(1 for k, _ in available if k == 'card'); a_portraits = len(available) - a_cards
-print(f"Images des cartes : {a_cards} / {n_cards} | portraits des personnages : {a_portraits} / {n_portraits} "
+print(f"Images des cartes : {a_images} / {n_images} trouvées ({fallbacks} par le portrait ou une autre variante) "
       f"| manquantes listées dans exports/missing_unit_cards.csv")
 n_icons = len({o['category_icon'] for o in options if o['category_icon']})
 print(f"Armées d'exemple : {len(templates)}" + (f" | {len(template_issues)} point(s) à vérifier :" if template_issues else ""))

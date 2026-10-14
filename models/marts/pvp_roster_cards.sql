@@ -55,6 +55,7 @@ select
     cr.root_unit_key,
     img.unit_card                         as root_unit_card,
     pt.portrait_image                     as root_portrait_image,
+    pt.portrait_images                    as root_portrait_images,
     case when img.unit_card in ('placeholder', 'a_character_placeholder') then 'portrait' else 'card' end as root_image_source,
     t.tab_order,
     cr.tab_key,
@@ -75,7 +76,8 @@ left join races r using (race_key)
 left join tabs t on t.tab_key = cr.tab_key
 left join {{ ref('int_unit_card_images') }} img on img.unit_key = cr.root_unit_key
 left join (
-    select unit_key, any_value(regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_image
+    select unit_key, min(regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_image,
+           string_agg(distinct regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1), '|' order by regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_images
     from {{ ref('stg_dump__units_custom_battle_permissions') }}
     where general_portrait is not null group by unit_key
 ) pt on pt.unit_key = cr.root_unit_key

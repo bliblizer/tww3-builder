@@ -20,9 +20,11 @@ flying as (
 
 portraits as (
     -- portrait du personnage (permissions de bataille : general_portrait) ; sert d'image quand la carte du jeu est
-    -- « placeholder » (le jeu construit alors la carte d'un personnage à partir de son portrait, dans ui/portraits/units)
+    -- « placeholder » ou absente des fichiers (le jeu construit alors la carte d'un personnage à partir de son portrait,
+    -- dans ui/portraits/units) ; min() : la même variante à chaque construction (build_app.py essaie aussi les autres)
     select unit_key,
-           any_value(regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_image
+           min(regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_image,
+           string_agg(distinct regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1), '|' order by regexp_extract(replace(general_portrait, chr(92), '/'), '([^/]+)\.png$', 1)) as portrait_images
     from {{ ref('stg_dump__units_custom_battle_permissions') }}
     where general_portrait is not null
     group by unit_key
@@ -104,6 +106,7 @@ select
     o.faction_keys_pvp                                                 as faction_keys,
     img.unit_card,
     pt.portrait_image,
+    pt.portrait_images,                   -- toutes les variantes du portrait, séparées par « | » (build_app.py les essaie dans l'ordre)
     ci.category_icon,
     lg.lore_icon,
     lg.lore_colour,

@@ -183,9 +183,9 @@ Limites de la V0 :
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
   - **Funds by role** : une barre empilée de la part des fonds par rôle (lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), avec unités, modèles et or au survol ;
-  - **Damage profile** : puissance de mêlée et puissance de tir totales (statistique × nombre de modèles) et pour 1 000 pièces d'or, répartition mêlée / tir, et part perforante, magique et enflammée de chacune ;
+  - **Damage profile** : puissance de mêlée (Σ Weapon Strength × modèles) et puissance de tir (Σ Missile Strength × modèles), totales et pour 1 000 pièces d'or, répartition mêlée / tir, et part perforante, magique et enflammée de chacune. Une info-bulle ⓘ explique chaque calcul et ses limites (la mêlée est un coup, le tir un débit sur 10 s) ;
   - **Answers to threats** : une jauge par besoin, en part des fonds — anti-large (`is_anti_large`), anti-armure (`is_armour_piercing`), anti-volants (unités de tir et volants), magie (attaques magiques, domaine de magie ou sort choisi). Un repère marque un minimum habituel (15 %, 20 %, 15 %, 10 %, constante `THREAT_ANSWERS`) : vert au-dessus, or en dessous, rouge et alerte à zéro ;
-  - **Speed** : vitesse moyenne pondérée par le coût, part des volants, une **bande de vitesse** (un point par unité, couleur de son rôle) et les unités rapides (≥ 80) et lentes (≤ 30) ;
+  - **Speed** : vitesse moyenne pondérée par le coût, part des volants, une **bande de vitesse** (une ligne par rôle, un point par vitesse avec le nombre d'unités, repères lent à 30, rapide à 80 et moyenne de l'armée ; au survol, la vitesse et les unités) et les unités rapides (≥ 80) et lentes (≤ 30) ;
   - **Health** : vie totale et vie pour 1 000 pièces d'or.
 - **Le roster est sur 2 colonnes**, dans l'ordre des onglets du jeu : Lords | Heroes, puis Infantry | Missile Infantry ou Cavalry, etc.
 - **Les cartes mesurent 50 × 108** pour voir plus de cartes par ligne. Le **tier** de l'unité (I à V) est affiché en haut à droite, sauf pour les lords et les héros.
@@ -386,6 +386,8 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 **Artillerie** : son arme de tir est portée par l'engin (`land_units.engine` → `battlefield_engines.missile_weapon`) et non par l'unité. `pvp_unit_stats` la prend quand l'unité n'a pas d'arme de tir propre : portée, munitions, puissance de tir et attributs de tir des pièces d'artillerie s'affichent dans la fiche d'unité.
 
 **Barre de vie** : comme en jeu, une barre verte avec la vie au centre et, pour les unités qui en ont une, un bandeau bleu de barrière (longueur proportionnelle à la barrière). La taille d'unité suit, en icône + nombre.
+
+**Images des cartes** : `build_app.py` essaie, dans l'ordre, la carte du jeu (`ui/units/icons`, sauf carte générique « placeholder »), puis le portrait du personnage, puis les autres variantes de ce portrait déclarées par le jeu (`pvp_roster_options.portrait_images`) ou présentes dans les assets (ex. `_campaign_02_0` si `_campaign_03_0` manque). Chaque nom est cherché dans `assets/unit_cards/` et dans `assets/portraits_units/`. En effet, la carte d'un personnage est le plus souvent construite par le jeu à partir de son portrait : le nom de carte donné par la table des variantes n'existe pas dans `ui/units/icons`. `exports/missing_unit_cards.csv` liste ce qui reste introuvable, avec le nom de l'unité, sa clé et tous les fichiers essayés.
 
 ## Pages Faction Guide (`docs/meta.html`) et Meta Overview (`docs/overview.html`)
 
