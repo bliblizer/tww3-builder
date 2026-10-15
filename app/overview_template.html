@@ -33,8 +33,8 @@ code { background: rgba(0,0,0,.35); padding: 1px 5px; border-radius: 3px; font-s
 .site-nav a { padding: 5px 12px; border-radius: 3px; color: var(--muted); text-decoration: none; font-weight: 500; white-space: nowrap; }
 .site-nav a:hover { color: var(--text); }
 .site-nav a[aria-current="page"] { background: var(--crimson); color: #f4ead6; }
-@media (max-width: 640px) { .site-nav a { padding: 5px 8px; font-size: 14px; } }
-.pill { margin-left: auto; font-size: 13px; color: var(--muted); border: 1px solid rgba(140,106,59,.7); border-radius: 12px; padding: 2px 10px; background: rgba(0,0,0,.3); }
+@media (max-width: 640px) { .site-nav { overflow-x: auto; max-width: 100%; } .site-nav a { padding: 5px 8px; font-size: 14px; } .brand { font-size: 16px; } }
+.pill { font-size: 13px; color: var(--muted); border: 1px solid rgba(140,106,59,.7); border-radius: 12px; padding: 2px 10px; background: rgba(0,0,0,.3); }
 .pill b { color: var(--text); font-weight: 500; }
 
 main { max-width: 1500px; margin: 0 auto; padding: 24px 24px 80px; }
@@ -115,12 +115,21 @@ table.mx { border-collapse: separate; border-spacing: 0; font-variant-numeric: t
 .wip strong { font: 700 clamp(22px, 3.2vw, 34px) "Cinzel", Georgia, serif; letter-spacing: .06em; color: var(--gold); text-shadow: 0 2px 10px rgba(0,0,0,.8); text-transform: uppercase; }
 .wip span { font-size: 16px; color: #f4ead6; max-width: 62ch; text-shadow: 0 1px 4px #000; }
 .fac .ban { font-size: 11px; font-weight: 700; color: #ffd2cb; background: #6b1d17; border: 1px solid var(--danger, #ff6b5a); border-radius: 3px; padding: 0 4px; }
+.brand { font: 700 18px "Cinzel", Georgia, serif; color: #f4ead6; text-decoration: none; margin-right: auto; }
+.brand:hover { color: var(--gold); }
+
+.topbar { position: sticky; top: 0; z-index: 45; }
+@media (max-width: 760px) { .topbar { position: static; } }
+
+/* bandeau collant : fond opaque (le contenu défile dessous) */
+body .topbar, body.has-art .topbar { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, #2a1e1a), #2a1e1a 60%); box-shadow: 0 4px 12px rgba(0,0,0,.4); }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="armies.html">My Armies</a><a href="meta.html">Faction Guide</a><a href="overview.html" aria-current="page">Meta Overview</a></nav>
+  <a class="brand" href="index.html">TWW3 Army Builder</a>
   <span class="pill">Game data <b id="patchTxt"></b></span>
+  <nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="armies.html">My Armies</a><a href="meta.html">Faction Guide</a><a href="overview.html" aria-current="page">Meta Overview</a></nav>
 </header>
 <div class="wip" role="note"><strong>🚧 Work in progress</strong><span>This page is under construction: the faction tier list and the matchup matrix are provisional and will change.</span></div>
 
@@ -233,6 +242,11 @@ function wireMatrix() {
 }
 $('order').addEventListener('change', renderMatrix);
 renderMatrix();
+
+/* bandeau du haut collant : les éléments collants de la page se placent dessous (--top-h) */
+(() => { const top = document.querySelector('.topbar'); if (!top) return;
+  const set = () => document.documentElement.style.setProperty('--top-h', (getComputedStyle(top).position === 'sticky' ? top.offsetHeight : 0) + 'px');
+  if ('ResizeObserver' in window) new ResizeObserver(set).observe(top); set(); addEventListener('resize', set); })();
 </script>
 </body>
 </html>

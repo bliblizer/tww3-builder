@@ -59,7 +59,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .race-btn .lbl { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font: 700 19px "Cinzel", Georgia, serif; text-shadow: 0 1px 3px #000; }
 .race-btn .caret { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); text-shadow: 0 0 3px #000; }
 /* menu des factions : identique au builder (liste collée sous le bouton, une ligne de 56 px par faction) */
-.race-menu { position: absolute; z-index: 50; top: 60px; left: 0; right: 0; max-height: 70vh; overflow-y: auto; margin: 0; padding: 0;
+.race-menu { position: absolute; z-index: 60; top: 60px; left: 0; right: 0; max-height: 70vh; overflow-y: auto; margin: 0; padding: 0;
   background: var(--panel); border: 1px solid var(--bronze); border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.6); }
 .race-menu[hidden] { display: none; }
 .race-opt { position: relative; display: block; width: 100%; height: 56px; padding: 0; border: none; border-top: 1px solid rgba(140,106,59,.4);
@@ -78,7 +78,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 /* ---------- Mise en page : fiche + onglets ---------- */
 .layout { max-width: 1680px; margin: 0 auto; padding: 20px 24px 80px; display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 24px; align-items: start; }
 .layout > main { min-width: 0; }
-.side { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin;
+.side { position: sticky; top: calc(var(--top-h, 0px) + 12px); max-height: calc(100vh - var(--top-h, 0px) - 24px); overflow-y: auto; scrollbar-width: thin;
   background: rgba(29,22,20,.86); border: 1px solid rgba(140,106,59,.6); border-radius: 8px; padding: 0 0 16px; min-width: 0; }
 .id-card { position: relative; padding: 70px 18px 10px; border-bottom: 1px solid rgba(140,106,59,.45); overflow: hidden; }
 .id-strip { position: absolute; inset: 0; background: var(--strip, none) right top / cover no-repeat; opacity: .75;
@@ -115,7 +115,7 @@ h3 { font: 700 16px "Cinzel", Georgia, serif; margin: 0 0 10px; color: var(--gol
 .legend-line u { display: inline-block; width: 2px; height: 12px; background: var(--info); margin-right: 6px; vertical-align: -2px; }
 .method { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
 
-.tabs { position: sticky; top: 0; z-index: 30; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px;
+.tabs { position: sticky; top: var(--top-h, 0px); z-index: 30; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px;
   background: rgba(29,22,20,.92); backdrop-filter: blur(4px); border-bottom: 1px solid rgba(140,106,59,.55); padding-top: env(safe-area-inset-top, 0px); }
 .tabs button { background: none; border: none; border-bottom: 3px solid transparent; padding: 12px 16px 9px; cursor: pointer; color: var(--muted);
   font: 700 16px "Cinzel", Georgia, serif; white-space: nowrap; }
@@ -303,17 +303,23 @@ body.editing .card:hover { outline: 1px solid var(--gold); outline-offset: 1px; 
 .ban-warn[hidden] { display: none; }
 .ban-warn strong { font: 700 clamp(18px, 2.4vw, 26px) "Cinzel", Georgia, serif; color: #ffd2cb; letter-spacing: .04em; text-transform: uppercase; }
 .ban-warn span { color: #f4ead6; font-size: 15px; }
+
+.topbar { position: sticky; top: 0; z-index: 45; }
+@media (max-width: 760px) { .topbar { position: static; } }
+
+/* bandeau collant : fond opaque (le contenu défile dessous) */
+body .topbar, body.has-art .topbar { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, #2a1e1a), #2a1e1a 60%); box-shadow: 0 4px 12px rgba(0,0,0,.4); }
 </style>
 </head>
 <body>
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="armies.html">My Armies</a><a href="meta.html" aria-current="page">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
+    <div class="race-pick">
+    <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
+    <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
+  </div>
   <div class="topbar-right">
     <div class="pills"><span class="pill" id="reviewedPill" hidden></span><span class="pill">Game data <b id="patchTxt"></b></span></div>
-    <div class="race-pick">
-      <button class="race-btn" type="button" id="raceBtn" aria-haspopup="true" aria-expanded="false"><span class="strip" id="raceBtnStrip"></span><span class="lbl" id="raceBtnLbl"></span><span class="caret">▾</span></button>
-      <div class="race-menu" id="raceMenu" hidden role="menu" aria-label="Factions"></div>
-    </div>
+    <nav class="site-nav" aria-label="Site"><a href="index.html" id="builderLink">Army Builder</a><a href="armies.html">My Armies</a><a href="meta.html" aria-current="page">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
   </div>
 </header>
 <div class="wip" role="note"><strong>🚧 Work in progress</strong><span>This page is under construction: faction guides, tier lists and matchups are provisional and will change.</span></div>
@@ -759,6 +765,11 @@ addEventListener('hashchange', () => openTab(location.hash.slice(1)));
 function renderAll() { renderSide(); renderGuide(); renderTiers(); renderMatchups(); renderArmies(); renderPatch(); }
 setRace(race, false);
 openTab(location.hash.slice(1) || (editing ? 'tiers' : 'guide'));
+
+/* bandeau du haut collant : les éléments collants de la page se placent dessous (--top-h) */
+(() => { const top = document.querySelector('.topbar'); if (!top) return;
+  const set = () => document.documentElement.style.setProperty('--top-h', (getComputedStyle(top).position === 'sticky' ? top.offsetHeight : 0) + 'px');
+  if ('ResizeObserver' in window) new ResizeObserver(set).observe(top); set(); addEventListener('resize', set); })();
 </script>
 </body>
 </html>

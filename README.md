@@ -180,6 +180,8 @@ Limites de la V0 :
   - **le choix d'une race adverse** ;
   - **un graphique en toile d'araignée** à 8 axes de 0 à 100 : Anti-large, Armour-piercing, Ranged, Mobility, Durability, Magic, Flying et Elite. Ton armée y est en **or**, mesurée en part des fonds. L'adversaire y est en **bleu**, mesuré sur le profil moyen de son roster PvP (1 carte = 1 voix, hors lords et héros), calculé par `build_app.py`. Dans ce profil, l'artillerie compte comme Ranged : sa portée est absente des statistiques pour la plupart des pièces (correction provisoire) ;
   - **des points clés repliables**, en rouge pour une alerte et en vert pour un point favorable : blindage face au perforant, grandes cibles face à l'anti-large, tir face aux boucliers et à la vitesse, volants, éthérés face aux dégâts magiques, vitesse.
+- **Bouton « ◆ Tier list »** (en tête du roster) : affiche sur chaque carte, du roster comme de l'armée, un bandeau à la couleur de son tier dans la tier list de la faction (Meta, Strong, Viable, Situ., Weak), avec une légende. Les données viennent de `config/tier_lists/<faction>.csv`, lues par `build_app.py` (`DATA.unitTiers`). Le choix est mémorisé ; le bouton est grisé pour une faction sans tier list.
+- **Image de l'armée (PNG)** : sous les cartes, un bloc « Lord & heroes » détaille chaque personnage : son option (monture, domaine…), son coût, et les sorts, capacités et objets choisis, avec leur icône.
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
   - **Funds by role** : une barre empilée de la part des fonds par rôle (lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), avec unités, modèles et or au survol ;
@@ -406,6 +408,8 @@ Toutes les armées enregistrées dans le navigateur : celles du bouton **Save** 
 
 - **Faction Guide** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#guide`, `#tiers`, `#matchups`, `#patch` ; l'ancien `#armies` ouvre l'onglet Guide).
 - **Meta Overview** : la tier list des factions (`overview.html#tiers`) et la matrice des matchups (`overview.html#matrix`).
+
+**Bandeau du haut** : sur toutes les pages, le sélecteur de faction (ou le nom du site) à gauche et les boutons de pages à droite. Il reste visible pendant le défilement (sauf sous 760 px de large) ; les éléments collants des pages se placent dessous grâce à la variable CSS `--top-h`, mesurée en JavaScript.
 
 **Navigation** : les pages du site ont le même bouton « Army Builder / My Armies / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
 

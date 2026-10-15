@@ -29,7 +29,7 @@ Images des cartes (facultatif) :
 - à relancer après chaque ajout d'images dans assets/ ;
 - sans image, l'application affiche des cartes de couleur avec les initiales.
 """
-import csv, json, math, os, re, shutil, struct, sys
+import csv, io, json, math, os, re, shutil, struct, sys
 import duckdb
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -527,11 +527,28 @@ for r in races:
     r['race_image'] = copy_image(src, 'races', r['race_image']) if src else None
     r['art'] = race_art.get(r['key'])
 
+# tier lists des unités (config/tier_lists/<faction>.csv) : affichées sur les cartes avec le bouton « Tier list »
+# race -> { clé de l'unité racine de la carte : tier } ; les fichiers qui commencent par « _ » sont ignorés
+unit_tiers = {}
+tl_dir = os.path.join(ROOT, 'config', 'tier_lists')
+if os.path.isdir(tl_dir):
+    for fname in sorted(os.listdir(tl_dir)):
+        if not fname.lower().endswith('.csv') or fname.startswith('_'): continue
+        raw = open(os.path.join(tl_dir, fname), 'rb').read()
+        try: text = raw.decode('utf-8-sig')
+        except UnicodeDecodeError: text = raw.decode('cp1252')
+        head = text.split('\n', 1)[0]
+        for row in csv.DictReader(io.StringIO(text), delimiter=';' if head.count(';') > head.count(',') else ','):
+            row = {(k or '').strip().lower(): (v or '').strip() for k, v in row.items()}
+            rk, key, tier = row.get('race_key'), row.get('root_unit_key'), row.get('tier', '').lower()
+            if rk and key and tier in ('meta', 'strong', 'viable', 'situational', 'weak'):
+                unit_tiers.setdefault(rk, {})[key] = tier
+
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
         'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
-        'raceProfiles': race_profiles, 'templates': templates, 'archetypes': archetypes,
+        'raceProfiles': race_profiles, 'unitTiers': unit_tiers, 'templates': templates, 'archetypes': archetypes,
         'factionCodes': {c: r for c, r in code_race.items() if r}}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
