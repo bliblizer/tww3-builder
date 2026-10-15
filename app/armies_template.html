@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TWW3 – My Armies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1d1614;--panel:#2a1e1a;--panel-2:#33241f;--bronze:#8c6a3b;--gold:#e2b65a;--text:#eadfc8;--muted:#a8977d;--danger:#ff6b5a;--ok:#7fc77f;--crimson:#7f1a15;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;color:var(--text);font:15px/1.45 "Alegreya Sans","Segoe UI",system-ui,sans-serif;background:radial-gradient(ellipse at 50% 0%,#3a2520 0%,var(--bg) 60%) fixed,var(--bg)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.serif{font-family:Cinzel,Georgia,serif}
+.topbar{display:flex;align-items:center;gap:10px 22px;flex-wrap:wrap;padding:10px 20px;background:linear-gradient(90deg,rgba(127,26,21,.35),rgba(42,30,26,.85) 60%);border-bottom:2px solid #a3261e}
+.site-nav{display:flex;gap:2px;background:rgba(0,0,0,.3);border:1px solid rgba(140,106,59,.6);border-radius:4px;padding:2px}
+.site-nav a{padding:5px 12px;border-radius:3px;color:var(--muted);text-decoration:none;font-weight:500;white-space:nowrap}
+.site-nav a[aria-current=page]{background:var(--crimson);color:#f4ead6}
+.pill{margin-left:auto;font-size:13px;color:var(--muted);border:1px solid rgba(140,106,59,.7);border-radius:12px;padding:2px 10px;background:rgba(0,0,0,.3)}.pill b{color:var(--text);font-weight:500}
+main{max-width:1600px;margin:0 auto;padding:20px 20px 80px}
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 20px}
+h1{margin:0;font:700 34px Cinzel,Georgia,serif;color:#f4ead6}
+.stats{color:var(--muted);margin:2px 0 0}
+.stats b{color:var(--text)}
+.hact{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.b{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 13px;border-radius:5px;border:1px solid rgba(244,234,214,.4);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.28));color:#f4ead6;font:600 13.5px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.b:hover:not(:disabled){border-color:var(--gold)}.b:disabled{opacity:.4;cursor:default}
+.b.prim{background:linear-gradient(180deg,#d9a83a,#8c6418);border-color:#ffe2a0;color:#fff7e2;font:700 14px Cinzel,Georgia,serif}
+.b.sm{height:30px;padding:0 10px;font-size:12.5px}.b.ico{width:32px;padding:0;justify-content:center}
+.b.danger:hover{border-color:var(--danger);color:#ffd2cb}
+.b svg{width:16px;height:16px}
+.note{margin:12px 0 0;padding:8px 12px;border-radius:6px;background:rgba(0,0,0,.25);border:1px solid rgba(140,106,59,.45);color:#d8cbb2;font-size:13.5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.note b{color:var(--text)}
+.layout>section{min-width:0}.layout{display:grid;grid-template-columns:270px minmax(0,1fr);gap:22px;margin-top:18px;align-items:start}
+.side{position:sticky;top:12px;background:rgba(29,22,20,.86);border:1px solid rgba(140,106,59,.6);border-radius:8px;padding:14px;max-height:calc(100vh - 24px);overflow:auto}
+.side h3{font:700 13px Cinzel,Georgia,serif;letter-spacing:.04em;color:var(--gold);margin:14px 0 6px}
+.side h3:first-of-type{margin-top:12px}
+.search{width:100%;height:36px;background:#140f0d;border:1px solid var(--bronze);border-radius:5px;padding:0 10px}
+.coll{display:flex;align-items:center;gap:8px;width:100%;padding:5px 8px;border-radius:4px;border:1px solid transparent;background:none;text-align:left;cursor:pointer}
+.coll:hover{background:rgba(255,255,255,.04)}.coll[aria-pressed=true]{background:rgba(226,182,90,.14);border-color:rgba(226,182,90,.5)}
+.coll .n{margin-left:auto;color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums}
+.coll img,.coll .ph{width:22px;height:22px;object-fit:contain;flex:none}
+.coll .ph{border-radius:50%;background:var(--bronze);font:700 9px/22px Cinzel,serif;color:#1d1614;text-align:center}
+.addf{color:var(--muted);font-size:13px;background:none;border:none;padding:4px 8px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid rgba(140,106,59,.6);border-radius:12px;padding:1px 9px;font-size:12.5px;background:rgba(0,0,0,.25);cursor:pointer}
+.chip[aria-pressed=true]{border-color:var(--gold);background:rgba(226,182,90,.18);color:#f6d58a}
+.clear{margin-top:14px;width:100%}
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:12px}
+.tools .cnt{color:var(--muted)}.tools .cnt b{color:var(--text)}
+.tools select{background:#140f0d;border:1px solid var(--bronze);border-radius:4px;padding:4px 8px}
+.seg{display:inline-flex;border:1px solid rgba(140,106,59,.6);border-radius:5px;overflow:hidden}
+.seg button{border:none;background:rgba(0,0,0,.25);padding:5px 11px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed=true]{background:rgba(226,182,90,.2);color:#f6d58a}
+.right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.bulk{display:none;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;margin-bottom:12px;border-radius:6px;background:#3a2c18;border:1px solid var(--gold)}
+.bulk.on{display:flex}.bulk b{color:#f6d58a}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{position:relative;display:flex;flex-direction:column;gap:7px;background:rgba(42,30,26,.92);border:1px solid rgba(140,106,59,.6);border-radius:7px;padding:12px 13px;min-width:0}
+.card.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.card .top{display:flex;align-items:center;gap:8px;min-width:0}
+.card .fi{width:30px;height:30px;object-fit:contain;flex:none}
+.card .nm{font:700 16px Cinzel,Georgia,serif;color:#f4ead6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .race{font-size:12.5px;color:var(--muted)}
+.star{margin-left:auto;background:none;border:none;font-size:20px;line-height:1;color:rgba(168,151,125,.45);cursor:pointer;padding:0 2px}
+.star.on{color:var(--gold)}
+.pick{width:17px;height:17px;accent-color:#d9a83a;flex:none}
+.strip{display:flex;gap:2px;overflow:hidden}
+.strip img,.strip span{width:26px;height:56px;flex:none;border-radius:2px;object-fit:cover}
+.strip span{display:flex;align-items:center;justify-content:center;font:700 9px Cinzel,serif;color:#f4ead6}
+.meta{display:flex;flex-wrap:wrap;gap:3px 14px;font-size:13px;color:var(--muted)}.meta b{color:var(--text);font-variant-numeric:tabular-nums}
+.badges{display:flex;flex-wrap:wrap;gap:5px;align-items:center;font-size:12px}
+.bd{border:1px solid rgba(140,106,59,.6);border-radius:3px;padding:0 6px;color:var(--muted)}
+.bd.arch{border-color:rgba(226,182,90,.6);color:var(--gold)}.bd.tag{border-radius:10px}
+.bd.ok{border-color:rgba(127,199,127,.6);color:#bfe8bf}.bd.warn{border-color:var(--danger);color:#ffc2b8;background:rgba(127,26,21,.3)}
+.bd.old{border-color:#c9a24a;color:#f0d690}.bd.folder{border-style:dashed}
+.st5{display:inline-flex;gap:1px;margin-left:4px}.st5 i{font-style:normal;color:rgba(168,151,125,.3)}.st5 i.on{color:var(--gold)}
+.foot{display:flex;align-items:center;gap:6px;margin-top:auto;padding-top:6px;border-top:1px solid rgba(140,106,59,.3)}
+.foot .when{font-size:12px;color:var(--muted);margin-right:auto}
+.src{font-size:12px;color:var(--muted)}
+.menu{position:absolute;z-index:20;right:12px;bottom:46px;background:var(--panel);border:1px solid var(--gold);border-radius:6px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,.6);display:grid;min-width:230px}
+.menu button{display:flex;align-items:center;gap:8px;text-align:left;background:none;border:1px solid transparent;border-radius:4px;padding:6px 9px;cursor:pointer;font-size:13.5px}
+.menu button:hover{border-color:var(--gold)}.menu hr{border:none;border-top:1px solid rgba(140,106,59,.4);margin:4px 0}
+.menu small{color:var(--muted);margin-left:auto;font-size:11.5px}
+.list .card{flex-direction:row;align-items:center;gap:14px;padding:8px 12px}
+.list{display:grid;gap:6px}
+.list .card .strip{flex:1;min-width:0}.list .card .strip img,.list .card .strip span{width:18px;height:38px}
+.list .card .meta,.list .card .badges,.list .desc{display:none}.list .card .foot{border:none;margin:0;padding:0}
+.list .card .top{width:260px;flex:none}.list .card .mini{display:block!important;font-size:13px;color:var(--muted);width:150px;flex:none}
+.mini{display:none}
+.group h2{font:700 18px Cinzel,Georgia,serif;margin:18px 0 8px;display:flex;align-items:center;gap:8px}.group h2 img{width:28px;height:28px}
+.group h2 .n{font:400 13px system-ui;color:var(--muted)}
+.desc{font-size:13px;color:#d8cbb2;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{padding:30px;text-align:center;border:1px dashed rgba(140,106,59,.7);border-radius:8px;color:var(--muted)}
+.toast{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:#1f3a1f;border:1px solid var(--ok);color:#d7f5d7;border-radius:6px;padding:8px 14px;z-index:60}
+.toast[hidden]{display:none}
+.drawer{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#241a16;border-top:2px solid var(--gold);box-shadow:0 -10px 30px rgba(0,0,0,.6);max-height:70vh;overflow:auto;padding:14px 20px calc(16px + env(safe-area-inset-bottom,0px))}
+.drawer[hidden]{display:none}
+.drawer h3{margin:0 0 10px;font:700 18px Cinzel,Georgia,serif;display:flex;align-items:center;gap:10px}.drawer h3 .b{margin-left:auto}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cmp .col{background:rgba(42,30,26,.9);border:1px solid rgba(140,106,59,.6);border-radius:7px;padding:10px 12px}
+.cmp table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}.cmp td{padding:3px 0;border-top:1px solid rgba(140,106,59,.25)}
+.cmp td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.cmp .better{color:var(--ok);font-weight:700}
+.cmp ul{margin:8px 0 0;padding-left:18px;font-size:13px}.cmp li.same{color:var(--muted)}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal[hidden]{display:none}
+.mbox{width:min(560px,100%);background:var(--panel);border:1px solid var(--bronze);border-radius:7px;padding:16px 18px;max-height:85vh;overflow:auto}
+.mbox h3{margin:0 0 8px;font:700 18px Cinzel,Georgia,serif}
+.mbox textarea{width:100%;height:190px;background:#140f0d;border:1px solid var(--bronze);border-radius:4px;color:var(--text);font:12.5px ui-monospace,Consolas,monospace;padding:8px}
+.mrow{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
+.callouts-unused{margin-top:28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.co-unused{background:rgba(0,0,0,.25);border:1px dashed rgba(140,106,59,.7);border-radius:7px;padding:10px 12px;font-size:13.5px;color:#d8cbb2}
+.co b{color:var(--gold);font-family:Cinzel,Georgia,serif}
+@media(max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}.side{position:static;max-height:none}.cmp{grid-template-columns:1fr}.list .card .top{width:auto;flex:1}.list .card .mini{display:none!important}}
+@media(max-width:560px){.site-nav{overflow-x:auto;max-width:100%}.site-nav a{padding:5px 8px;font-size:13.5px}.pill{display:none}main{padding:14px 12px 80px}.grid{grid-template-columns:1fr}.hact .lbl{display:none}}
+
+.ph{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--bronze);font:700 10px Cinzel,serif;color:#1d1614;flex:none}
+.coll .ph{width:22px;height:22px;font-size:8px}
+.mbox label{display:block;font-size:13px;color:var(--muted);margin:8px 0 3px}
+.mbox input[type=text],.mbox textarea.ed,.mbox select{width:100%;background:#140f0d;border:1px solid var(--bronze);border-radius:4px;padding:7px 9px;color:var(--text)}
+.mbox textarea.ed{height:110px;font:inherit}
+.drop{border:2px dashed rgba(140,106,59,.8);border-radius:8px;padding:18px;text-align:center;color:var(--muted);margin:8px 0}
+.drop.over{border-color:var(--gold);background:rgba(226,182,90,.08)}
+.toast button{margin-left:10px;background:none;border:1px solid var(--ok);border-radius:4px;color:#d7f5d7;padding:1px 8px;cursor:pointer}
+.hint{font-size:12.5px;color:var(--muted);margin:4px 0 0}
+.cmp .bar{height:6px;border-radius:3px;background:rgba(0,0,0,.4);position:relative;margin-top:2px}.cmp .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--gold)}
+.welcome{padding:26px;border:1px dashed rgba(140,106,59,.7);border-radius:8px;background:rgba(29,22,20,.6)}
+.welcome h2{font:700 20px Cinzel,Georgia,serif;margin:0 0 6px}.welcome p{color:var(--muted);margin:0 0 12px}
+.strip .more{display:flex;align-items:center;justify-content:center;width:26px;height:56px;font-size:11px;color:var(--muted)}
+.fi{width:30px;height:30px;object-fit:contain;flex:none}
+</style></head>
+<body>
+<header class="topbar"><nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="armies.html" aria-current="page">My Armies</a><a href="meta.html">Faction Guide</a><a href="overview.html">Meta Overview</a></nav><span class="pill">Game data <b id="patchTxt"></b></span></header>
+<main>
+ <div class="head">
+  <div><h1>My Armies</h1><p class="stats" id="stats"></p></div>
+  <div class="hact">
+   <a class="b prim" href="index.html" style="text-decoration:none">＋ <span class="lbl">New army</span></a>
+   <button class="b" id="importBtn">⬆ <span class="lbl">Import</span></button>
+   <button class="b" id="backupBtn">⛁ <span class="lbl">Backup</span></button>
+  </div>
+ </div>
+ <p class="note">💾 <span>Your armies live <b>in this browser</b>. Use <b>Backup</b> to save them all to a file, and <b>Import</b> to bring them to another computer or browser.</span></p>
+ <div class="layout">
+  <aside class="side" aria-label="Filters">
+   <input class="search" id="q" type="search" placeholder="Search name, unit, notes, tags…" aria-label="Search">
+   <h3>Collections</h3><div id="colls"></div><button class="addf" type="button" id="newFolder">＋ New folder</button>
+   <h3>Factions</h3><div id="facs"></div>
+   <h3>Status</h3><div class="chips" id="status"></div>
+   <h3>Source</h3><div class="chips" id="sources"></div>
+   <h3 id="tagsTitle">Tags</h3><div class="chips" id="tags"></div>
+   <button class="b sm clear" id="clearBtn">Clear filters</button>
+  </aside>
+  <section>
+   <div class="tools">
+    <span class="cnt" id="cnt"></span>
+    <label style="color:var(--muted);font-size:13.5px">Sort <select id="sort"><option value="recent">Last edited</option><option value="name">Name</option><option value="faction">Faction</option><option value="cost">Cost</option></select></label>
+    <div class="right"><div class="seg" role="group" aria-label="View"><button data-v="cards" aria-pressed="true">▦ Cards</button><button data-v="list" aria-pressed="false">☰ List</button><button data-v="group" aria-pressed="false">⚑ By faction</button></div></div>
+   </div>
+   <div class="bulk" id="bulk"><b id="selN"></b><button class="b sm" id="cmpBtn">⇄ Compare</button><button class="b sm" id="bulkFolder">📁 Move to folder</button><button class="b sm" id="bulkTag">🏷 Add tag</button><button class="b sm" id="bulkExport">⬇ Export</button><button class="b sm danger" id="bulkDelete">🗑 Delete</button><button class="b sm" id="unsel" style="margin-left:auto">Clear selection</button></div>
+   <div id="host"></div>
+  </section>
+ </div>
+</main>
+<div class="drawer" id="drawer" hidden></div>
+<div class="modal" id="modal" hidden><div class="mbox" id="mbox" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="fileIn" accept=".army_setup,.json" multiple hidden>
+<script>
+const DATA = /*__DATA__*/null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const img = p => p ? 'images/' + p.split('/').map(encodeURIComponent).join('/') : '';
+const initials = n => n.replace(/\(.*?\)/g, '').split(/[\s-]+/).filter(w => /^[A-Za-zÀ-ÿ]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+const raceOf = k => DATA.races.find(r => r.key === k);
+$('patchTxt').textContent = DATA.patch.replace('patch_', 'patch ');
+
+/* ---------- Stockage (même clé que le bouton Save du builder) ----------
+   armée : { id, name, r, a, m, cost, units, saved, updated, patch, fav, folder, tags[], source } */
+const KEY = 'tww3-builder:armies', FKEY = 'tww3-builder:folders';
+const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || d); } catch { return JSON.parse(d); } };
+let armies = load(KEY, '[]'), folders = load(FKEY, '[]');
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(armies)); localStorage.setItem(FKEY, JSON.stringify(folders)); return true; }
+  catch { toast('Could not save in this browser (storage full or blocked).', true); return false; }
+}
+
+/* ---------- Règles et coûts : mêmes calculs que le builder ---------- */
+const OPTS = {};   // race -> unité -> { card, opt }
+DATA.races.forEach(r => { OPTS[r.key] = {}; (DATA.roster[r.key] || []).forEach(card => card.opts.forEach(opt => { OPTS[r.key][opt.u] = { card, opt }; })); });
+const SPELL_STEP = DATA.spellStep;
+const canRank = o => !o.rn && o.role !== 'lord' && o.role !== 'hero';
+const rankedBase = (c, rank) => Math.round(c * DATA.xp[rank][0]) + DATA.xp[rank][1];
+function upgradesCost(sel, rk) {
+  const ups = DATA.up[rk] || {}; let other = 0; const spells = [];
+  sel.forEach(k => { const u = ups[k]; if (!u) return; if (u[0] === 's') spells.push(u[1] || 0); else other += u[1] || 0; });
+  spells.sort((a, b) => b - a);
+  return other + Math.floor(spells.reduce((s, c, k) => s + c * (1 - SPELL_STEP * k), 0));
+}
+const unitCost = (u, rk) => (canRank(u.opt) ? rankedBase(u.opt.c, u.rank) : u.opt.c) + upgradesCost(u.sel, rk);
+const capsOf = rk => DATA.caps[rk] || { g: {}, m: {}, o: {} };
+function validate(rk, army, cost) {
+  const out = [];
+  if (!(army.length && army[0].opt.l && army[0].opt.g)) out.push('No general: the first unit must be a lord');
+  if (army.filter(u => u.opt.l).length > 1) out.push('More than one lord');
+  if (army.length > DATA.maxUnits) out.push(`Too many units (${army.length} / ${DATA.maxUnits})`);
+  if (cost > DATA.budget) out.push(`Over budget (${fmt(cost)} / ${fmt(DATA.budget)})`);
+  const c = capsOf(rk), n = {};
+  army.forEach(u => (c.m[u.opt.u] || []).forEach(k => { n[k] = (n[k] || 0) + 1; }));
+  Object.entries(n).forEach(([k, cnt]) => {
+    let cap = c.g[k][1]; army.forEach(u => { const ov = c.o[u.card.id]; if (ov && ov[k] != null) cap = Math.max(cap, ov[k]); });
+    if (cnt > cap) out.push(`Unit cap exceeded: ${c.g[k][0]} (${cnt} / ${cap})`);
+  });
+  return out;
+}
+function decode(rk, text) {
+  const by = OPTS[rk] || {}, army = [], missing = [];
+  (text || '').split(',').filter(Boolean).forEach(part => {
+    const [u, rank, mask] = part.split('~'), hit = by[u];
+    if (!hit) { missing.push(u); return; }
+    const m = BigInt('0x' + (mask || '0')), up = hit.opt.up || [];
+    army.push({ card: hit.card, opt: hit.opt, sel: new Set(up.filter((k, i) => (m >> BigInt(i)) & 1n)), rank: canRank(hit.opt) ? Math.min(9, Number(rank) || 0) : 0 });
+  });
+  const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+  return { army, missing };
+}
+function encode(army) {
+  return army.map(u => { const up = u.opt.up || []; let mask = 0n; up.forEach((k, i) => { if (u.sel.has(k)) mask |= 1n << BigInt(i); }); return [u.opt.u, u.rank || 0, mask.toString(16)].join('~'); }).join(',');
+}
+/* état calculé d'une armée (mis en cache par id + contenu) */
+const cache = new Map();
+function info(e) {
+  const ck = e.r + '|' + e.a; if (cache.has(ck)) return cache.get(ck);
+  const d = decode(e.r, e.a), cost = d.army.reduce((s, u) => s + unitCost(u, e.r), 0);
+  const st = u => DATA.st[u.opt.u] || [];
+  const issues = (d.missing.length ? [`${d.missing.length} unit(s) no longer available`] : []).concat(raceOf(e.r) ? validate(e.r, d.army, cost) : ['Unknown faction']);
+  const x = { ...d, cost, issues, models: d.army.reduce((s, u) => s + (st(u)[0] || 0), 0), st };
+  cache.set(ck, x); return x;
+}
+const outdated = e => e.patch && e.patch !== DATA.patch;
+const needsAttention = e => info(e).issues.length > 0 || outdated(e);
+const when = iso => { if (!iso) return ''; const d = Math.floor((Date.now() - new Date(iso)) / 864e5); return d <= 0 ? 'Edited today' : d === 1 ? 'Edited yesterday' : d < 60 ? `Edited ${d} days ago` : 'Edited ' + new Date(iso).toLocaleDateString('en-GB'); };
+const SRC = { saved: '💾 Saved', imported: '⬆ Imported from game', link: '🔗 Added from a link', backup: '⛁ Restored from a backup' };
+const builderLink = (e, extra = '') => { const p = new URLSearchParams({ v: '1', r: e.r, a: e.a }); if (e.name) p.set('n', e.name); if (e.m && e.m.length <= 500) p.set('m', e.m); return `index.html${extra}#` + p; };
+
+/* ---------- Filtres et rendu ---------- */
+const F = { q: '', coll: 'all', facs: new Set(), status: '', source: '', tag: '' };
+let view = 'cards', sort = 'recent'; const sel = new Set();
+const icon = (r, cls = 'fi') => r && r.icon ? `<img class="${cls}" src="${img(r.icon)}" alt="">` : `<span class="ph">${esc(r ? r.code || r.name.slice(0, 2) : '?')}</span>`;
+function match(e) {
+  const r = raceOf(e.r) || { name: e.r };
+  if (F.q) { const t = [e.name, r.name, e.m, (e.tags || []).join(' '), e.folder, info(e).army.map(u => u.card.n).join(' ')].join(' ').toLowerCase(); if (!t.includes(F.q)) return false; }
+  if (F.coll === 'fav' && !e.fav) return false;
+  if (F.coll === 'recent' && (Date.now() - new Date(e.updated || e.saved)) > 7 * 864e5) return false;
+  if (F.coll.startsWith('f:') && e.folder !== F.coll.slice(2)) return false;
+  if (F.facs.size && !F.facs.has(e.r)) return false;
+  if (F.status === 'ok' && needsAttention(e)) return false;
+  if (F.status === 'warn' && !needsAttention(e)) return false;
+  if (F.source && (e.source || 'saved') !== F.source) return false;
+  if (F.tag && !(e.tags || []).includes(F.tag)) return false;
+  return true;
+}
+function sorted(list) {
+  const t = e => new Date(e.updated || e.saved || 0).getTime(), rn = e => (raceOf(e.r) || {}).name || '';
+  const by = { recent: (a, b) => t(b) - t(a), name: (a, b) => a.name.localeCompare(b.name), faction: (a, b) => rn(a).localeCompare(rn(b)) || a.name.localeCompare(b.name), cost: (a, b) => info(b).cost - info(a).cost };
+  return list.slice().sort((a, b) => (!!b.fav - !!a.fav) || by[sort](a, b));
+}
+function strip(x, max = 20) {
+  return x.army.slice(0, max).map(u => { const p = u.opt.img || u.card.img;
+    return p ? `<img src="${img(p)}" alt="" loading="lazy" title="${esc(u.opt.n)}">` : `<span style="background:${DATA.tabColors[u.card.t] || '#4a2c2a'}" title="${esc(u.opt.n)}">${esc(initials(u.card.n))}</span>`; }).join('') +
+    (x.army.length > max ? `<span class="more">+${x.army.length - max}</span>` : '');
+}
+function card(e) {
+  const r = raceOf(e.r) || { name: e.r }, x = info(e);
+  const status = x.issues.length ? `<span class="bd warn" title="${esc(x.issues.join(' · '))}">⚠ ${esc(x.issues[0])}${x.issues.length > 1 ? ` (+${x.issues.length - 1})` : ''}</span>`
+    : outdated(e) ? `<span class="bd old" title="Saved on ${esc(e.patch.replace('patch_', 'patch '))}: open it to check costs and caps on the current patch">⟳ Saved on ${esc(e.patch.replace('patch_', 'patch '))}</span>` : '<span class="bd ok">✓ Ready to play</span>';
+  return `<article class="card${sel.has(e.id) ? ' sel' : ''}" data-id="${e.id}">
+    <div class="top"><input type="checkbox" class="pick" ${sel.has(e.id) ? 'checked' : ''} aria-label="Select ${esc(e.name)}">${icon(r)}<div style="min-width:0"><div class="nm" title="${esc(e.name)}">${esc(e.name)}</div><div class="race">${esc(r.name)}</div></div>
+      <button class="star${e.fav ? ' on' : ''}" aria-pressed="${!!e.fav}" title="${e.fav ? 'Remove from favourites' : 'Add to favourites'}">★</button></div>
+    <div class="mini">${fmt(x.cost)} · ${x.army.length} units</div>
+    <div class="strip">${strip(x)}</div>
+    <div class="meta"><span><b>${fmt(x.cost)}</b> / ${fmt(DATA.budget)}</span><span><b>${fmt(x.models)}</b> models</span><span><b>${x.army.length}</b> units</span></div>
+    <div class="badges">${status}${e.folder ? `<span class="bd folder">📁 ${esc(e.folder)}</span>` : ''}${(e.tags || []).map(t => `<span class="bd tag">#${esc(t)}</span>`).join('')}</div>
+    ${e.m ? `<p class="desc">${esc(e.m)}</p>` : ''}
+    <div class="foot"><span class="when">${when(e.updated || e.saved)}${e.source ? ` · <span class="src">${SRC[e.source] || ''}</span>` : ''}</span>
+      <a class="b sm prim" href="${esc(builderLink(e))}" style="text-decoration:none">Open</a><button class="b sm" data-share>Share ▾</button><button class="b sm ico" data-more title="More actions" aria-label="More actions">⋯</button></div>
+  </article>`;
+}
+function render() {
+  const list = sorted(armies.filter(match)), cnt = f => armies.filter(f).length;
+  const allFolders = [...new Set([...folders, ...armies.map(e => e.folder).filter(Boolean)])].sort();
+  $('stats').innerHTML = armies.length ? `<b>${armies.length}</b> armies · <b>${cnt(e => e.fav)}</b> favourites · <b>${new Set(armies.map(e => e.r)).size}</b> factions · <b>${cnt(needsAttention)}</b> need attention` : 'No army yet';
+  $('cnt').innerHTML = `<b>${list.length}</b> of ${armies.length} armies`;
+  const coll = (k, label, n, ico) => `<button class="coll" data-c="${esc(k)}" aria-pressed="${F.coll === k}">${ico}<span>${esc(label)}</span><span class="n">${n}</span></button>`;
+  $('colls').innerHTML = coll('all', 'All armies', armies.length, '▦') + coll('fav', 'Favourites', cnt(e => e.fav), '<span style="color:var(--gold)">★</span>') +
+    coll('recent', 'Edited this week', cnt(e => (Date.now() - new Date(e.updated || e.saved)) <= 7 * 864e5), '🕑') +
+    allFolders.map(f => coll('f:' + f, f, cnt(e => e.folder === f), '📁')).join('');
+  const facs = [...new Set(armies.map(e => e.r))].map(raceOf).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name));
+  $('facs').innerHTML = facs.map(r => `<button class="coll" data-f="${r.key}" aria-pressed="${F.facs.has(r.key)}">${icon(r, '')}<span>${esc(r.name)}</span><span class="n">${cnt(e => e.r === r.key)}</span></button>`).join('') || '<p class="hint">Factions appear here once you save armies.</p>';
+  $('status').innerHTML = [['ok', '✓ Ready to play'], ['warn', '⚠ Needs attention']].map(([k, l]) => `<button class="chip" data-s="${k}" aria-pressed="${F.status === k}">${l}</button>`).join('');
+  $('sources').innerHTML = Object.entries(SRC).filter(([k]) => armies.some(e => (e.source || 'saved') === k)).map(([k, l]) => `<button class="chip" data-o="${k}" aria-pressed="${F.source === k}">${l}</button>`).join('');
+  const tags = [...new Set(armies.flatMap(e => e.tags || []))].sort();
+  $('tags').innerHTML = tags.map(t => `<button class="chip" data-t="${esc(t)}" aria-pressed="${F.tag === t}">#${esc(t)}</button>`).join('') || '<p class="hint">Add tags from the ⋯ menu of an army.</p>';
+  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
+  if (!armies.length) $('host').innerHTML = `<div class="welcome"><h2>No army saved yet</h2><p>Build an army and click <b>Save</b> in the builder, or import your armies from the game (.army_setup files) or from a backup.</p>
+    <a class="b prim" href="index.html" style="text-decoration:none">Build an army</a> <button class="b" onclick="openImport()">⬆ Import</button></div>`;
+  else if (!list.length) $('host').innerHTML = '<div class="empty">No army matches these filters.<br><button class="b sm" onclick="clearAll()" style="margin-top:10px">Clear filters</button></div>';
+  else if (view === 'group') {
+    const by = {}; list.forEach(e => (by[e.r] = by[e.r] || []).push(e));
+    $('host').innerHTML = Object.keys(by).sort((a, b) => ((raceOf(a) || {}).name || a).localeCompare((raceOf(b) || {}).name || b)).map(k => `<div class="group"><h2>${icon(raceOf(k), '')}${esc((raceOf(k) || {}).name || k)} <span class="n">${by[k].length}</span></h2><div class="grid">${by[k].map(card).join('')}</div></div>`).join('');
+  } else $('host').innerHTML = `<div class="${view === 'list' ? 'list' : 'grid'}">${list.map(card).join('')}</div>`;
+  [...sel].forEach(id => { if (!armies.some(e => e.id === id)) sel.delete(id); });
+  $('bulk').classList.toggle('on', sel.size > 0); $('selN').textContent = `${sel.size} selected`; $('cmpBtn').disabled = sel.size !== 2;
+}
+function toast(t, warn, undo) {
+  const el = $('toast'); el.innerHTML = (warn ? '⚠ ' : '✓ ') + esc(t) + (undo ? '<button type="button">Undo</button>' : ''); el.hidden = false;
+  if (undo) el.querySelector('button').onclick = () => { undo(); el.hidden = true; };
+  clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, undo ? 6000 : 2200);
+}
+function clearAll() { Object.assign(F, { q: '', coll: 'all', status: '', source: '', tag: '' }); F.facs.clear(); $('q').value = ''; render(); }
+const byId = id => armies.find(e => e.id === id);
+const touch = e => { e.updated = new Date().toISOString(); };
+const newId = () => Date.now() + Math.floor(Math.random() * 1000);
+
+/* ---------- Fenêtres ---------- */
+function modal(html) { $('mbox').innerHTML = html; $('modal').hidden = false; const f = $('mbox').querySelector('input,textarea,select,button'); if (f) f.focus(); }
+function closeModal() { $('modal').hidden = true; }
+function ask(title, label, value, onOk, opts = {}) {
+  const field = opts.area ? `<textarea class="ed" id="askIn">${esc(value)}</textarea>` : opts.list
+    ? `<input type="text" id="askIn" list="askList" value="${esc(value)}"><datalist id="askList">${opts.list.map(v => `<option value="${esc(v)}">`).join('')}</datalist>`
+    : `<input type="text" id="askIn" value="${esc(value)}">`;
+  modal(`<h3>${esc(title)}</h3><label for="askIn">${esc(label)}</label>${field}${opts.hint ? `<p class="hint">${esc(opts.hint)}</p>` : ''}
+    <div class="mrow"><button class="b prim" id="askOk">${esc(opts.ok || 'Save')}</button><button class="b" onclick="closeModal()">Cancel</button></div>`);
+  const go = () => { onOk($('askIn').value.trim()); closeModal(); };
+  $('askOk').onclick = go; if (!opts.area) $('askIn').addEventListener('keydown', ev => { if (ev.key === 'Enter') go(); });
+  $('askIn').select && $('askIn').select();
+}
+const allFolderNames = () => [...new Set([...folders, ...armies.map(e => e.folder).filter(Boolean)])].sort();
+
+/* ---------- Partage ---------- */
+const absLink = e => new URL(builderLink(e), location.href).href;
+async function copy(text, msg) { try { await navigator.clipboard.writeText(text); toast(msg); } catch { modal(`<h3>Copy</h3><textarea class="ed" readonly>${esc(text)}</textarea><div class="mrow"><button class="b" onclick="closeModal()">Close</button></div>`); } }
+function asText(e) {
+  const r = raceOf(e.r) || { name: e.r }, x = info(e), count = {};
+  x.army.forEach(u => { count[u.opt.n] = (count[u.opt.n] || 0) + 1; });
+  return `**${e.name}** – ${r.name} (${fmt(x.cost)} / ${fmt(DATA.budget)}, ${x.army.length} units)\n` +
+    Object.entries(count).map(([n, k]) => `${k > 1 ? k + '× ' : ''}${n}`).join('\n') + (e.m ? `\n\n${e.m}` : '') + `\n\n${absLink(e)}`;
+}
+/* fichier .army_setup du jeu (version 8) : même écriture que le bouton Export du builder */
+function armySetupBlob(e) {
+  const x = info(e), rk = e.r, r = raceOf(rk), enc = new TextEncoder(), parts = [];
+  const all = x.army.map(u => u.opt.fk || []), main = r.faction;
+  const faction = all.every(l => l.includes(main)) ? main : ((all[0] || []).filter(f => all.every(l => l.includes(f)))[0] || main);
+  const u8 = v => parts.push(Uint8Array.of(v)), u32 = v => { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, v, true); parts.push(b); };
+  const str = t => { const b = enc.encode(t), h = new Uint8Array(2); new DataView(h.buffer).setUint16(0, b.length, true); parts.push(h, b); };
+  u32(8); str(faction); str('conquest'); u8(0); u32(x.army.length);
+  const ups = DATA.up[rk] || {}, general = x.army.length && x.army[0].opt.l && x.army[0].opt.g ? x.army[0] : null;
+  x.army.forEach(u => {
+    str(`${u.opt.u}:${faction}:${u === general ? 1 : 0}`);
+    const block = new Uint8Array(11); block[7] = canRank(u.opt) ? u.rank : 0; parts.push(block);
+    u32(0);
+    const innate = (u.opt.role === 'lord' || u.opt.role === 'hero') ? (DATA.exportInnate[u.opt.u] || []).map(k => [0, k]) : [];
+    const chosen = [...u.sel].filter(k => ups[k]).map(k => [ups[k][0] === 'i' ? 2 : 0, k]);
+    const items = [...innate, ...chosen]; u32(items.length); items.forEach(([t, k]) => { u8(t); str(k); }); str('none');
+  });
+  parts.push(new Uint8Array(9));
+  return new Blob(parts, { type: 'application/octet-stream' });
+}
+function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+const fileName = e => (e.name || 'army').replace(/[\\/:*?"<>|]+/g, '').trim() || 'army';
+function closeMenus() { document.querySelectorAll('.menu').forEach(m => m.remove()); }
+function menu(cardEl, items) {
+  closeMenus(); const m = document.createElement('div'); m.className = 'menu'; m.setAttribute('role', 'menu');
+  m.innerHTML = items.map(it => it === '-' ? '<hr>' : `<button role="menuitem" data-k="${it[0]}"${it[3] ? ' style="color:#ffc2b8"' : ''}>${it[1]}${it[2] ? `<small>${it[2]}</small>` : ''}</button>`).join('');
+  cardEl.append(m); m.querySelector('button').focus(); return m;
+}
+function shareMenu(cardEl, e) {
+  menu(cardEl, [['link', '🔗 Copy link', 'anyone can open it'], ['file', '⬇ Download .army_setup', 'for the game'], ['png', '🖼 Image (opens the builder)'], ['text', '📋 Copy as text', 'for Discord']]).onclick = ev => {
+    const k = ev.target.closest('button')?.dataset.k; if (!k) return; closeMenus();
+    if (k === 'link') copy(absLink(e), 'Link copied');
+    if (k === 'file') { download(armySetupBlob(e), fileName(e) + '.army_setup'); toast('File downloaded: copy it into the army_setups folder of the game'); }
+    if (k === 'png') window.open(builderLink(e, '?do=png'), '_blank');
+    if (k === 'text') copy(asText(e), 'Text copied');
+  };
+}
+function moreMenu(cardEl, e) {
+  menu(cardEl, [['ren', '✎ Rename'], ['dup', '⧉ Duplicate'], ['fold', '📁 Move to folder…'], ['tags', '🏷 Edit tags…'], ['notes', '📝 Edit notes…'], '-', ['del', '🗑 Delete', '', true]]).onclick = ev => {
+    const k = ev.target.closest('button')?.dataset.k; if (!k) return; closeMenus();
+    if (k === 'ren') ask('Rename', 'Name', e.name, v => { if (v) { e.name = v; touch(e); persist(); render(); } });
+    if (k === 'dup') { const c = { ...e, id: newId(), name: e.name + ' (copy)', fav: false, saved: new Date().toISOString() }; touch(c); armies.unshift(c); persist(); render(); toast('Duplicated'); }
+    if (k === 'fold') ask('Move to folder', 'Folder (leave empty for none)', e.folder || '', v => { e.folder = v || undefined; if (v && !folders.includes(v)) folders.push(v); touch(e); persist(); render(); }, { list: allFolderNames(), ok: 'Move' });
+    if (k === 'tags') ask('Tags', 'Tags, separated by commas', (e.tags || []).join(', '), v => { e.tags = [...new Set(v.split(',').map(t => t.trim().toLowerCase()).filter(Boolean))]; touch(e); persist(); render(); }, { hint: 'For example: ladder, tourney, vs elves' });
+    if (k === 'notes') ask('Notes', 'Notes', e.m || '', v => { e.m = v; touch(e); persist(); render(); }, { area: true });
+    if (k === 'del') removeArmies([e.id]);
+  };
+}
+function removeArmies(ids) {
+  const before = armies.slice(); armies = armies.filter(e => !ids.includes(e.id)); ids.forEach(id => sel.delete(id)); persist(); render();
+  toast(ids.length > 1 ? `${ids.length} armies deleted` : 'Army deleted', false, () => { armies = before; persist(); render(); });
+}
+
+/* ---------- Comparaison de deux armées ---------- */
+function profile(e) {
+  const x = info(e), st = u => DATA.st[u.opt.u] || [], cost = x.cost || 1;
+  const fund = f => 100 * x.army.filter(f).reduce((s, u) => s + unitCost(u, e.r), 0) / cost;
+  const sum = f => x.army.reduce((s, u) => s + f(u), 0);
+  // DATA.st : [taille, force de l'arme, force de tir, anti-large, perforant, a du tir, magique, vitesse, vie]
+  return { cost: x.cost, models: x.models, units: x.army.length,
+    melee: sum(u => (st(u)[1] || 0) * (st(u)[0] || 0)), missile: sum(u => (st(u)[2] || 0) * (st(u)[0] || 0)),
+    al: fund(u => st(u)[3]), ap: fund(u => st(u)[4]), fly: fund(u => st(u)[5] || u.opt.fly), mag: fund(u => st(u)[6] || u.opt.lore),
+    speed: sum(u => (st(u)[7] || 0) * unitCost(u, e.r)) / cost, hp: sum(u => st(u)[8] || 0) };
+}
+function compare() {
+  const [a, b] = [...sel].map(byId), pa = profile(a), pb = profile(b);
+  const rows = [['Cost', 'cost', 0], ['Models', 'models', 1], ['Units', 'units', 0], ['Melee power', 'melee', 1], ['Missile power', 'missile', 1], ['Total health', 'hp', 1],
+    ['Average speed', 'speed', 1], ['Anti-large (% funds)', 'al', 1], ['Anti-armour (% funds)', 'ap', 1], ['Anti-flying (% funds)', 'fly', 1], ['Magic (% funds)', 'mag', 1]];
+  const names = e => [...new Set(info(e).army.map(u => u.opt.n))], na = names(a), nb = names(b);
+  const col = (e, p, o, mine, other) => `<div class="col"><div style="display:flex;gap:8px;align-items:center">${icon(raceOf(e.r))}<b class="serif">${esc(e.name)}</b></div>
+    <table>${rows.map(([l, k, hi]) => { const better = hi === 1 ? p[k] > o[k] : false; const pct = l.includes('%');
+      return `<tr><td>${l}</td><td class="${better ? 'better' : ''}">${pct ? Math.round(p[k]) + '%' : fmt(p[k])}</td></tr>`; }).join('')}</table>
+    <ul>${mine.map(n => `<li class="${other.includes(n) ? 'same' : ''}">${esc(n)}${other.includes(n) ? ' (in both)' : ''}</li>`).join('')}</ul>
+    <a class="b sm prim" href="${esc(builderLink(e))}" style="text-decoration:none;margin-top:6px">Open in builder</a></div>`;
+  $('drawer').innerHTML = `<h3>Compare <button class="b sm" onclick="document.getElementById('drawer').hidden=true">Close</button></h3>
+    <p class="hint" style="margin:-4px 0 10px">Same measures as the Composition panel of the builder. The higher value is in green.</p>
+    <div class="cmp">${col(a, pa, pb, na, nb)}${col(b, pb, pa, nb, na)}</div>`;
+  $('drawer').hidden = false;
+}
+
+/* ---------- Import : fichiers du jeu, lien du builder, sauvegarde ---------- */
+function parseArmySetup(buffer) {
+  const dv = new DataView(buffer), dec = new TextDecoder(); let p = 0;
+  const u8 = () => dv.getUint8(p++), u32 = () => { const v = dv.getUint32(p, true); p += 4; return v; };
+  const str = () => { const n = dv.getUint16(p, true); p += 2; const t = dec.decode(new Uint8Array(buffer, p, n)); p += n; return t; };
+  const head = { version: u32(), faction: str(), mode: str(), flag: u8() }, units = [];
+  for (let i = 0, n = u32(); i < n; i++) {
+    const [unitKey] = str().split(':'); const block = new Uint8Array(buffer, p, 11); p += 11;
+    for (let j = 0, m = u32(); j < m; j++) { str(); str(); }
+    const items = []; for (let j = 0, m = u32(); j < m; j++) { u8(); items.push(str()); }
+    str(); units.push({ unitKey, rank: block[7], items });
+  }
+  return { head, units };
+}
+function addArmy(e) { touch(e); e.saved = e.saved || e.updated; e.patch = e.patch || DATA.patch; armies.unshift(e); }
+async function importFiles(files) {
+  let n = 0, bad = [];
+  for (const f of files) {
+    try {
+      if (/\.json$/i.test(f.name)) {
+        const j = JSON.parse(await f.text()); const list = Array.isArray(j) ? j : j.armies || [];
+        const known = new Set(armies.map(e => e.r + '|' + e.a + '|' + e.name));
+        list.forEach(e => { if (e && e.r && e.a && !known.has(e.r + '|' + e.a + '|' + e.name)) { armies.push({ ...e, id: newId(), source: e.source || 'backup' }); n++; } });
+        (j.folders || []).forEach(x => { if (!folders.includes(x)) folders.push(x); });
+        continue;
+      }
+      const d = parseArmySetup(await f.arrayBuffer()), rk = DATA.factionRace[d.head.faction];
+      if (!rk || !OPTS[rk]) { bad.push(f.name); continue; }
+      const by = OPTS[rk], army = [];
+      d.units.forEach(x => { const hit = by[x.unitKey]; if (hit) army.push({ card: hit.card, opt: hit.opt, sel: new Set(x.items.filter(k => (hit.opt.up || []).includes(k))), rank: canRank(hit.opt) ? Math.min(9, x.rank) : 0 }); });
+      const lord = army.findIndex(u => u.opt.l); if (lord > 0) army.unshift(army.splice(lord, 1)[0]);
+      const e = { id: newId(), name: f.name.replace(/\.army_setup$/i, '').replace(/_/g, ' '), r: rk, a: encode(army), m: '', source: 'imported' };
+      e.cost = info(e).cost; e.units = army.length; addArmy(e); n++;
+    } catch { bad.push(f.name); }
+  }
+  persist(); render();
+  toast(n ? `${n} ${n > 1 ? 'armies' : 'army'} imported${bad.length ? `, ${bad.length} file(s) could not be read` : ''}` : 'Nothing imported', !n || bad.length > 0);
+}
+function importLink(text) {
+  try {
+    const p = new URLSearchParams(new URL(text.trim(), location.href).hash.slice(1));
+    if (!p.get('r') || !p.get('a') || !OPTS[p.get('r')]) throw 0;
+    const e = { id: newId(), name: p.get('n') || `${raceOf(p.get('r')).name} army`, r: p.get('r'), a: p.get('a'), m: p.get('m') || '', source: 'link' };
+    e.cost = info(e).cost; e.units = info(e).army.length; addArmy(e); persist(); render(); toast('Army added from the link');
+  } catch { toast('This is not a link to an army of the builder', true); }
+}
+function openImport() {
+  modal(`<h3>Import armies</h3>
+    <div class="drop" id="drop">Drop <b>.army_setup</b> files from the game or a <b>backup</b> file here<br><button class="b sm" id="pick" style="margin-top:8px">Choose files…</button></div>
+    <p class="hint">Game folder (Windows): %APPDATA%\\The Creative Assembly\\Warhammer3\\army_setups — you can select several files at once.</p>
+    <label for="lnk">Or paste a link to an army of the builder</label><input type="text" id="lnk" placeholder="https://…/index.html#v=1&r=…&a=…">
+    <div class="mrow"><button class="b prim" id="lnkOk">Add from link</button><button class="b" onclick="closeModal()">Close</button></div>`);
+  const drop = $('drop');
+  $('pick').onclick = () => $('fileIn').click();
+  drop.ondragover = ev => { ev.preventDefault(); drop.classList.add('over'); }; drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = ev => { ev.preventDefault(); drop.classList.remove('over'); closeModal(); importFiles([...ev.dataTransfer.files]); };
+  $('lnkOk').onclick = () => { const v = $('lnk').value; closeModal(); importLink(v); };
+}
+$('fileIn').onchange = ev => { closeModal(); importFiles([...ev.target.files]); ev.target.value = ''; };
+$('importBtn').onclick = openImport;
+function backup(list = armies, name = 'my-armies') {
+  const data = { app: 'tww3-builder', version: 1, patch: DATA.patch, exported: new Date().toISOString(), folders, armies: list };
+  download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), `${name}-${new Date().toISOString().slice(0, 10)}.json`);
+}
+$('backupBtn').onclick = () => { if (!armies.length) return toast('Nothing to back up yet', true); backup(); toast(`Backup downloaded (${armies.length} armies)`); };
+
+/* ---------- Actions groupées ---------- */
+$('cmpBtn').onclick = compare;
+$('unsel').onclick = () => { sel.clear(); render(); };
+$('bulkDelete').onclick = () => removeArmies([...sel]);
+$('bulkExport').onclick = () => { backup([...sel].map(byId), 'armies-selection'); toast('Selection exported as a backup file'); };
+$('bulkFolder').onclick = () => ask('Move to folder', 'Folder (leave empty for none)', '', v => { [...sel].map(byId).forEach(e => { e.folder = v || undefined; touch(e); }); if (v && !folders.includes(v)) folders.push(v); persist(); render(); }, { list: allFolderNames(), ok: 'Move' });
+$('bulkTag').onclick = () => ask('Add a tag', 'Tag', '', v => { const t = v.toLowerCase(); if (!t) return; [...sel].map(byId).forEach(e => { e.tags = [...new Set([...(e.tags || []), t])]; touch(e); }); persist(); render(); });
+$('newFolder').onclick = () => ask('New folder', 'Folder name', '', v => { if (v && !folders.includes(v)) { folders.push(v); persist(); render(); } }, { ok: 'Create' });
+
+/* ---------- Événements ---------- */
+document.addEventListener('click', ev => {
+  const t = ev.target;
+  if (!t.closest('.menu') && !t.closest('[data-share]') && !t.closest('[data-more]')) closeMenus();
+  if (t === $('modal')) closeModal();
+  const c = t.closest('.coll'); if (c) { if (c.dataset.c) F.coll = c.dataset.c; if (c.dataset.f) { F.facs.has(c.dataset.f) ? F.facs.delete(c.dataset.f) : F.facs.add(c.dataset.f); } return render(); }
+  if (t.dataset.s) { F.status = F.status === t.dataset.s ? '' : t.dataset.s; return render(); }
+  if (t.dataset.o) { F.source = F.source === t.dataset.o ? '' : t.dataset.o; return render(); }
+  if (t.dataset.t) { F.tag = F.tag === t.dataset.t ? '' : t.dataset.t; return render(); }
+  if (t.dataset.v) { view = t.dataset.v; return render(); }
+  const cardEl = t.closest('.card'); if (!cardEl || t.closest('.menu')) return;
+  const e = byId(+cardEl.dataset.id); if (!e) return;
+  if (t.classList.contains('star')) { e.fav = !e.fav; persist(); render(); return toast(e.fav ? 'Added to favourites' : 'Removed from favourites'); }
+  if (t.classList.contains('pick')) { t.checked ? sel.add(e.id) : sel.delete(e.id); return render(); }
+  if (t.closest('[data-share]')) return shareMenu(cardEl, e);
+  if (t.closest('[data-more]')) return moreMenu(cardEl, e);
+});
+$('q').addEventListener('input', ev => { F.q = ev.target.value.trim().toLowerCase(); render(); });
+$('sort').addEventListener('change', ev => { sort = ev.target.value; render(); });
+$('clearBtn').onclick = clearAll;
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') { closeMenus(); closeModal(); $('drawer').hidden = true; } });
+addEventListener('storage', ev => { if (ev.key === KEY || ev.key === FKEY) { armies = load(KEY, '[]'); folders = load(FKEY, '[]'); cache.clear(); render(); } });   // sauvegarde depuis un autre onglet
+render();
+</script>
+</body>
+</html>

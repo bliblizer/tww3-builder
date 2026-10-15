@@ -31,6 +31,8 @@ TEMPLATE = os.path.join(ROOT, 'app', 'meta_template.html')
 OUT = os.path.join(ROOT, 'docs', 'meta.html')
 OVERVIEW_TEMPLATE = os.path.join(ROOT, 'app', 'overview_template.html')
 OVERVIEW_OUT = os.path.join(ROOT, 'docs', 'overview.html')
+ARMIES_TEMPLATE = os.path.join(ROOT, 'app', 'armies_template.html')
+ARMIES_OUT = os.path.join(ROOT, 'docs', 'armies.html')
 TIER_DIR = os.path.join(ROOT, 'config', 'tier_lists')
 ICON_ASSETS = os.path.join(ROOT, 'assets', 'faction_icons')
 ICON_OUT = os.path.join(ROOT, 'docs', 'images', 'faction_icons')
@@ -454,7 +456,26 @@ os.makedirs(os.path.dirname(CHECKS), exist_ok=True)
 with open(CHECKS, 'w', encoding='utf-8', newline='') as f:
     w = csv.writer(f); w.writerow(['level', 'where', 'message']); w.writerows(checks)
 
-print(OUT); print(OVERVIEW_OUT)
+# My Armies : les armées sont dans le navigateur ; la page embarque ce qu'il faut pour les décoder, les chiffrer,
+# les valider (mêmes règles que le builder), les comparer et les exporter au format du jeu
+ST = ['unit_size', 'weapon_strength', 'missile_strength', 'is_anti_large', 'is_armour_piercing', 'range', 'has_magical_attacks', 'speed', 'health']
+OPT_KEYS = ('u', 'n', 'c', 'role', 'l', 'g', 'rn', 'fly', 'lore', 'img', 'up', 'fk')
+def st_row(u):
+    r = [stat(u, c) for c in ST]
+    r[5] = 1 if r[5] is not None else 0            # « a du tir »
+    return [int(v) if isinstance(v, bool) else v for v in r]
+write_page(ARMIES_TEMPLATE, ARMIES_OUT, {
+    'patch': PATCH, 'budget': D['budget'], 'maxUnits': D['maxUnits'], 'xp': D['xp'], 'spellStep': 0.047,
+    'races': [dict(rr, faction=by_key[rr['key']].get('faction')) for rr in race_list],
+    'roster': {rk: [{'id': c['id'], 'n': c['n'], 'img': c.get('img'), 't': c['t'], 'opts': [{k: o.get(k) for k in OPT_KEYS if o.get(k) not in (None, False, [], '')} for o in c['opts']]}
+                    for c in cards] for rk, cards in D['roster'].items()},
+    'up': {rk: {k: [v[1], v[2]] for k, v in ups.items()} for rk, ups in D.get('up', {}).items()},
+    'caps': D.get('caps', {}), 'factionRace': D.get('factionRace', {}), 'exportInnate': D.get('exportInnate', {}),
+    'st': {o['u']: st_row(o['u']) for cards in D['roster'].values() for c in cards for o in c['opts']},
+    'tabColors': TAB_COLORS,
+})
+
+print(OUT); print(OVERVIEW_OUT); print(ARMIES_OUT)
 print(f"{PATCH} | {len(races)} factions | breakdown : {len(breakdown)} | matchups : {len(matrix)} lignes | "
       f"tier list des factions : {len(faction_tier)} | icônes : {len(icons)} | tier lists d'unités : {len(tier_files)} | "
       f"armées d'exemple : {len(templates)} | patch changes : {'comparé à ' + PREV if PREV else 'aucun patch précédent dans history/'}")

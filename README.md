@@ -389,12 +389,25 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 
 **Images des cartes** : `build_app.py` essaie, dans l'ordre, la carte du jeu (`ui/units/icons`, sauf carte générique « placeholder »), puis le portrait du personnage, puis les autres variantes de ce portrait déclarées par le jeu (`pvp_roster_options.portrait_images`) ou présentes dans les assets (ex. `_campaign_02_0` si `_campaign_03_0` manque). Chaque nom est cherché dans `assets/unit_cards/` et dans `assets/portraits_units/`. En effet, la carte d'un personnage est le plus souvent construite par le jeu à partir de son portrait : le nom de carte donné par la table des variantes n'existe pas dans `ui/units/icons`. `exports/missing_unit_cards.csv` liste ce qui reste introuvable, avec le nom de l'unité, sa clé et tous les fichiers essayés.
 
+## Page My Armies (`docs/armies.html`)
+
+Toutes les armées enregistrées dans le navigateur : celles du bouton **Save** du builder, celles importées du jeu, ajoutées depuis un lien ou restaurées d'une sauvegarde. Le bouton **Open** du builder ouvre cette page.
+
+- **Stockage** : dans le navigateur (`localStorage`, clé `tww3-builder:armies`, la même que le bouton Save ; les dossiers vides dans `tww3-builder:folders`). Une armée : `{ id, name, r (race), a (unités, même encodage que les liens), m (notes), cost, units, saved, updated, patch, fav, folder, tags, source }`. Réenregistrer une armée du même nom depuis le builder garde son favori, son dossier, ses tags et sa provenance.
+- **Filtres** : recherche (nom, unités, notes, tags, dossier), collections (toutes, favoris, éditées cette semaine, dossiers), factions, statut, provenance, tags ; tri par date, nom, faction ou coût ; vues cartes, liste ou par faction. Les favoris restent en tête.
+- **Statut** : chaque armée est recalculée avec les données du patch courant et les mêmes règles que le builder (général, un seul lord, 20 unités, budget, plafonds, unités disparues) : « Ready to play », « ⚠ » avec le problème, ou « ⟳ Saved on patch … » pour une armée enregistrée sur un patch plus ancien.
+- **Par armée** : Open (dans le builder), Share (lien, fichier `.army_setup` identique à l'export du builder, image via `index.html?do=png#…`, texte pour Discord), renommer, dupliquer, dossier, tags, notes, supprimer (avec annulation).
+- **Sélection multiple** : comparer deux armées (coût, modèles, puissance de mêlée et de tir, vie, vitesse, réponses aux menaces, unités communes), déplacer dans un dossier, ajouter un tag, exporter la sélection en fichier de sauvegarde, supprimer.
+- **Import** : plusieurs `.army_setup` du jeu d'un coup (glisser-déposer ou sélection), un lien du builder, ou un fichier de sauvegarde. **Backup** télécharge toutes les armées et les dossiers dans un fichier JSON, à réimporter sur un autre ordinateur ou navigateur (les doublons sont ignorés).
+
+`build_meta.py` génère la page à partir de `app/armies_template.html`, avec les données nécessaires pour décoder, chiffrer, valider et exporter les armées (roster, coûts des améliorations, plafonds, expérience, quelques statistiques). Le builder accepte aussi `index.html?do=png#…` et `?do=export#…`, qui lancent l'image ou l'export du fichier du jeu à l'ouverture.
+
 ## Pages Faction Guide (`docs/meta.html`) et Meta Overview (`docs/overview.html`)
 
 - **Faction Guide** : un guide PvP par faction, `meta.html?race=skaven`, avec l'onglet dans l'adresse (`#guide`, `#tiers`, `#matchups`, `#patch` ; l'ancien `#armies` ouvre l'onglet Guide).
 - **Meta Overview** : la tier list des factions (`overview.html#tiers`) et la matrice des matchups (`overview.html#matrix`).
 
-**Navigation** : les trois pages du site ont le même bouton « Army Builder / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
+**Navigation** : les pages du site ont le même bouton « Army Builder / My Armies / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
 
 ```
 app/meta_template.html             page Faction Guide (HTML + CSS + JavaScript, sans bibliothèque)
@@ -499,11 +512,11 @@ Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fic
 
 ## Git et GitHub
 
-**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `app/meta_template.html`, `app/overview_template.html`, `history/`, `docs/` (le site) et ce README.
+**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `app/meta_template.html`, `app/overview_template.html`, `app/armies_template.html`, `history/`, `docs/` (le site) et ce README.
 **Ce qui ne l'est pas** (voir `.gitignore`) : `tww3.duckdb`, `target/`, `logs/`, `exports/`, `.venv/`, ainsi que les images originales extraites du jeu (`assets/`).
 
 **Routine après une modification**, avec GitHub Desktop :
-1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages Faction Guide et Meta Overview).
+1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages My Armies, Faction Guide et Meta Overview).
 2. Dans GitHub Desktop, onglet **Changes** : relis les fichiers modifiés.
 3. Écris un résumé en bas à gauche, par exemple « Roster : ajout des images », puis clique sur **Commit to main**.
 4. Clique sur **Push origin**. Le code est sauvegardé sur GitHub, et le site en ligne se met à jour en une à deux minutes.

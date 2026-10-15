@@ -581,7 +581,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
 <body>
 
 <header class="topbar">
-  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="meta.html" id="metaLink">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
+  <nav class="site-nav" aria-label="Site"><a href="index.html" aria-current="page">Army Builder</a><a href="armies.html">My Armies</a><a href="meta.html" id="metaLink">Faction Guide</a><a href="overview.html">Meta Overview</a></nav>
   <button class="ex-btn" id="templatesBtn" title="Ready-made armies for this race"><span class="ex-ico" aria-hidden="true">📖</span><span class="ex-lbl">Example armies</span><span class="n" id="exCount"></span></button>
   <div class="topbar-right">
   <span class="patch" id="patchPill"></span>
@@ -608,7 +608,7 @@ dl.kv dd { margin: 0; font-variant-numeric: tabular-nums; }
       </div></div>
       <div class="tgrp"><span class="cap">My armies</span><div class="row">
         <button class="b2" id="saveBtn" title="Save to My armies in this browser"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/><path d="M8 20v-6h8v6"/></svg><span class="lbl">Save</span></button>
-        <button class="b2" id="armiesBtn" title="Open your saved armies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="lbl">Open</span></button>
+        <button class="b2" id="armiesBtn" title="Open My Armies: all your saved and imported armies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="lbl">Open</span></button>
       </div></div>
       <div class="tgrp"><span class="cap">Share</span><div class="row">
         <button class="b2" id="shareBtn" title="Copy a link to this army"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span class="lbl">Copy link</span></button>
@@ -1632,8 +1632,11 @@ function saveFavourite() {
   if (!state.army.length) { flash('The army is empty.'); return; }
   const e = encodeArmy();
   const name = state.name.trim() || `${race().name} – ${new Date().toLocaleDateString('en-GB')}`;
-  const list = readFavs().filter(f => !(f.name === name && f.r === e.r));
-  list.unshift({ id: Date.now(), name, r: e.r, a: e.a, m: e.m, cost: spent(), units: state.army.length, saved: new Date().toISOString() });
+  const all = readFavs(), prev = all.find(f => f.name === name && f.r === e.r) || {};
+  const list = all.filter(f => f !== prev), now = new Date().toISOString();
+  // on garde ce que My Armies a ajouté (favori, dossier, tags, provenance) quand on réenregistre une armée du même nom
+  list.unshift({ ...prev, id: prev.id || Date.now(), name, r: e.r, a: e.a, m: e.m, cost: spent(), units: state.army.length,
+    saved: prev.saved || now, updated: now, patch: DATA.patch, source: prev.source || 'saved' });
   const saved = writeFavs(list);
   flash(saved ? `Saved “${name}” in this browser.` : 'Could not save in this browser.', saved);
 }
@@ -2114,7 +2117,7 @@ function setupTools() {
     const n = $('armyNotes'); n.hidden = !n.hidden; $('notesBtn').setAttribute('aria-expanded', String(!n.hidden)); if (!n.hidden) n.focus();
   });
   $('saveBtn').addEventListener('click', saveFavourite);
-  $('armiesBtn').addEventListener('click', showFavourites);
+  $('armiesBtn').addEventListener('click', () => { location.href = 'armies.html'; });
   $('shareBtn').addEventListener('click', async () => {
     const link = shareLink();
     try { await navigator.clipboard.writeText(link); flash('Link copied to the clipboard.', true); }
@@ -2204,7 +2207,12 @@ function init() {
   setupDragAndDrop();
   setupTooltips();
   trackArmyHeight();
-  if (!loadFromHash()) {
+  const loaded = loadFromHash();
+  // actions lancées depuis My Armies : index.html?do=png#… (image) ou ?do=export#… (fichier du jeu)
+  const todo = new URLSearchParams(location.search).get('do');
+  if (loaded && todo === 'png') setTimeout(exportPng, 300);
+  if (loaded && todo === 'export') setTimeout(exportArmySetup, 300);
+  if (!loaded) {
     const wanted = new URLSearchParams(location.search).get('race');
     setRace(Math.max(0, DATA.races.findIndex(r => raceSlug(r) === wanted || r.key === wanted)), { record: false });
   }
