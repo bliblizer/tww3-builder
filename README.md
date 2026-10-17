@@ -391,6 +391,25 @@ Le séparateur `,` ou `;` (Excel en français) est détecté automatiquement. Un
 
 **Images des cartes** : `build_app.py` essaie, dans l'ordre, la carte du jeu (`ui/units/icons`, sauf carte générique « placeholder »), puis le portrait du personnage, puis les autres variantes de ce portrait déclarées par le jeu (`pvp_roster_options.portrait_images`) ou présentes dans les assets (ex. `_campaign_02_0` si `_campaign_03_0` manque). Chaque nom est cherché dans `assets/unit_cards/` et dans `assets/portraits_units/`. En effet, la carte d'un personnage est le plus souvent construite par le jeu à partir de son portrait : le nom de carte donné par la table des variantes n'existe pas dans `ui/units/icons`. `exports/missing_unit_cards.csv` liste ce qui reste introuvable, avec le nom de l'unité, sa clé et tous les fichiers essayés.
 
+## Page Magic (`docs/magic.html`)
+
+Un guide PvP des domaines de magie : `magic.html`, ou `magic.html#hashut` pour ouvrir directement un domaine.
+
+- **Tier list des domaines** : Meta (joué dans la plupart des parties), Situational (bon matchup ou bon lanceur), Weak (rarement joué), plus « Not rated » pour un domaine sans tier. Un filtre par faction estompe les domaines inaccessibles ; la recherche trouve un sort, un domaine ou une faction (y compris par le nom français entendu dans la vidéo).
+- **Fiche d'un domaine** : icône du jeu, tier, lanceurs, résumé, puis les sorts groupés par tier (« Rarely played » et « Not rated yet » repliés). Pour chaque sort : mana, recharge, durée, portée, dégâts (normaux, perforants, magiques, enflammés, par tick) et effets, lus dans les données du jeu par la clé du sort, plus le conseil d'overcast et le commentaire. Encadré « What to take » : les combos recommandés avec leur coût de base.
+- Les **Runes naines** sont traitées comme un domaine (les runes du Runesmith).
+
+Fichiers (`config/magic/`, UTF-8, virgule ou point-virgule) :
+
+| Fichier | Colonnes |
+|---|---|
+| `lores.csv` | `lore_id`, `lore_name`, `casters`, `tier` (meta, situational, weak ou vide), `comment`, `video_timestamp` |
+| `spells.csv` | `lore_id`, `spell_key` (clé du jeu, seule colonne utilisée pour retrouver le sort), `spell_name` (pour la lecture), `video_name`, `tier`, `overcast` (yes, no, optional), `comment`, `video_timestamp`, `confidence` (non affichée) |
+| `combos.csv` | `lore_id`, `combo` (main, alternative, beginner, best), `spell_1…3` (pour la lecture), `spell_1_key…spell_3_key`, `comment`, `video_timestamp` |
+| `video.txt` | facultatif : l'adresse de la vidéo source ; les horodatages deviennent alors des liens vers le bon moment |
+
+Le nom, l'icône, les coûts et les dégâts viennent du jeu par la clé : ils restent justes au patch suivant. L'icône du domaine est celle que le jeu associe aux options qui portent ses sorts (sinon l'icône de son premier sort Meta). Contrôles au build (dans `exports/meta_checks.csv`) : sort inconnu au patch courant, domaine absent de `lores.csv`, tier ou overcast invalide, doublon, combo qui cite un sort hors du domaine, domaine sans sort, domaine sans tier.
+
 ## Page My Armies (`docs/armies.html`)
 
 Toutes les armées enregistrées dans le navigateur : celles du bouton **Save** du builder, celles importées du jeu, ajoutées depuis un lien ou restaurées d'une sauvegarde. Le bouton **Open** du builder ouvre cette page.
@@ -411,7 +430,7 @@ Toutes les armées enregistrées dans le navigateur : celles du bouton **Save** 
 
 **Bandeau du haut** : sur toutes les pages, le sélecteur de faction (ou le nom du site) à gauche et les boutons de pages à droite. Il reste visible pendant le défilement (sauf sous 760 px de large) ; les éléments collants des pages se placent dessous grâce à la variable CSS `--top-h`, mesurée en JavaScript.
 
-**Navigation** : les pages du site ont le même bouton « Army Builder / My Armies / Faction Guide / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
+**Navigation** : les pages du site ont le même bouton « Army Builder / My Armies / Faction Guide / Magic / Meta Overview » en haut à gauche. Le builder et la page Faction Guide s'ouvrent l'un l'autre sur la faction affichée (`meta.html?race=skaven`, `index.html?race=skaven`). L'identifiant de faction est son nom en minuscules, mots reliés par des tirets. Un lien de partage d'armée (`index.html#…&a=…`) reste prioritaire sur `?race=`. Dans Meta Overview, chaque faction et chaque case de la matrice ouvrent la page de la faction.
 
 ```
 app/meta_template.html             page Faction Guide (HTML + CSS + JavaScript, sans bibliothèque)
@@ -516,11 +535,11 @@ Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fic
 
 ## Git et GitHub
 
-**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `app/meta_template.html`, `app/overview_template.html`, `app/armies_template.html`, `history/`, `docs/` (le site) et ce README.
+**Ce qui est versionné :** `raw/`, `config/`, `models/`, `macros/`, `seeds/`, `tests/`, `scripts/`, `app/template.html`, `app/meta_template.html`, `app/overview_template.html`, `app/armies_template.html`, `app/magic_template.html`, `history/`, `docs/` (le site) et ce README.
 **Ce qui ne l'est pas** (voir `.gitignore`) : `tww3.duckdb`, `target/`, `logs/`, `exports/`, `.venv/`, ainsi que les images originales extraites du jeu (`assets/`).
 
 **Routine après une modification**, avec GitHub Desktop :
-1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages My Armies, Faction Guide et Meta Overview).
+1. Relance `dbt build --profiles-dir .`, puis `python scripts/build_app.py` si le builder doit changer, puis `python scripts/build_meta.py` (pages My Armies, Faction Guide, Magic et Meta Overview).
 2. Dans GitHub Desktop, onglet **Changes** : relis les fichiers modifiés.
 3. Écris un résumé en bas à gauche, par exemple « Roster : ajout des images », puis clique sur **Commit to main**.
 4. Clique sur **Push origin**. Le code est sauvegardé sur GitHub, et le site en ligne se met à jour en une à deux minutes.

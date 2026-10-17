@@ -32,6 +32,9 @@ OUT = os.path.join(ROOT, 'docs', 'meta.html')
 OVERVIEW_TEMPLATE = os.path.join(ROOT, 'app', 'overview_template.html')
 OVERVIEW_OUT = os.path.join(ROOT, 'docs', 'overview.html')
 ARMIES_TEMPLATE = os.path.join(ROOT, 'app', 'armies_template.html')
+MAGIC_TEMPLATE = os.path.join(ROOT, 'app', 'magic_template.html')
+MAGIC_OUT = os.path.join(ROOT, 'docs', 'magic.html')
+MAGIC_DIR = os.path.join(ROOT, 'config', 'magic')
 ARMIES_OUT = os.path.join(ROOT, 'docs', 'armies.html')
 TIER_DIR = os.path.join(ROOT, 'config', 'tier_lists')
 ICON_ASSETS = os.path.join(ROOT, 'assets', 'faction_icons')
@@ -452,10 +455,6 @@ write_page(OVERVIEW_TEMPLATE, OVERVIEW_OUT, {
     'hasMatrix': bool(matrix), 'hasTiers': bool(faction_tier),
 })
 
-os.makedirs(os.path.dirname(CHECKS), exist_ok=True)
-with open(CHECKS, 'w', encoding='utf-8', newline='') as f:
-    w = csv.writer(f); w.writerow(['level', 'where', 'message']); w.writerows(checks)
-
 # My Armies : les armées sont dans le navigateur ; la page embarque ce qu'il faut pour les décoder, les chiffrer,
 # les valider (mêmes règles que le builder), les comparer et les exporter au format du jeu
 ST = ['unit_size', 'weapon_strength', 'missile_strength', 'is_anti_large', 'is_armour_piercing', 'range', 'has_magical_attacks', 'speed', 'health']
@@ -475,7 +474,84 @@ write_page(ARMIES_TEMPLATE, ARMIES_OUT, {
     'tabColors': TAB_COLORS,
 })
 
+# ---------- page Magic : domaines, sorts et combos (config/magic/) ----------
+# lores.csv  : lore_id, lore_name, casters, tier, comment, video_timestamp
+# spells.csv : lore_id, spell_key, spell_name, video_name, tier, overcast, comment, video_timestamp, confidence
+# combos.csv : lore_id, combo, spell_1, spell_2, spell_3, spell_1_key, spell_2_key, spell_3_key, comment, video_timestamp
+# video.txt  : facultatif, adresse de la vidéo source (les horodatages deviennent des liens)
+MAGIC_TIERS = {'meta', 'situational', 'weak'}
+ups_all = {}
+for rk_, ups_ in D.get('up', {}).items():
+    for k_, v_ in ups_.items(): ups_all.setdefault(k_, v_)
+lore_icon_votes = {}   # icône de domaine du jeu, retrouvée par les sorts des options qui la portent
+for cards_ in D['roster'].values():
+    for c_ in cards_:
+        for o_ in c_['opts']:
+            if o_.get('li'):
+                for k_ in o_.get('up') or []: lore_icon_votes.setdefault(k_, {}).setdefault((o_['li'], o_.get('lc')), 0); lore_icon_votes[k_][(o_['li'], o_.get('lc'))] += 1
+def mpath(name): return os.path.join(MAGIC_DIR, name)
+magic_lores, magic_spells, magic_combos = [], [], []
+if os.path.isdir(MAGIC_DIR) and os.path.exists(mpath('lores.csv')):
+    seen_l = set()
+    for i, row in enumerate(read_csv(mpath('lores.csv')), start=2):
+        lid = row.get('lore_id', ''); where = f'config/magic/lores.csv:{i}'
+        if not lid: continue
+        if lid in seen_l: check('warning', where, f'domaine {lid} en double'); continue
+        seen_l.add(lid)
+        t = row.get('tier', '').lower()
+        if t and t not in MAGIC_TIERS: check('error', where, f"tier « {row['tier']} » invalide (meta, situational, weak ou vide)"); t = ''
+        magic_lores.append({'lore_id': lid, 'lore_name': row.get('lore_name') or lid, 'casters': row.get('casters', ''), 'tier': t,
+                            'comment': row.get('comment', ''), 'video_timestamp': row.get('video_timestamp', '')})
+    seen_s = set()
+    for i, row in enumerate(read_csv(mpath('spells.csv')) if os.path.exists(mpath('spells.csv')) else [], start=2):
+        lid, k = row.get('lore_id', ''), row.get('spell_key', ''); where = f'config/magic/spells.csv:{i}'
+        if not lid and not k: continue
+        if lid not in seen_l: check('error', where, f'domaine « {lid} » absent de lores.csv'); continue
+        u = ups_all.get(k)
+        if not u: check('error', where, f"sort inconnu au {PATCH} : {k} ({row.get('spell_name', '')})"); continue
+        if (lid, k) in seen_s: check('warning', where, f'{u[0]} en double dans {lid}'); continue
+        seen_s.add((lid, k))
+        t = row.get('tier', '').lower()
+        if t and t not in MAGIC_TIERS: check('error', where, f"tier « {row['tier']} » invalide pour {u[0]}"); t = ''
+        oc = row.get('overcast', '').lower()
+        if oc and oc not in ('yes', 'no', 'optional'): check('warning', where, f"overcast « {oc} » ignoré (yes, no, optional)"); oc = ''
+        d = D['details'].get(k) or []
+        magic_spells.append({'lore_id': lid, 'spell_key': k, 'spell_name': u[0], 'video_name': row.get('video_name', ''), 'tier': t, 'overcast': oc,
+                             'comment': row.get('comment', ''), 'video_timestamp': row.get('video_timestamp', ''), 'icon': u[5] if len(u) > 5 else None,
+                             'mana': d[2] if d else None, 'cd': d[3] if d else None, 'dur': d[4] if d else None, 'fx': d[7] if len(d) > 7 else '',
+                             'range': d[8] if len(d) > 8 else None, 'dmg': d[9] if len(d) > 9 else None, 'dpt': d[10] if len(d) > 10 else None})
+    keys_of = {}
+    for sp in magic_spells: keys_of.setdefault(sp['lore_id'], set()).add(sp['spell_key'])
+    for i, row in enumerate(read_csv(mpath('combos.csv')) if os.path.exists(mpath('combos.csv')) else [], start=2):
+        lid = row.get('lore_id', ''); where = f'config/magic/combos.csv:{i}'
+        if not lid: continue
+        ks = [row.get(f'spell_{n}_key', '') for n in (1, 2, 3)]
+        bad = [k for k in ks if k and k not in keys_of.get(lid, set())]
+        if bad: check('error', where, f"combo de {lid} : sort(s) hors du domaine {', '.join(bad)}"); continue
+        magic_combos.append({'lore_id': lid, 'combo': row.get('combo', ''), **{f'spell_{n}': (ups_all[k][0] if k else '') for n, k in zip((1, 2, 3), ks)},
+                             **{f'spell_{n}_key': k for n, k in zip((1, 2, 3), ks)}, 'comment': row.get('comment', ''), 'video_timestamp': row.get('video_timestamp', '')})
+    for l in magic_lores:
+        votes = {}
+        for k in keys_of.get(l['lore_id'], ()):
+            for ic, n in lore_icon_votes.get(k, {}).items(): votes[ic] = votes.get(ic, 0) + n
+        best = max(votes, key=votes.get) if votes else (None, None)
+        first = next((s_['icon'] for s_ in magic_spells if s_['lore_id'] == l['lore_id'] and s_['tier'] == 'meta' and s_['icon']), None) or \
+                next((s_['icon'] for s_ in magic_spells if s_['lore_id'] == l['lore_id'] and s_['icon']), None)
+        l['icon'], l['colour'] = best[0] or first, best[1]
+        if not keys_of.get(l['lore_id']): check('warning', 'config/magic/spells.csv', f"aucun sort pour le domaine {l['lore_id']}")
+        if not l['tier']: check('info', 'config/magic/lores.csv', f"{l['lore_name']} : tier à remplir")
+    video = open(mpath('video.txt'), encoding='utf-8').read().strip() if os.path.exists(mpath('video.txt')) else ''
+    write_page(MAGIC_TEMPLATE, MAGIC_OUT, {
+        'patch': PATCH, 'lores': magic_lores, 'spells': magic_spells, 'combos': magic_combos, 'video': video,
+        'statIcons': {k: v for k, v in D.get('statIcons', {}).items() if k in ('weapon_strength', 'ap')},
+        'sourceNote': 'Source: a French PvP video guide (timestamps), checked against the game files for names, costs, damage and effects.'})
+
+os.makedirs(os.path.dirname(CHECKS), exist_ok=True)
+with open(CHECKS, 'w', encoding='utf-8', newline='') as f:
+    w = csv.writer(f); w.writerow(['level', 'where', 'message']); w.writerows(checks)
+
 print(OUT); print(OVERVIEW_OUT); print(ARMIES_OUT)
+if magic_lores: print(MAGIC_OUT, f'| magie : {len(magic_lores)} domaines, {len(magic_spells)} sorts, {len(magic_combos)} combos')
 print(f"{PATCH} | {len(races)} factions | breakdown : {len(breakdown)} | matchups : {len(matrix)} lignes | "
       f"tier list des factions : {len(faction_tier)} | icônes : {len(icons)} | tier lists d'unités : {len(tier_files)} | "
       f"armées d'exemple : {len(templates)} | patch changes : {'comparé à ' + PREV if PREV else 'aucun patch précédent dans history/'}")

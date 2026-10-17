@@ -1,0 +1,194 @@
+﻿lore_id,spell_key,spell_name,video_name,tier,overcast,comment,video_timestamp,confidence
+little_waaagh,wh_main_spell_lil_waaagh_gorkll_fix_it,Gork'll Fix It,Gork s'en charge,meta,yes,"Must-have: -45% speed in a huge zone for 24 s, 200 m range.",3:53,high
+little_waaagh,wh_main_spell_lil_waaagh_itchy_nuisance,Itchy Nuisance,« Itchy »,meta,yes,Cast together with Gork'll Fix It on the enemy when your cavalry arrives.,4:21,high
+little_waaagh,wh_main_spell_lil_waaagh_sneaky_stabbin,Sneaky Stabbin',Poignard perfide,situational,,"Third pick: costs only 4, but buffs a single unit.",5:34,high
+little_waaagh,wh_main_spell_lil_waaagh_vindictive_glare,Vindictive Glare,Feu d'artifice / pétard,situational,,"250 m range, but goblins are short: projectiles often hit the ground.",4:59,medium
+little_waaagh,wh_main_spell_lil_waaagh_night_shroud,Night Shroud,La lune (invisibilité),weak,,"Fun invisibility, not meta.",4:53,medium
+little_waaagh,wh_main_spell_lil_waaagh_curse_of_da_bad_moon,Curse of Da Bad Moon,,,,,,
+big_waaagh,wh_main_spell_big_waaagh_eadbutt,'Eadbutt,Coup de boule (souffle),meta,,"Best spell of the lore: cheap breath, magical, hits many models; spam it.",6:16,high
+big_waaagh,wh_main_spell_big_waaagh_ere_we_go,'Ere We Go,« +40 »,meta,,+40 melee attack in a zone for 38 s; time it well.,6:45,high
+big_waaagh,wh_main_spell_big_waaagh_fists_of_gork,Fists of Gork,Buff une unité,situational,,"Magical attacks against daemons, but one unit only.",7:07,medium
+big_waaagh,wh_main_spell_big_waaagh_gaze_of_mork,Gaze of Mork,Regard de Mork,weak,yes,Single projectile: easily blocked by another unit.,5:53,high
+big_waaagh,wh_main_spell_big_waaagh_foot_of_gork,Foot of Gork,Pied de Gork,weak,,"Fine in PvE, useless in PvP.",6:56,high
+big_waaagh,wh_main_spell_big_waaagh_brain_bursta,Brain Bursta,L'explosion,weak,,Not very useful.,7:01,medium
+light,wh_main_spell_light_net_of_amyntok,Net of Amyntok,Filet,meta,optional,"Top 3 most played spell; net a unit to kill it, not just to hold it.",7:50,high
+light,wh_main_spell_light_shems_burning_gaze,Shem's Burning Gaze,Regard embrasé,meta,yes,"5 projectiles; kills artillery (cannons, mortars).",9:01,high
+light,wh_main_spell_light_bironas_timewarp,Birona's Timewarp,Distorsion de Birona,meta,optional,"Speed, charge and melee attack in a 200 m zone for 50 s, for 11.",10:15,high
+light,wh_main_spell_light_banishment,Banishment,Bannissement,situational,,"Good, but you take the Net instead; great on Mazdamundi who has it innately.",8:38,high
+light,wh_main_spell_light_light_of_battle,Light of Battle,Lumière de bataille,situational,,"Units cannot rout for 22 s: very situational, strong in 2v2.",9:29,high
+light,wh_main_spell_light_phas_protection,Pha's Protection,Protection de Pha,situational,yes,Single unit unless overcast; a Net often does the same job.,9:58,high
+heavens,wh_main_spell_heavens_urannons_thunderbolt,Urannon's Thunderbolt,Foudre d'Uranon,meta,yes,"Huge damage for little mana, hard to dodge: spam it.",12:50,high
+heavens,wh_main_spell_heavens_wind_blast,Wind Blast,Tornade,meta,no,Fast breath that slows: catches fleeing cavalry.,12:02,high
+heavens,wh_main_spell_heavens_harmonic_convergence,Harmonic Convergence,Convergence harmonique,situational,no,Third pick; gets you out of bad situations for 5 mana.,12:38,high
+heavens,wh_main_spell_heavens_curse_of_the_midnight_wind,Curse of the Midnight Wind,Souffle de minuit,situational,,Nice because it is a zone.,13:27,high
+heavens,wh_main_spell_heavens_comet_of_casandora,Comet of Casandora,Comète de Casandora,weak,,Expensive and very easy to dodge.,13:14,high
+heavens,wh_main_spell_heavens_chain_lightning,Chain Lightning,Déluge d'éclairs,weak,,Not worth it.,13:27,high
+fire,wh_main_spell_fire_the_burning_head,The Burning Head,Tête enflammée,meta,optional,Spam it; also lowers leadership.,14:03,high
+fire,wh_main_spell_fire_flaming_sword_of_rhuin,Flaming Sword of Rhuin,Épée ardente de Rhuin,meta,,"Flaming and magical attacks, 200 m, 28 s.",14:15,high
+fire,wh_main_spell_fire_cascading_fire_cloak,Cascading Fire Cloak,Cape embrasée,situational,,"Very good, but The Burning Head is spammed instead.",13:56,high
+fire,wh_main_spell_fire_fireball,Fireball,Boule de feu,situational,,Small damage for little mana.,14:28,high
+fire,wh_main_spell_fire_flame_storm,Flame Storm,,,,,,
+fire,wh_main_spell_fire_piercing_bolts_of_burning,Piercing Bolts of Burning,,,,,,
+death,wh_main_spell_death_spirit_leech,Spirit Leech,Buveur d'esprit,meta,optional,Masterclass; overcast for a 300 m range so the target cannot escape.,14:39,high
+death,wh_main_spell_death_doom_and_darkness,Doom & Darkness,Fatalitas,meta,yes,-16 leadership in a zone when overcast: routs low-leadership armies (not Dwarfs).,15:40,high
+death,wh_main_spell_death_the_fate_of_bjuna,The Fate of Bjuna,Rire de Bjuna,situational,,Huge damage but 22 mana and slow to arrive; best on ~60-model units.,14:45,high
+death,wh_main_spell_death_aspect_of_the_dreadknight,Aspect of the Dread Knight,,,,,,
+death,wh_main_spell_death_soulblight,Soulblight,,,,,,
+death,wh_main_spell_death_the_purple_sun_of_xereus,The Purple Sun of Xereus,,,,,,
+vampires,wh_main_spell_vampires_invocation_of_nehek,Invocation of Nehek,Invocation,meta,yes,Mandatory heal; overcast for a zone.,16:33,high
+vampires,wh_main_spell_vampires_gaze_of_nagash,Gaze of Nagash,Regard de Nagash,meta,yes,Huge damage; can go through a line of infantry. Projectile: watch the terrain.,16:39,high
+vampires,wh_main_spell_vampires_wind_of_death,Wind of Death,Vent de mort,situational,yes,"One-shots infantry, but costs 20 overcast.",17:07,high
+vampires,wh_main_spell_vampires_vanhels_danse_macabre,Vanhel's Danse Macabre,Danse macabre,situational,yes,Speed; overcast to cast it in a zone.,17:19,high
+vampires,wh_main_spell_vampires_raise_dead,Raise Dead,Résurrection,situational,,Good third pick for beginners.,17:19,high
+vampires,wh_main_spell_vampires_curse_of_years,Curse of Years,,,,,,
+vampires,wh2_dlc11_spell_vampires_drowned_dead,Drowned Dead,,,,,,
+metal,wh_main_spell_metal_final_transmutation,Final Transmutation,Ultime transmutation,meta,yes,"Cannot be dodged; overcast doubles the duration, so the damage, for less than twice the cost.",18:17,high
+metal,wh_main_spell_metal_searing_doom,Searing Doom,Main de plomb,situational,,Very strong but can be dodged.,2:04,medium
+metal,wh_main_spell_metal_plague_of_rust,Plague of Rust,Peste oxydante,situational,,Cheap complement (4 mana).,18:35,high
+metal,wh_main_spell_metal_gehennas_golden_hounds,Gehenna's Golden Hounds,,,,,,
+metal,wh_main_spell_metal_glittering_robe,Glittering Robe,,,,,,
+metal,wh_main_spell_metal_transmutation_of_lead,Transmutation of Lead,,,,,,
+shadows,wh_dlc05_spell_shadow_the_withering,The Withering,Affaiblissement,meta,optional,Masterclass debuff; overcast lasts 34 s.,19:03,high
+shadows,wh_dlc05_spell_shadow_melkoths_mystifying_miasma,Melkoth's Mystifying Miasma,Miasme,meta,,Slow plus some damage; also used on cavalry just for the slow.,19:25,high
+shadows,wh_dlc05_spell_shadow_pit_of_shades,Pit of Shades,Abîme de noirceur,situational,,"100% armour-piercing, but can be dodged.",20:01,high
+shadows,wh_dlc05_spell_shadow_okkams_mindrazor,Okkam's Mindrazor,Okkam's Mindrazor,weak,,"Only for zone magical attacks, at 14 mana.",20:21,high
+shadows,wh_dlc05_spell_shadow_the_enfeebling_foe,The Enfeebling Foe,(armure et commandement),weak,,"Some armour and leadership loss, not worth it.",19:09,medium
+shadows,wh_dlc05_spell_shadow_the_penumbral_pendulum,The Penumbral Pendulum,Pendule,weak,,Bad.,19:03,high
+wild,wh_dlc03_spell_wild_traitor_kin,Traitor-Kin,« Rébellion animale »,meta,yes,"The only spell you play: like Flock of Doom, boosted, and it slows.",20:33,medium
+wild,wh_dlc03_spell_wild_bray_scream,Bray-Scream,La Bram,situational,,"Small 100% armour-piercing breath, as a complement.",20:55,high
+wild,wh_dlc03_spell_wild_devolve,Devolve,,weak,,The rest of the lore is not played.,20:27,medium
+wild,wh_dlc03_spell_wild_mantle_of_ghorok,Mantle of Ghorok,,weak,,The rest of the lore is not played.,20:27,medium
+wild,wh_dlc03_spell_wild_savage_dominion,Savage Dominion,,weak,,The rest of the lore is not played.,20:27,medium
+wild,wh_dlc03_spell_wild_viletide,Viletide,,weak,,The rest of the lore is not played.,20:27,low
+beasts,wh_dlc03_spell_beasts_flock_of_doom,Flock of Doom,Nuée de corbeaux,meta,yes,Spam it overcast.,21:14,high
+beasts,wh_dlc03_spell_beasts_the_amber_spear,The Amber Spear,Lance d'ambre,situational,,Like Fireball: can always be useful.,21:26,high
+beasts,wh_dlc03_spell_beasts_panns_impenetrable_pelt,Pann's Impenetrable Pelt,,,,,,
+beasts,wh_dlc03_spell_beasts_the_curse_of_anraheir,The Curse of Anraheir,,,,,,
+beasts,wh3_cp1_spell_beasts_transformation_of_kadon,Transformation of Kadon,,,,,,
+beasts,wh_dlc03_spell_beasts_wyssans_wildform,Wyssan's Wildform,,,,,,
+life,wh_dlc05_spell_life_regrowth,Regrowth,Vigueur du printemps,meta,optional,One of the biggest heals; overcast to heal 4 units.,21:51,high
+life,wh_dlc05_spell_life_awakening_of_the_wood,Awakening of the Wood,Éveil du bois,meta,,"Broken: -45% speed for 12 s, very fast to cast.",21:38,high
+life,wh_dlc05_spell_life_earth_blood,Earth Blood,Sang de la terre,situational,,Easy option for beginners.,22:43,medium
+life,wh_dlc05_spell_life_flesh_to_stone,Flesh to Stone,,,,,,
+life,wh_dlc05_spell_life_shield_of_thorns,Shield of Thorns,,,,,,
+life,wh_dlc05_spell_life_the_dwellers_below,The Dwellers Below,,,,,,
+high,wh2_main_spell_high_magic_tempest,Tempest,Tempête,meta,optional,"-60% speed to flying units in a zone, even when they land; overcast for big damage.",23:11,high
+high,wh2_main_spell_high_magic_soul_quench,Soul Quench,Étouffement de l'âme,meta,yes,Combo with Tempest on a flying lord: about 1000 damage overcast.,23:48,high
+high,wh2_main_spell_high_magic_apotheosis,Apotheosis,Consécration,meta,no,Small cheap heal (5 mana).,23:36,high
+high,wh2_main_spell_high_magic_arcane_unforging,Arcane Unforging,,weak,,The rest is forgettable.,24:49,medium
+high,wh2_main_spell_high_magic_fiery_convocation,Fiery Convocation,,weak,,The rest is forgettable.,24:49,medium
+high,wh2_main_spell_high_magic_hand_of_glory,Hand of Glory,,weak,,The rest is forgettable.,24:49,medium
+dark,wh2_main_spell_dark_magic_soul_stealer,Soul Stealer,Voleur d'âme,meta,no,"Zone damage that heals by % of health: best on a dragon. 18 mana, cannot be overcast.",25:02,high
+dark,wh2_main_spell_dark_magic_doombolt,Doombolt,Éclair noir,meta,yes,"Falls from the sky, hard to dodge: one-shots lords (1400 damage overcast).",25:37,high
+dark,wh2_main_spell_dark_magic_chillwind,Chillwind,Vent glacial,situational,,"Fast, 100% armour-piercing, magical, slows: optional complement.",25:19,high
+dark,wh2_main_spell_dark_magic_bladewind,Bladewind,,,,,,
+dark,wh2_main_spell_dark_magic_power_of_darkness,Power of Darkness,,,,,,
+dark,wh2_main_spell_dark_magic_word_of_pain,Word of Pain,,,,,,
+ruin,wh2_main_spell_ruin_warp_lightning,Warp Lightning,Malfoudre,meta,yes,"Broken: 10 bolts overcast for 11 mana, hits everything.",27:06,high
+ruin,wh2_main_spell_ruin_howling_warpgale,Howling Warpgale,Tempête warp,meta,optional,"Like Tempest without the damage, but cheaper; 14 s is enough with Skaven shooting.",26:48,high
+ruin,wh2_main_spell_ruin_cracks_call,Crack's Call,« celui qui arrache un seigneur »,situational,yes,Heavy damage on a lord and -30 armour around it.,27:49,medium
+ruin,wh2_main_spell_ruin_death_frenzy,Death Frenzy,,,,,,
+ruin,wh2_main_spell_ruin_scorch,Scorch,,,,,,
+ruin,wh2_main_spell_grey_seer_the_dreaded_thirteenth_spell,The Dreaded Thirteenth Spell,,,,,,
+plague,wh2_main_spell_plague_vermintide,Vermintide,Flot de vermine / invocation de guerriers des clans,meta,,Costs almost nothing; the safe pick.,28:11,medium
+plague,wh2_main_spell_plague_bless_with_filth,Bless with Filth,Infestation de bénédiction,meta,no,"Gives poison to your fighting units in a zone, cheaper than Pestilent Breath.",29:23,high
+plague,wh2_main_spell_plague_pestilent_breath,Pestilent Breath,Souffle de pestilence,situational,yes,Slow and debuffs; must be overcast for the poison.,28:11,high
+plague,wh2_main_spell_plague_wither,Wither,Décrépitude,situational,yes,"-30 armour in a zone, -60 overcast for 10: against heavily armoured factions.",28:23,high
+plague,wh2_main_spell_plague_plague,Plague,La peste,situational,,"Huge damage, but a vortex that is easy to dodge.",28:49,high
+plague,wh2_main_spell_grey_seer_the_dreaded_thirteenth_spell,The Dreaded Thirteenth Spell,,,,,,
+stealth,wh2_dlc14_spell_stealth_warp_stars,Warp Stars,Étoile de malpierre,meta,yes,"Spam on lords and single entities: 2 projectiles overcast, magical.",30:46,high
+stealth,wh2_dlc14_spell_stealth_veil_of_shadows,Veil of Shadows,« Haut de vert » (ralentissement + vigueur),situational,,Huge slow and debuff that drains vigour.,30:04,low
+stealth,wh2_dlc14_spell_stealth_armour_of_darkness,Armour of Darkness,,,,,,
+stealth,wh2_dlc14_spell_stealth_black_whirlwind,Black Whirlwind,,,,,,
+stealth,wh2_dlc14_spell_stealth_brittle_bone,Brittle Bone,,,,,,
+stealth,wh2_main_spell_ruin_skitterleap,Skitterleap,,,,,,
+nehekhara,wh2_dlc09_spell_nehekhara_djafs_incantation_of_cursed_blades,Djaf's Incantation of Cursed Blades,Incantation de Djaf,meta,yes,Always overcast: -45% speed on one unit.,31:20,high
+nehekhara,wh2_dlc09_spell_nehekhara_usirians_incantation_of_vengeance,Usirian's Incantation of Vengeance,Incantation de Vengeance,meta,yes,+16 anti-large and +25% damage on one unit for almost nothing.,31:57,high
+nehekhara,wh2_dlc09_spell_nehekhara_nerus_incantation_of_protection,Neru's Incantation of Protection,(+40 résistance physique),situational,no,Very situational: only against armies without magical attacks.,32:57,high
+nehekhara,wh2_dlc09_spell_nehekhara_ptras_incantation_of_righteous_smiting,Ptra's Incantation of Righteous Smiting,,,,,,
+nehekhara,wh2_dlc09_spell_nehekhara_sakhmets_incantation_of_the_skullstorm,Sakhmet's Incantation of the Skullstorm,,,,,,
+nehekhara,wh2_dlc09_spell_nehekhara_usekhps_incantation_of_desiccation,Usekhp's Incantation of Desiccation,,,,,,
+deep,wh2_dlc11_spell_deep_fog_of_the_damned,Fog of the Damned,Brouillard des damnés,meta,yes,-24 melee attack and -8 defence for 35 s; -40 overcast.,33:39,high
+deep,wh2_dlc11_spell_deep_tidecall,Tidecall,« Aquamanci »,meta,no,-25% speed for 5 mana: spam it.,33:57,medium
+deep,wh2_dlc11_spell_deep_denizens_of_the_deep,Denizens of the Deep,Résidents des profondeurs,situational,,Summons tough crabs; harder to play.,34:52,high
+deep,wh2_dlc11_spell_deep_krakens_pull,Kraken's Pull,"(sort « troll », 15 de mana)",weak,,"-45% slow but far too slow to cast, and costs 15.",33:45,medium
+deep,wh2_dlc11_spell_deep_spiteful_shot,Spiteful Shot,,,,,,
+deep,wh2_dlc11_spell_deep_ghost_ship,Vangheist's Revenge,,,,,,
+runes,wh2_dlc17_rune_abilities_rune_of_slowness,Rune of Slowness,Rune de lenteur,meta,optional,The most played rune: big slow on one unit for 30 s.,36:03,high
+runes,wh2_dlc17_rune_abilities_rune_of_speed,Rune of Speed,Rune de vitesse,meta,optional,+45% speed and +24 melee attack in a zone; great to chase or to flee.,36:19,high
+runes,wh_main_rune_abilities_rune_of_wrath_and_ruin,Rune of Wrath & Ruin,L'explosion,meta,yes,"Armour-piercing, magical explosion; take it with Speed or Slowness.",37:04,high
+runes,wh_main_rune_abilities_rune_of_negation,Rune of Negation,(+40 % de résistance),situational,,"+40% resistance, usually on your lord.",36:52,high
+runes,wh_main_rune_abilities_rune_of_oath_and_steel,Rune of Oath & Steel,(l'armure),weak,,Armour: Dwarfs already have plenty.,36:58,high
+runes,wh2_dlc17_rune_abilities_rune_of_breaking,Rune of Breaking,,weak,,The rest is not played.,37:15,medium
+hashut,wh3_dlc23_spell_hashut_burning_wrath,Burning Wrath,Colère ardente,meta,yes,"More meta but harder: 3 moving projectiles overcast, as strong as Flames of Azgorh for half the cost.",38:18,high
+hashut,wh3_dlc23_spell_hashut_curse_of_hashut,Curse of Hashut,Malédiction d'Hashut,meta,yes,A Spirit Leech with 200 m range: the target cannot escape.,39:25,high
+hashut,wh3_dlc23_spell_hashut_flames_of_azgorh,Flames of Azgorh,Flammes d'Azgorh,meta,yes,No-brainer for beginners: huge damage on infantry (60 projectiles overcast).,37:27,high
+hashut,wh3_dlc23_spell_hashut_ash_storm,Ash Storm,Nuage de cendre,meta,no,Cheap slow and fire debuff to pair with the big spell.,40:06,high
+hashut,wh3_dlc23_spell_hashut_dark_subjugation,Dark Subjugation,,,,,,
+hashut,wh3_dlc23_spell_hashut_hell_hammer,Hell Hammer,,,,,,
+nurgle,wh3_main_spell_nurgle_fleshy_abundance,Fleshy Abundance,Bienfait des boursouflures,meta,yes,The easy pick: the biggest zone heal; overcast heals 4 units.,40:44,high
+nurgle,wh3_main_spell_nurgle_rancid_visitations,Rancid Visitations,Infestation putride,meta,yes,Best direct damage spell: kills small lords (Malagor in two casts).,41:30,high
+nurgle,wh3_main_spell_nurgle_miasma_of_pestilence,Miasma of Pestilence,Miasme de pestilence,meta,no,Cheap (4): cancels a cavalry charge if timed well.,42:52,high
+nurgle,wh3_main_spell_nurgle_stream_of_corruption,Stream of Corruption,Flot de corruption,situational,,Longest breath: can cross 2 or 3 blobbed units.,42:40,high
+nurgle,wh3_main_spell_nurgle_pestilent_pustule,Blight Boil,,weak,,Not played.,43:22,medium
+nurgle,wh3_main_spell_nurgle_curse_of_the_leper,Curse of the Leper,,weak,,Not played.,43:22,medium
+tzeentch,wh3_main_spell_tzeentch_blue_fire_of_tzeentch,Blue Fire of Tzeentch,Feu bleu,meta,yes,Kills lightly armoured infantry; always overcast.,43:28,high
+tzeentch,wh3_main_spell_tzeentch_pink_fire_of_tzeentch,Pink Fire of Tzeentch,Feu de Tzeentch,meta,yes,"Kills monsters, lords and cavalry; cast at max range (175 m), ideally from the air.",44:02,high
+tzeentch,wh3_main_spell_tzeentch_glean_magic,Glean Magic,Le sort n°1,meta,,Take it to regain winds of magic faster: near-infinite magic.,45:33,high
+tzeentch,wh3_main_spell_tzeentch_infernal_gateway,Infernal Gateway,Porte des enfers,situational,no,"Traps units like Pit of Shades, but a zone that can be dodged.",45:05,high
+tzeentch,wh3_main_spell_tzeentch_tzeentchs_firestorm,Tzeentch's Firestorm,L'éclair / le bombardement,situational,,"Misses often, especially on moving units.",45:50,low
+tzeentch,wh3_main_spell_tzeentch_treason_of_tzeentch,Treason of Tzeentch,,,,,,
+slaanesh,wh3_main_spell_slaanesh_lash_of_slaanesh,Lash of Slaanesh,Fouet de Slaanesh,meta,yes,"100% armour-piercing, magical; overcast doubles the damage.",46:58,high
+slaanesh,wh3_main_spell_slaanesh_acquiescence,Acquiescence,Consentement suicidaire,meta,yes,-45% speed.,47:25,high
+slaanesh,wh3_main_spell_slaanesh_pavane_of_slaanesh,Pavane of Slaanesh,Pavane,meta,,Drains vigour and enrages: forces flying units to land.,46:07,high
+slaanesh,wh3_main_spell_slaanesh_hysterical_frenzy,Hysterical Frenzy,,weak,,The others are much weaker.,48:43,medium
+slaanesh,wh3_main_spell_slaanesh_phantasmagoria,Phantasmagoria,,weak,,The others are much weaker.,48:43,medium
+slaanesh,wh3_main_spell_slaanesh_slicing_shards,Slicing Shards,,weak,,The others are much weaker.,48:43,medium
+great_maw,wh3_main_spell_great_maw_trollguts,Trollguts,Tripes de troll,meta,optional,Biggest single-target heal; overcast only when the unit has lost a lot.,48:49,high
+great_maw,wh3_main_spell_great_maw_braingobbler,Braingobbler,(moins de commandement),situational,no,Cheap complement: -16 leadership.,49:29,medium
+great_maw,wh3_main_spell_great_maw_bullgorger,Bullgorger,(plus de dégâts),situational,no,Cheap complement: more damage for longer.,49:35,medium
+great_maw,wh3_main_spell_great_maw_toothcracker,Toothcracker,(armure et résistance aux projectiles),situational,optional,Overcast for a long zone buff against shooting armies.,49:41,medium
+great_maw,wh3_main_spell_great_maw_bonecrusher,Bonecrusher,,weak,,Only two spells are worth playing.,48:49,medium
+great_maw,wh3_main_spell_great_maw_the_maw,The Maw,,weak,,Only two spells are worth playing.,48:49,medium
+ice,wh3_main_spell_ice_ice_sheet,Ice Sheet,Couche de glace,meta,no,Main spell: -25% speed and charge in a huge zone for 4 mana.,50:48,high
+ice,wh3_main_spell_ice_death_frost,Death Frost,Givre mortel,meta,no,A Spirit Leech; overcast only adds range.,51:19,high
+ice,wh3_main_spell_ice_ice_maidens_kiss,Ice Maiden's Kiss,Souffle de glace,situational,no,Adds frostbite: a second slow that stacks with Ice Sheet.,51:01,medium
+ice,wh3_main_spell_ice_heart_of_winter,Heart of Winter,Cœur de l'hiver,weak,,Bad.,52:17,medium
+ice,wh3_main_spell_ice_crystal_sanctuary,Crystal Sanctuary,,,,,,
+ice,wh3_main_spell_ice_frost_blades,Frost Blades,,,,,,
+tempest,wh3_main_spell_tempest_hailstorm,Hailstorm,La tempête,meta,yes,"Better than Searing Doom: 40 projectiles in a large zone, twice as many overcast.",52:28,medium
+tempest,wh3_main_spell_tempest_hawks_of_miska,Hawks of Miska,(débuff de commandement),meta,,-16 leadership in a moving zone for about 21 s.,53:13,low
+tempest,wh3_main_spell_tempest_gust_of_true_flight,Gust of True Flight,(précision et portée),situational,,Accuracy and range for your shooters: masterclass in 2v2.,52:23,medium
+tempest,wh3_main_spell_tempest_swiftwing,Swiftwing,Preste,situational,,"Speed for your cavalry, which is often already fast enough.",52:51,high
+tempest,wh3_main_spell_tempest_biting_wind,Biting Wind,,,,,,
+tempest,wh3_main_spell_tempest_blizzard,Blizzard,,,,,,
+hags,wh3_dlc24_spell_hags_the_forbidden_fens,The Forbidden Fens,"Vengeance / débuff vitesse, charge et vigueur",meta,yes,Slows charge and speed for 24 s; overcast it becomes a buff for your units.,54:06,medium
+hags,wh3_dlc24_spell_hags_vengeance_of_spirits,Vengeance of Spirits,(réduit au silence en zone),meta,yes,Silences in a zone; overcast boosts your spell mastery.,54:28,medium
+hags,wh3_dlc24_spell_hags_curse_of_the_ancient_witch,Curse of the Ancient Witch,(-60 armure),meta,yes,"-60 armour and -50% missile block, spreads to 5 units: even Chaos Warriors drop to 10 armour.",55:05,high
+hags,wh3_dlc24_spell_hags_malediction_of_madness,Malediction of Madness,(rage),situational,,"Enrage an enemy, or better your own unit for a big damage boost.",55:38,medium
+hags,wh3_dlc24_spell_hags_cursed_cauldron,Cursed Cauldron,,,,,,
+hags,wh3_dlc24_spell_hags_witchbrew,Witchbrew,,,,,,
+yang,wh3_main_spell_yang_dragons_breath,Dragon's Breath,Souffle du dragon,meta,yes,Always overcast (42 damage per model instead of 21): a better Blue Fire against light armour.,56:53,high
+yang,wh3_main_spell_yang_jade_shield,Jade Shield,Bouclier de jade,situational,optional,Halves the damage taken by one unit.,57:28,high
+yang,wh3_main_spell_yang_constellation_of_the_dragon,Constellation of the Dragon,,,,,,
+yang,wh3_main_spell_yang_might_of_heaven_and_earth,Might of Heaven & Earth,,,,,,
+yang,wh3_main_spell_yang_stone_ground_stance,Stone Ground Stance,,,,,,
+yang,wh3_main_spell_yang_wall_of_wind_and_fire,Wall of Wind & Fire,,,,,,
+yin,wh3_main_spell_yin_storm_of_shadows,Storm of Shadows,(sort principal),meta,yes,The only really good spell: -45% speed and charge in a zone for 4.,57:56,high
+yin,wh3_main_spell_yin_ancestral_warriors,Ancestral Warriors,,weak,,Not played.,58:08,medium
+yin,wh3_main_spell_yin_blossom_wind,Blossom Wind,,weak,,Not played.,58:08,medium
+yin,wh3_main_spell_yin_cloak_of_jet,Cloak of Jet,,weak,,Not played.,58:08,medium
+yin,wh3_main_spell_yin_missile_mirror,Missile Mirror,,weak,,Not played.,58:08,medium
+yin,wh3_main_spell_yin_talons_of_night,Talons of Night,,weak,,Not played.,58:08,medium
+mists,wh3_dlc27_spell_mists_ladrielles_shroud,Ladrielle's Shroud,Suaire de Ladrielle,meta,yes,Restores vigour and gives immunity to contact effects (poison…).,59:07,high
+mists,wh3_dlc27_spell_mists_walk_between_worlds,Walk Between Worlds,(combo avec la Pierre de nullité),meta,yes,+55 physical resistance: with the Null Stone item it makes a unit nearly immortal.,59:32,medium
+mists,wh3_dlc27_spell_mists_mathlanns_spite,Mathlann’s Spite,(ralentissement),situational,no,Slow.,1:00:44,medium
+mists,wh3_dlc27_spell_mists_mistress_of_the_deeps,Mistress of the Deeps,(l'invocation),weak,,"Summon, less interesting.",1:00:50,medium
+mists,wh3_dlc27_spell_mists_flensing_haar,Flensing Haar,,,,,,
+mists,wh3_dlc27_spell_mists_the_writhing_mist,The Writhing Mist,,,,,,
+undeath,wh3_dlc29_spell_undeath_morkharn_breath_of_darkness,Breath of Darkness,,,,,,
+undeath,wh3_dlc29_spell_undeath_razkhar_the_abyssal_swarm,The Abyssal Swarm,,,,,,
+undeath,wh3_dlc29_spell_undeath_akararan_the_dark_riders,The Dark Riders,,,,,,
+undeath,wh3_dlc29_spell_undeath_sulekhim_hand_of_dust,The Hand of Dust,,,,,,
+undeath,wh3_dlc29_spell_undeath_kandorak_the_harbinger,The Harbinger,,,,,,
+undeath,wh3_dlc29_spell_undeath_khizaar_the_soulstealer,The Soulstealer,,,,,,

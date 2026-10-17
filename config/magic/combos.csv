@@ -1,0 +1,53 @@
+﻿lore_id,combo,spell_1,spell_2,spell_3,spell_1_key,spell_2_key,spell_3_key,comment,video_timestamp
+little_waaagh,main,Gork'll Fix It,Itchy Nuisance,,wh_main_spell_lil_waaagh_gorkll_fix_it,wh_main_spell_lil_waaagh_itchy_nuisance,,"Both on the same target when your cavalry arrives, plus the Waaagh!.",4:33
+little_waaagh,alternative,Gork'll Fix It,Itchy Nuisance,Sneaky Stabbin',wh_main_spell_lil_waaagh_gorkll_fix_it,wh_main_spell_lil_waaagh_itchy_nuisance,wh_main_spell_lil_waaagh_sneaky_stabbin,Three cheap spells.,5:34
+big_waaagh,main,'Eadbutt,'Ere We Go,,wh_main_spell_big_waaagh_eadbutt,wh_main_spell_big_waaagh_ere_we_go,,,6:56
+light,main,Net of Amyntok,Shem's Burning Gaze,,wh_main_spell_light_net_of_amyntok,wh_main_spell_light_shems_burning_gaze,,The two most played spells by far.,9:23
+light,alternative,Shem's Burning Gaze,Birona's Timewarp,,wh_main_spell_light_shems_burning_gaze,wh_main_spell_light_bironas_timewarp,,Offensive choice.,10:26
+heavens,main,Urannon's Thunderbolt,Wind Blast,,wh_main_spell_heavens_urannons_thunderbolt,wh_main_spell_heavens_wind_blast,,Huge damage plus a slow.,13:46
+heavens,alternative,Urannon's Thunderbolt,Harmonic Convergence,,wh_main_spell_heavens_urannons_thunderbolt,wh_main_spell_heavens_harmonic_convergence,,,13:51
+fire,main,The Burning Head,Flaming Sword of Rhuin,,wh_main_spell_fire_the_burning_head,wh_main_spell_fire_flaming_sword_of_rhuin,,,14:21
+death,main,Spirit Leech,Doom & Darkness,,wh_main_spell_death_spirit_leech,wh_main_spell_death_doom_and_darkness,,,16:05
+death,alternative,The Fate of Bjuna,Spirit Leech,,wh_main_spell_death_the_fate_of_bjuna,wh_main_spell_death_spirit_leech,,Only if you are sure of your matchup.,16:10
+vampires,main,Invocation of Nehek,Gaze of Nagash,,wh_main_spell_vampires_invocation_of_nehek,wh_main_spell_vampires_gaze_of_nagash,,,17:59
+vampires,alternative,Invocation of Nehek,Vanhel's Danse Macabre,,wh_main_spell_vampires_invocation_of_nehek,wh_main_spell_vampires_vanhels_danse_macabre,,"Speed in a zone, overcast.",18:05
+vampires,beginner,Invocation of Nehek,Raise Dead,Vanhel's Danse Macabre,wh_main_spell_vampires_invocation_of_nehek,wh_main_spell_vampires_raise_dead,wh_main_spell_vampires_vanhels_danse_macabre,An answer to every situation.,17:49
+metal,main,Final Transmutation,,,wh_main_spell_metal_final_transmutation,,,"Overcast, alone, in 99% of games.",18:17
+metal,alternative,Final Transmutation,Plague of Rust,,wh_main_spell_metal_final_transmutation,wh_main_spell_metal_plague_of_rust,,Or with Searing Doom.,18:47
+shadows,main,The Withering,Melkoth's Mystifying Miasma,,wh_dlc05_spell_shadow_the_withering,wh_dlc05_spell_shadow_melkoths_mystifying_miasma,,The two stack very well.,19:56
+shadows,alternative,Pit of Shades,Melkoth's Mystifying Miasma,,wh_dlc05_spell_shadow_pit_of_shades,wh_dlc05_spell_shadow_melkoths_mystifying_miasma,,Depending on the matchup.,20:08
+wild,main,Traitor-Kin,,,wh_dlc03_spell_wild_traitor_kin,,,Overcast and spammed.,20:33
+wild,alternative,Traitor-Kin,Bray-Scream,,wh_dlc03_spell_wild_traitor_kin,wh_dlc03_spell_wild_bray_scream,,,20:55
+beasts,main,Flock of Doom,,,wh_dlc03_spell_beasts_flock_of_doom,,,Overcast and spammed.,21:14
+life,main,Regrowth,Awakening of the Wood,,wh_dlc05_spell_life_regrowth,wh_dlc05_spell_life_awakening_of_the_wood,,,22:43
+life,beginner,Regrowth,Earth Blood,,wh_dlc05_spell_life_regrowth,wh_dlc05_spell_life_earth_blood,,Save your lord or many units.,22:49
+high,main,Tempest,Soul Quench,Apotheosis,wh2_main_spell_high_magic_tempest,wh2_main_spell_high_magic_soul_quench,wh2_main_spell_high_magic_apotheosis,Take all three.,24:44
+dark,main,Soul Stealer,,,wh2_main_spell_dark_magic_soul_stealer,,,"Alone, on a dragon (Malekith, Morathi, sorceress).",25:02
+dark,alternative,Doombolt,Chillwind,,wh2_main_spell_dark_magic_doombolt,wh2_main_spell_dark_magic_chillwind,,Doombolt spam on a dark steed or dark pegasus.,25:37
+ruin,main,Warp Lightning,Howling Warpgale,,wh2_main_spell_ruin_warp_lightning,wh2_main_spell_ruin_howling_warpgale,,Warp Lightning overcast.,27:29
+plague,main,Vermintide,Bless with Filth,,wh2_main_spell_plague_vermintide,wh2_main_spell_plague_bless_with_filth,,,29:34
+stealth,main,Warp Stars,Veil of Shadows,,wh2_dlc14_spell_stealth_warp_stars,wh2_dlc14_spell_stealth_veil_of_shadows,,Warp Stars overcast on lords.,30:40
+nehekhara,main,Djaf's Incantation of Cursed Blades,,,wh2_dlc09_spell_nehekhara_djafs_incantation_of_cursed_blades,,,"Overcast, sometimes alone.",31:20
+nehekhara,best,Djaf's Incantation of Cursed Blades,Usirian's Incantation of Vengeance,,wh2_dlc09_spell_nehekhara_djafs_incantation_of_cursed_blades,wh2_dlc09_spell_nehekhara_usirians_incantation_of_vengeance,,Both overcast.,33:27
+deep,main,Fog of the Damned,Tidecall,,wh2_dlc11_spell_deep_fog_of_the_damned,wh2_dlc11_spell_deep_tidecall,,Fog of the Damned overcast.,35:04
+deep,alternative,Fog of the Damned,Denizens of the Deep,,wh2_dlc11_spell_deep_fog_of_the_damned,wh2_dlc11_spell_deep_denizens_of_the_deep,,Harder to play.,34:52
+runes,main,Rune of Speed,Rune of Wrath & Ruin,,wh2_dlc17_rune_abilities_rune_of_speed,wh_main_rune_abilities_rune_of_wrath_and_ruin,,Or Slowness with Wrath & Ruin.,37:15
+runes,alternative,Rune of Slowness,Rune of Speed,,wh2_dlc17_rune_abilities_rune_of_slowness,wh2_dlc17_rune_abilities_rune_of_speed,,,36:25
+hashut,main,Burning Wrath,Ash Storm,,wh3_dlc23_spell_hashut_burning_wrath,wh3_dlc23_spell_hashut_ash_storm,,Burning Wrath overcast: the most meta.,40:10
+hashut,alternative,Curse of Hashut,Ash Storm,,wh3_dlc23_spell_hashut_curse_of_hashut,wh3_dlc23_spell_hashut_ash_storm,,Curse of Hashut overcast.,40:10
+hashut,beginner,Flames of Azgorh,,,wh3_dlc23_spell_hashut_flames_of_azgorh,,,"Overcast, alone.",40:06
+nurgle,main,Rancid Visitations,Miasma of Pestilence,,wh3_main_spell_nurgle_rancid_visitations,wh3_main_spell_nurgle_miasma_of_pestilence,,,43:11
+nurgle,alternative,Fleshy Abundance,Miasma of Pestilence,,wh3_main_spell_nurgle_fleshy_abundance,wh3_main_spell_nurgle_miasma_of_pestilence,,,43:11
+nurgle,beginner,Fleshy Abundance,,,wh3_main_spell_nurgle_fleshy_abundance,,,"The easy pick, overcast.",40:44
+tzeentch,main,Blue Fire of Tzeentch,Pink Fire of Tzeentch,Glean Magic,wh3_main_spell_tzeentch_blue_fire_of_tzeentch,wh3_main_spell_tzeentch_pink_fire_of_tzeentch,wh3_main_spell_tzeentch_glean_magic,"Both fires overcast, Glean Magic for winds.",45:27
+slaanesh,main,Lash of Slaanesh,Acquiescence,,wh3_main_spell_slaanesh_lash_of_slaanesh,wh3_main_spell_slaanesh_acquiescence,,Both overcast.,48:26
+slaanesh,alternative,Pavane of Slaanesh,Acquiescence,,wh3_main_spell_slaanesh_pavane_of_slaanesh,wh3_main_spell_slaanesh_acquiescence,,Against armies with flying units.,48:13
+slaanesh,best,Pavane of Slaanesh,Acquiescence,Lash of Slaanesh,wh3_main_spell_slaanesh_pavane_of_slaanesh,wh3_main_spell_slaanesh_acquiescence,wh3_main_spell_slaanesh_lash_of_slaanesh,All three together.,48:43
+great_maw,main,Trollguts,Braingobbler,,wh3_main_spell_great_maw_trollguts,wh3_main_spell_great_maw_braingobbler,,Or Trollguts with any cheap spell.,50:24
+ice,main,Ice Sheet,Death Frost,,wh3_main_spell_ice_ice_sheet,wh3_main_spell_ice_death_frost,,Spam Ice Sheet to slow.,51:53
+ice,alternative,Ice Sheet,Ice Maiden's Kiss,,wh3_main_spell_ice_ice_sheet,wh3_main_spell_ice_ice_maidens_kiss,,Two stacking slows.,51:01
+tempest,main,Hailstorm,Hawks of Miska,,wh3_main_spell_tempest_hailstorm,wh3_main_spell_tempest_hawks_of_miska,,,53:32
+hags,main,Vengeance of Spirits,Curse of the Ancient Witch,,wh3_dlc24_spell_hags_vengeance_of_spirits,wh3_dlc24_spell_hags_curse_of_the_ancient_witch,,"Vengeance of Spirits overcast first, then the curse.",55:21
+yang,main,Dragon's Breath,Jade Shield,,wh3_main_spell_yang_dragons_breath,wh3_main_spell_yang_jade_shield,,Dragon's Breath overcast.,57:45
+yin,main,Storm of Shadows,,,wh3_main_spell_yin_storm_of_shadows,,,Overcast.,58:21
+mists,main,Ladrielle's Shroud,Walk Between Worlds,,wh3_dlc27_spell_mists_ladrielles_shroud,wh3_dlc27_spell_mists_walk_between_worlds,,"With the Null Stone, on Children of the Flame.",59:32
