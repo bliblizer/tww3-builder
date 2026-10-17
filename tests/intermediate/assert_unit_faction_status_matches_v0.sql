@@ -1,3 +1,5 @@
+-- Référence V0 établie sur le patch 9.0 : sur un autre patch, les ajouts et retraits du jeu feraient échouer le test.
+{{ config(enabled=(var('patch') == 'patch_9.0')) }}
 -- Non-régression : la réécriture SQL doit reproduire exactement le statut calculé par les scripts Python de la V0.
 -- Renvoie chaque couple faction x unité qui diffère (ou n'existe que d'un côté).
 with new as (

@@ -546,16 +546,27 @@ Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fic
 
 ## Mettre à jour pour un nouveau patch
 
-```
-python scripts/fetch_raw.py patch_9.1 <hash du commit WH3-Dump>
-dbt build --profiles-dir . --vars "patch: patch_9.1"
-python scripts/build_app.py
-python scripts/build_meta.py
-```
+1. **Trouver le commit du dump.** Sur https://github.com/Shazbot/WH3-Dump/commits, repérer le commit du patch (ex. « 9.0.4 hotfix ») et copier son **hash complet** (40 caractères).
+2. **Télécharger les fichiers du jeu** dans un nouveau dossier (les anciens patchs sont conservés) :
+   ```
+   python scripts/fetch_raw.py patch_9.0.4 fd977bb755b3c765c51cf442be2c13ca3d5fa023
+   ```
+3. **Mettre à jour le patch par défaut** dans `dbt_project.yml` (`vars: patch: patch_9.0.4`), puis construire et tester :
+   ```
+   python -m dbt.cli.main build --profiles-dir .
+   ```
+   (`python -m dbt.cli.main` remplace `dbt` quand Windows bloque `dbt.exe`.) Les tests `*_match_v0` comparent au patch 9.0 et ne tournent que sur ce patch.
+4. **Reconstruire le site** :
+   ```
+   python scripts/build_app.py
+   python scripts/build_meta.py
+   ```
+   `build_meta.py` écrit `history/units_patch_9.0.4.csv` et le compare au patch précédent : l'onglet **Patch changes** du Faction Guide se remplit.
+5. **Relire les contrôles** : `exports/meta_checks.csv` (unités disparues des tier lists, sorts inconnus, armées d'exemple invalides, guides à relire), `exports/missing_unit_cards.csv` (nouvelles cartes sans image : ajouter les images dans `assets/`).
+6. **Mettre à jour l'éditorial** : la colonne `Reviewed patch` de `config/meta/faction_breakdown.csv` pour les factions relues (sinon la page affiche « may be outdated »), les nouvelles unités dans `config/tier_lists/`, les armées d'exemple signalées.
+7. **Versionner** le nouveau dossier `raw/patch_9.0.4/`, `history/units_patch_9.0.4.csv`, `dbt_project.yml` et `docs/`, puis Commit et Push.
 
-`build_meta.py` écrit alors `history/units_patch_9.1.csv` et compare au patch 9.0 : l'onglet Patch changes se remplit. Pense à versionner le nouvel instantané.
-
-Après un ajout de ligne dans `config/sources.csv`, lance d'abord `python scripts/generate_staging.py patch_9.1` pour créer le modèle du nouveau fichier.
+Après un ajout de ligne dans `config/sources.csv`, lance d'abord `python scripts/generate_staging.py patch_9.0.4` pour créer le modèle du nouveau fichier.
 
 ## Récupérer un nouveau patch
 

@@ -8,7 +8,7 @@ macro-paths: ["macros"]
 test-paths: ["tests"]
 
 vars:
-  patch: patch_9.0        # dossier de raw/ à traiter  -> dbt build --vars "patch: patch_9.1"
+  patch: patch_9.0.4      # dossier de raw/ à traiter (patch courant du site)  -> dbt build --vars "patch: patch_9.1"
   raw_root: raw
 
 models:

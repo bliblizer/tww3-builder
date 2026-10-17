@@ -1,3 +1,5 @@
+-- Référence V0 établie sur le patch 9.0 : sur un autre patch, les ajouts et retraits du jeu feraient échouer le test.
+{{ config(enabled=(var('patch') == 'patch_9.0')) }}
 -- Non-régression du regroupement en cartes et des libellés d'options contre la V0 (scripts Python).
 -- Les écarts assumés (corrections) sont listés dans seeds/reference/ref_v0_accepted_differences.csv.
 -- La V0 complétait le libellé de monture par « On foot » au niveau de la carte : on reproduit ce calcul ici.
