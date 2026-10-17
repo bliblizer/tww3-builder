@@ -544,11 +544,19 @@ if os.path.isdir(tl_dir):
             if rk and key and tier in ('meta', 'strong', 'viable', 'situational', 'weak'):
                 unit_tiers.setdefault(rk, {})[key] = tier
 
+# calculateur de duel (panneau de l'unité) : cadence de frappe de l'arme de mêlée et nombre de cibles d'un coup de zone
+roster_keys = {o['unit_key'] for o in options}
+melee_extra = {r['unit_key']: [round(float(r['iv']), 2) if r['iv'] else 4.3, int(r['spl'] or 1)] for r in rows("""
+    select m.unit_key, mw.melee_attack_interval as iv, mw.splash_attack_max_attacks as spl
+    from staging.stg_dump__main_units m
+    join staging.stg_dump__land_units lu using (land_unit_key)
+    left join staging.stg_dump__melee_weapons mw on mw.melee_weapon_key = lu.primary_melee_weapon""") if r['unit_key'] in roster_keys}
+
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
         'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
-        'raceProfiles': race_profiles, 'unitTiers': unit_tiers, 'templates': templates, 'archetypes': archetypes,
+        'raceProfiles': race_profiles, 'unitTiers': unit_tiers, 'melee': melee_extra, 'templates': templates, 'archetypes': archetypes,
         'factionCodes': {c: r for c, r in code_race.items() if r}}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 
