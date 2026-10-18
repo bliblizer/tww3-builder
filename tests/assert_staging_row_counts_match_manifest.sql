@@ -153,6 +153,18 @@ with staged as (
     select 'db/projectile_bombardments_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__projectile_bombardments') }}
     union all
     select 'db/battle_vortexs_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battle_vortexs') }}
+    union all
+    select 'db/battle_set_piece_armies_characters_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__battle_set_piece_armies_characters') }}
+    union all
+    select 'db/ancillary_to_effects_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__ancillary_to_effects') }}
+    union all
+    select 'db/unit_abilities_to_additional_ui_effects_juncs_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_abilities_to_additional_ui_effects_juncs') }}
+    union all
+    select 'db/unit_abilities_additional_ui_effects_tables/data__.tsv' as path, count(*) as n from {{ ref('stg_dump__unit_abilities_additional_ui_effects') }}
+    union all
+    select 'text/db/unit_ability_types__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__unit_ability_types') }}
+    union all
+    select 'text/db/character_skills__.loc.tsv' as path, count(*) as n from {{ ref('stg_dump_loc__character_skills') }}
 ),
 manifest as (
     select path, cast(rows as bigint) as n

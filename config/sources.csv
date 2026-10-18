@@ -77,3 +77,9 @@ text/db/unit_abilities_additional_ui_effects__.loc.tsv,textes,Lignes d effet des
 db/battlefield_engines_tables/data__.tsv,statistiques,Engins de guerre (artillerie) : arme de tir de l'engin (land_units.engine),confirmé
 db/projectile_bombardments_tables/data__.tsv,sorts,Bombardements des sorts : nombre et type de projectiles,confirmé
 db/battle_vortexs_tables/data__.tsv,sorts,Vortex des sorts : dégâts (normaux et perforants) et durée,confirmé
+db/battle_set_piece_armies_characters_tables/data__.tsv,personnalisation,Personnages des listes d objets de bataille (nom du personnage -> unité),confirmé
+db/ancillary_to_effects_tables/data__.tsv,personnalisation,Effets des objets (pour retrouver la capacité et l icône d un objet),confirmé
+db/unit_abilities_to_additional_ui_effects_juncs_tables/data__.tsv,capacites,Points forts et faibles affichés dans l info-bulle des capacités,confirmé
+db/unit_abilities_additional_ui_effects_tables/data__.tsv,capacites,Ordre et sens (positif / négatif) des points forts et faibles,confirmé
+text/db/unit_ability_types__.loc.tsv,textes,Types de capacités (Wind / Direct damage),confirmé
+text/db/character_skills__.loc.tsv,textes,Noms des compétences (renvois depuis certains noms de capacités),confirmé

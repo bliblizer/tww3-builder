@@ -69,7 +69,7 @@ STAT_ICONS = {   # statistique du builder -> noms possibles du fichier d'icône 
     # barre de vie et modificateurs affichés à côté des valeurs (noms du jeu : ui/skins/default/…)
     'health_bar': ['icon_stat_health_noframe_16px', 'icon_stat_health_noframe', 'icon_stat_health'],
     'shield': ['modifier_icon_shield', 'icon_stat_missile_block_chance'],
-    'barrier': ['modifier_icon_shield', 'modifier_icon_directional_shield'],
+    'barrier': ['barrier', 'modifier_icon_shield', 'modifier_icon_directional_shield'],   # barrier.png ajouté dans assets/stats_icons
     'ap': ['modifier_icon_armour_piercing'],
     'ap_ranged': ['modifier_icon_armour_piercing_ranged', 'modifier_icon_armour_piercing'],
     'magical': ['modifier_icon_magical'],
@@ -341,7 +341,12 @@ def damage(r):
             int(bool(r['dmg_magical'])), int(bool(r['dmg_flaming']))]
 details = {r['key']: [r['name'], r['description'], compact(r['mana_cost']), compact(r['cooldown']), compact(r['duration']),
                       compact(r['uses']), int(bool(r['is_passive'])), r['effects'], compact(r['range']), damage(r),
-                      compact(r['damage_per_tick'])]
+                      compact(r['damage_per_tick']),
+                      # [11] type (« Wind »…), [12] rayon et [13] vitesse d'un vortex ou d'un bombardement,
+                      # [14] unités touchées (« enemies (max: 1) »), [15] rayon de la zone d'effet,
+                      # [16] points forts et faibles du jeu : [[1 = positif / 0 = négatif, texte], …]
+                      r['ability_type'], compact(r['dmg_radius']), compact(r['dmg_speed']), r['affects'], compact(r['area_radius']),
+                      [[1 if pc.split('|', 1)[0] == 'positive' else 0, pc.split('|', 1)[1]] for pc in (r['pros_cons'] or '').split(' ¦ ') if '|' in pc] or None]
            for r in rows("select * from marts.pvp_ability_details")}
 
 # capacités innées écrites dans un fichier .army_setup : le jeu ne les enregistre que pour les lords et héros,
@@ -552,11 +557,15 @@ melee_extra = {r['unit_key']: [round(float(r['iv']), 2) if r['iv'] else 4.3, int
     join staging.stg_dump__land_units lu using (land_unit_key)
     left join staging.stg_dump__melee_weapons mw on mw.melee_weapon_key = lu.primary_melee_weapon""") if r['unit_key'] in roster_keys}
 
+# icônes des marques du Chaos pour le panneau de personnalisation (ability_icons/mark_khorne.png…)
+mark_icons = {m: ability_icon(f'mark_{m.lower()}') for m in ('Khorne', 'Nurgle', 'Slaanesh', 'Tzeentch', 'Undivided')}
+mark_icons = {k: v for k, v in mark_icons.items() if v}
+
 data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, 'races': races, 'roster': roster, 'caps': caps, 'up': up_dict,
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
         'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
-        'raceProfiles': race_profiles, 'unitTiers': unit_tiers, 'melee': melee_extra, 'templates': templates, 'archetypes': archetypes,
+        'raceProfiles': race_profiles, 'markIcons': mark_icons, 'unitTiers': unit_tiers, 'melee': melee_extra, 'templates': templates, 'archetypes': archetypes,
         'factionCodes': {c: r for c, r in code_race.items() if r}}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 

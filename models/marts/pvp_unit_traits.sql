@@ -10,7 +10,9 @@ abilities as (
     join {{ ref('stg_dump__land_units_to_unit_abilites_junctions') }} j using (land_unit_key)
     join {{ ref('stg_dump__unit_abilities') }} a using (ability_key)
     left join texts t on t.loc_key = 'unit_abilities_onscreen_name_' || j.ability_key
-    where not a.is_unit_upgrade and not coalesce(a.is_hidden_in_ui, false)
+    -- capacité d'amélioration : choisie dans la personnalisation pour un personnage, innée pour une unité ordinaire
+    where (not a.is_unit_upgrade or u.unit_key not in (select unit_key from {{ ref('int_character_agent_subtypes') }}))
+      and not coalesce(a.is_hidden_in_ui, false)
 ),
 attributes as (
     select distinct u.unit_key, 'attribute', ag.attribute_key,

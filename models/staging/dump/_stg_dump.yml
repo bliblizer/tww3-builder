@@ -366,3 +366,25 @@ models:
     description: "Bombardements des sorts : nombre et type de projectiles (source : db/projectile_bombardments_tables/data__.tsv)"
   - name: stg_dump__battle_vortexs
     description: "Vortex des sorts : dégâts (normaux et perforants) et durée (source : db/battle_vortexs_tables/data__.tsv)"
+  - name: stg_dump__battle_set_piece_armies_characters
+    description: "Personnages des listes d objets de bataille (nom du personnage -> unité) (source : db/battle_set_piece_armies_characters_tables/data__.tsv)"
+  - name: stg_dump__ancillary_to_effects
+    description: "Effets des objets (pour retrouver la capacité et l icône d un objet) (source : db/ancillary_to_effects_tables/data__.tsv)"
+  - name: stg_dump__unit_abilities_to_additional_ui_effects_juncs
+    description: "Points forts et faibles affichés dans l info-bulle des capacités (source : db/unit_abilities_to_additional_ui_effects_juncs_tables/data__.tsv)"
+  - name: stg_dump__unit_abilities_additional_ui_effects
+    description: "Ordre et sens (positif / négatif) des points forts et faibles (source : db/unit_abilities_additional_ui_effects_tables/data__.tsv)"
+  - name: stg_dump_loc__unit_ability_types
+    description: "Types de capacités (Wind / Direct damage) (source : text/db/unit_ability_types__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"
+  - name: stg_dump_loc__character_skills
+    description: "Noms des compétences (renvois depuis certains noms de capacités) (source : text/db/character_skills__.loc.tsv)"
+    data_tests:
+      - unique:
+          column_name: "loc_key"
+      - not_null:
+          column_name: "loc_key"

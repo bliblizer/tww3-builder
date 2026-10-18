@@ -6,6 +6,10 @@
 with recursive all_loc as (
     select loc_key, text, 'agent_subtypes' as loc_table from {{ ref('stg_dump_loc__agent_subtypes') }}
     union all
+    select loc_key, text, 'unit_ability_types' from {{ ref('stg_dump_loc__unit_ability_types') }}
+    union all
+    select loc_key, text, 'character_skills' from {{ ref('stg_dump_loc__character_skills') }}
+    union all
     select loc_key, text, 'ancillaries' as loc_table from {{ ref('stg_dump_loc__ancillaries') }}
     union all
     select loc_key, text, 'cultures_subcultures' as loc_table from {{ ref('stg_dump_loc__cultures_subcultures') }}

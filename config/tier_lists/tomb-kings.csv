@@ -1,0 +1,43 @@
+﻿race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh2_dlc09_sc_tmb_tomb_kings,wh3_dlc29_tmb_cha_liche_high_priest_death,Liche High Priest,characters,meta,Cheap with strong lore of magic that fits all your strategy.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_khatep_0,Grand Hierophant Khatep,characters,strong,Incantation of vengeance spammer.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh3_dlc29_tmb_cha_arkhan_the_black_mp,Arkhan the Black,characters,viable,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_tomb_king_0,Tomb King,characters,weak,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_khalida_0,High Queen Khalida,characters,meta,Decent duelist with strong single entity killing potential with her item and when combined with a light mage.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_settra_0,Settra the Imperishable,characters,meta,Play on warsphynx. Resilient terror piece with good spells. Carefull to not overload his kit.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_liche_priest_death_0,Liche Priest,characters,strong,Only if your lord isn't a spellcaster. Or to heal Settra.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_necrotect_0,Necrotect,characters,strong,Worth to consider if you want to heal a very expensive construct (khemric titan or Necrosphynx.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh3_dlc29_tmb_cha_tomb_herald,Tomb Herald,characters,weak,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cha_tomb_prince_0,Tomb Prince,characters,weak,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_skeleton_warriors_0,Skeleton Warriors,infantry,meta,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_skeleton_spearmen_0,Skeleton Spearmen,infantry,meta,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_nehekhara_warriors_0,Nehekharan Warriors,infantry,weak,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_skeleton_spearmen_ror,King Nekhesh's Scorpion Legion (Skeleton Spearmen),infantry,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_tomb_guard_0,Tomb Guard,infantry,weak,Made redundant by ushabties ,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_tomb_guard_1,Tomb Guard (Halberds),infantry,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_tomb_guard_ror,The Khepra Guard (Tomb Guard),infantry,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_skeleton_archers_0,Skeleton Archers,range,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cav_skeleton_horsemen_archers_0,Skeleton Horse Archers,range,strong,"Cheap and reliable range damage, being a cheap cavalry unit gives it the ability to turn itself into an ad hoc light cavalry.",Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_inf_skeleton_archers_ror,Blessed Legion of Phakth (Skeleton Archers),range,viable,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_art_screaming_skull_catapult_0,Screaming Skull Catapults,range,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_veh_skeleton_archer_chariot_0,Skeleton Archer Chariots,range,weak,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_ushabti_1,Ushabti (Great Bows),range,strong,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_sepulchral_stalkers_0,Sepulchral Stalkers,range,viable,"More of a defensive unit, it's range attack is its main damage tool, the anti large melee attacks are decent but aren't comparable to similarly priced monsters.",Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_ushabti_ror,Chosen of the Gods (Ushabti – Great Bows),range,meta,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_sepulchral_stalkers_ror,Eyes of the Desert (Sepulchral Stalkers),range,viable,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_pro06_tmb_mon_bone_giant_0,Bone Giant,range,situational,Good artillery and very slow large unit sniper.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_veh_khemrian_warsphinx_0,Khemrian Warsphinx,range,strong,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_carrion_0,Carrion,monsters,viable,Good both for rushes but also as annoying mobility against rushes vs range units or to chase routing enemies.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cav_skeleton_horsemen_0,Skeleton Horsemen,monsters,strong,Cheap cavalry unit to do light cavalry job or being a mobile meatshield.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cav_nehekhara_horsemen_0,Nehekharan Horsemen,monsters,viable,"Deceptivly effective against higher costed cavalry (empire knights, wild riders) as long as they avoid receiving the charge).",Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_veh_skeleton_chariot_0,Skeleton Chariots,monsters,situational,Fragile but fast pressure when you want to rush unarmored defensive armies.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_ushabti_0,Ushabti,monsters,strong,Most reliable and efficient infantry cleaner,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_tomb_scorpion_0,Tomb Scorpion,monsters,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_art_casket_of_souls_0,Casket of Souls,monsters,situational,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cav_necropolis_knights_0,Necropolis Knights,monsters,viable,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_cav_necropolis_knights_1,Necropolis Knights (Halberds),monsters,situational,"Not as strong as equivalent from other factions, heavy cavalry/ large units are better dealt with a mix of strong single entities, chaff, range and spells.",Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_heirotitan_0,Hierotitan,monsters,weak,Bound spells are interesting but the lack of speed makes it a subpar fighter compared to other options.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_necrosphinx_0,Necrosphinx,monsters,viable,,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh2_dlc09_tmb_mon_necrosphinx_ror,The Sphinx of Usekph (Necrosphinx),monsters,strong,Anti large center piece of many army,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh3_dlc29_tmb_mon_khemric_titan,Khemric Titan,monsters,strong,A tankier RoR necrosphynx with less reliable damage potential.,Reym,Cycle charge enjoyer,patch_9.0
+wh2_dlc09_sc_tmb_tomb_kings,wh3_dlc29_tmb_mon_khemric_titan_ror,Icon of Usirian (Khemric Titan),monsters,viable,,Reym,Cycle charge enjoyer,patch_9.0

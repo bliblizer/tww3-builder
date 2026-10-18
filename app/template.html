@@ -131,6 +131,21 @@ button { font: inherit; color: inherit; }
 .info-i { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; margin-left: 4px; border-radius: 50%;
   border: 1px solid rgba(168,151,125,.8); color: var(--muted); font: 700 10px/1 Georgia, serif; font-style: italic; cursor: help; vertical-align: 1px; }
 .info-i:hover, .info-i:focus-visible { border-color: var(--gold); color: var(--gold); }
+.tip-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.tip-ico { width: 38px; height: 38px; border-radius: 50%; flex: none; }
+.tip-title { flex: 1; min-width: 0; } .tip-title h5 { margin: 0; }
+.tip-kind { display: block; font-size: 12px; color: var(--muted); }
+/* coût en mana : pastille ronde bien visible en haut à droite, comme en jeu */
+.tip-mana { flex: none; display: flex; align-items: center; justify-content: center; min-width: 34px; height: 34px; padding: 0 6px; border-radius: 17px;
+  background: radial-gradient(circle at 35% 30%, #6fc3ff, #1d5fa8 70%); border: 2px solid #cfe9ff; color: #fff; font: 800 17px system-ui, sans-serif;
+  text-shadow: 0 1px 2px #000; box-shadow: 0 0 8px rgba(111,195,255,.6); }
+.tip-grid { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; padding: 6px 0; border-top: 1px solid rgba(140,106,59,.45); font-size: 13px; }
+.tip-grid .l { color: var(--muted); white-space: nowrap; } .tip-grid .v { color: var(--text); } .tip-grid .v b { color: #f6d58a; }
+.tip-grid img { width: 14px; height: 14px; vertical-align: -2px; margin-right: 2px; }
+.tip ul.pc { list-style: none; margin: 4px 0 0; padding: 6px 0 0; border-top: 1px solid rgba(140,106,59,.45); }
+.tip ul.pc li { position: relative; padding-left: 16px; font-size: 13px; } .tip ul.pc li::before { position: absolute; left: 0; font-size: 11px; top: 2px; }
+.tip ul.pc li.pro { color: #bfe8a0; } .tip ul.pc li.pro::before { content: "▲"; color: #6ab04c; }
+.tip ul.pc li.con { color: #ffb4a8; } .tip ul.pc li.con::before { content: "▼"; color: #d24b3b; }
 .tip .dmg { margin: 0 0 6px; padding: 5px 8px; border-radius: 4px; background: rgba(0,0,0,.3); border: 1px solid rgba(140,106,59,.45); }
 .tip .dmg .k { font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 .tip .dmg .v { display: flex; flex-wrap: wrap; gap: 2px 12px; } .tip .dmg .v span { display: inline-flex; align-items: center; gap: 4px; }
@@ -214,7 +229,7 @@ button { font: inherit; color: inherit; }
   border-radius: 3px; overflow: hidden; border: 1px solid #0b0806; box-shadow: 0 0 0 1px rgba(140,106,59,.55), inset 0 1px 0 rgba(255,255,255,.25);
   background: linear-gradient(180deg, #8fd24c 0%, #5aa524 45%, #2f6b12 100%);
   font: 700 14px system-ui, sans-serif; color: #fff; text-shadow: 0 1px 2px #000, 0 0 3px #000; }
-.hpbar::before { content: ""; position: absolute; left: 0; top: 0; height: 46%; width: var(--barrier, 0%);
+.hpbar::before { content: ""; position: absolute; left: 0; top: 0; height: 26%; width: var(--barrier, 0%);   /* barrière : bande pleine en haut, comme en jeu */
   background: linear-gradient(180deg, #a9ecff, #3aa6d6); box-shadow: 0 1px 0 rgba(0,0,0,.35); }
 .hpbar span { position: relative; display: inline-flex; align-items: center; gap: 4px; } .hpbar img { width: 16px; height: 16px; }
 .hpbar .barrier { color: #d9f6ff; }
@@ -1599,7 +1614,7 @@ function renderUnitStats() {
     ${tags.length ? `<ul class="tags${DATA.skin.effPos ? ' icons' : ''}">${tags.map(([n, s]) => {
         const neg = s.includes('negative'), img = neg ? DATA.skin.effNeg : DATA.skin.effPos;
         return `<li class="${neg ? 'neg' : ''} ${s.startsWith('very') ? 'strong' : ''}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(n)}</li>`; }).join('')}</ul>` : ''}
-    ${st.health != null ? `<div class="hpbar" title="${st.barrier_health ? `Barrier ${fmt(st.barrier_health)} · ` : ''}Health ${fmt(st.health)}"${st.barrier_health ? ` style="--barrier:${Math.min(100, 100 * st.barrier_health / st.health).toFixed(1)}%"` : ''}>
+    ${st.health != null ? `<div class="hpbar" title="${st.barrier_health ? `Barrier ${fmt(st.barrier_health)} · ` : ''}Health ${fmt(st.health)}"${st.barrier_health ? ' style="--barrier:100%"' : ''}>
       ${st.barrier_health ? `<span class="barrier">${DATA.statIcons.barrier ? `<img src="images/${esc(DATA.statIcons.barrier)}" alt="">` : '◈ '}${fmt(st.barrier_health)}</span>` : ''}
       <span>${DATA.statIcons.health_bar ? `<img src="images/${esc(DATA.statIcons.health_bar)}" alt="">` : '✚ '}${fmt(st.health)}</span></div>` : ''}
     ${st.unit_size != null ? `<p class="size-line">${(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall) ? `<img src="images/${esc(st.is_large ? DATA.skin.entityLarge : DATA.skin.entitySmall)}" alt="" title="${st.is_large ? 'Large' : 'Small'} entity">` : ''}<b class="size-n">${fmt(st.unit_size)}</b>${st.is_large ? ' <span class="muted">large</span>' : ''}${shownRank(unit) ? ` · Rank ${shownRank(unit)}` : ''}</p>` : ''}
@@ -1646,8 +1661,8 @@ function renderCustom() {
       if (k === 'mount') { const d = foot ? target.c - foot.c : 0; price = v !== 'On foot' && d ? fmt(d) : ''; }
       else price = fmt(unitCost(carry(target)));   // comme en jeu : prix total de l'unité avec cette variante
       const label = k === 'mount' && v === 'On foot' ? 'None' : (v || 'None');
-      const icon = k === 'lore' ? target.li : k === 'mount' && v !== 'On foot' ? target.mi : null;
-      const iconHtml = (k === 'lore' || k === 'mount')
+      const icon = k === 'lore' ? target.li : k === 'mount' && v !== 'On foot' ? target.mi : k === 'mark' ? (DATA.markIcons || {})[v] : null;
+      const iconHtml = (k === 'lore' || k === 'mount' || k === 'mark')
         ? (icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>') : '';
       const loreStyle = k === 'lore' && target.lc ? ` lore" style="--lore:#${esc(target.lc)}` : '';
       return `<label class="row${loreStyle}"><input type="radio" name="dim-${k}" data-u="${esc(target.u)}" ${(opt[k] ?? '') === v ? 'checked' : ''}>` +
@@ -1660,6 +1675,7 @@ function renderCustom() {
   const current = upgradesCost(unit.sel);
   const sections = UPGRADE_SECTIONS.map(([type, title]) => {
     const keys = (opt.up || []).filter(k => ups[k] && ups[k][1] === type);
+    if (type === 's') keys.sort((a, b) => (ups[a][2] || 0) - (ups[b][2] || 0) || ups[a][0].localeCompare(ups[b][0]));   // ordre du jeu
     if (!keys.length) return '';
     const all = keys.every(k => unit.sel.has(k));
     const rows = keys.map(k => {
@@ -1667,7 +1683,7 @@ function renderCustom() {
       const checked = unit.sel.has(k);
       // comme en jeu : le prix n'est affiché que sur les éléments non cochés (surcoût de leur ajout)
       const price = checked ? '' : `<span class="price">${fmt(upgradesCost(new Set([...unit.sel, k])) - current)}</span>`;
-      const iconHtml = type === 'i' ? '' : icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>';
+      const iconHtml = icon ? `<img class="ico" src="images/${esc(icon)}" alt="">` : '<span class="ico empty"></span>';
       return `<label class="row"${DATA.details[k] ? ` data-tip="${esc(k)}"` : ''}><input type="checkbox" data-k="${esc(k)}" ${checked ? 'checked' : ''}>${iconHtml}<span class="lbl">${esc(name)}</span>${price}</label>`;
     }).join('');
     return `<section class="pz"><h4 class="serif">${title}</h4>` +
@@ -2157,12 +2173,15 @@ async function importFromFolder() {
   return true;
 }
 async function pickFile() {
-  if ('showOpenFilePicker' in window) {   // le navigateur retient le dernier dossier utilisé pour cet identifiant
+  // Le navigateur retient le dernier dossier utilisé pour cet identifiant. Pas de filtre d'extension : Chrome refuse
+  // « .army_setup » (le « _ » n'est pas admis dans un filtre) et l'appel échouait sans rien afficher.
+  if ('showOpenFilePicker' in window) {
     try {
-      const [h] = await window.showOpenFilePicker({ id: 'army-setups-import', types: [{ description: 'Army setup', accept: { 'application/octet-stream': ['.army_setup'] } }] });
-      importArmySetup(await h.getFile());
-    } catch { /* fenêtre fermée */ }
-  } else $('importFile').click();
+      const [h] = await window.showOpenFilePicker({ id: 'army-setups-import' });
+      return importArmySetup(await h.getFile());
+    } catch (e) { if (e && e.name === 'AbortError') return; }   // fenêtre fermée : rien à faire ; autre erreur : champ fichier
+  }
+  $('importFile').click();
 }
 async function exportToFolder(blob, fileName) {
   if (!(await hasAccess(gameDir, true))) return false;
@@ -2308,29 +2327,38 @@ function tipHtml(key) {
   if (key && key.startsWith('txt:')) { const [t, ...ls] = key.slice(4).split('|'); return `<h5>${esc(t)}</h5>${ls.map(l => `<p class="help">${esc(l)}</p>`).join('')}`; }
   const d = DATA.details[key];
   if (!d) return '';
-  const [name, , mana, cooldown, duration, uses, passive, effects, range, dmg, dpt] = d;
-  const meta = [passive ? '<span><b>Passive</b></span>' : '', mana ? `<span>Mana <b>${mana}</b></span>` : '',
-    cooldown ? `<span>Cooldown <b>${Math.round(cooldown)}s</b></span>` : '', duration ? `<span>Duration <b>${Math.round(duration)}s</b></span>` : '',
-    range ? `<span>Range <b>${Math.round(range)}m</b></span>` : '', uses ? `<span>Uses <b>${uses}</b></span>` : ''].filter(Boolean).join('');
-  // dégâts : [type, normaux, perforants, impacts, durée du vortex, magiques, enflammés]
-  let dmgHtml = '';
+  const [name, , mana, cooldown, duration, uses, passive, effects, range, dmg, dpt, type, radius, speed, affects, area, prosCons] = d;
+  const up = Object.values(DATA.up).map(u => u[key]).find(Boolean), kindName = up ? { s: 'Spell', a: passive ? 'Passive ability' : 'Ability', i: 'Item' }[up[1]] : (passive ? 'Passive ability' : 'Ability');
+  const icon = up && up[5] ? `<img class="tip-ico" src="images/${esc(up[5])}" alt="">` : '';
+  const ico = k => DATA.statIcons[k] ? `<img src="images/${esc(DATA.statIcons[k])}" alt="">` : '';
+  const row = (label, value) => value == null || value === '' ? '' : `<span class="l">${label}</span><span class="v">${value}</span>`;
+  const sec = n => `${Math.round(n * 10) / 10}s`, m = n => `${Math.round(n)}m`;
+  // bloc 1 : dégâts et forme de l'effet (comme « Damage Per Second / Duration / Radius / Movement Speed » en jeu)
+  let block1 = '';
   if (dmg) {
-    const [kind, base, ap, hits, vdur, magical, flaming] = dmg;
-    const ico = k => DATA.statIcons[k] ? `<img src="images/${esc(DATA.statIcons[k])}" alt="">` : '';
-    const parts = [base ? `<span>${ico('weapon_strength')}<b>${fmt(base)}</b> damage</span>` : '',
-      ap ? `<span>${ico('ap')}<b>${fmt(ap)}</b> armour-piercing</span>` : ''].filter(Boolean).join('');
-    const per = kind === 'vortex' ? `per hit${hits > 1 ? `, ${hits} vortexes` : ''}${vdur ? `, lasts ${Math.round(vdur)}s` : ''}`
-      : hits > 1 ? `per impact, ${hits} impacts` : kind === 'bombardment' ? 'per impact' : '';
-    const kindName = { projectile: 'Projectile', bombardment: 'Bombardment', vortex: 'Vortex' }[kind] || 'Damage';
-    const flags = [magical ? `<span>${ico('magical')}Magical</span>` : '', flaming ? `<span>${ico('flaming')}Flaming</span>` : ''].join('');
-    dmgHtml = `<div class="dmg"><div class="k">${kindName}</div><div class="v">${parts}</div>${per ? `<div class="per">${per}</div>` : ''}${flags ? `<div class="v">${flags}</div>` : ''}</div>`;
+    const [dkind, base, ap, hits, vdur, magical, flaming] = dmg, tot = (base || 0) + (ap || 0), apPct = tot ? Math.round(100 * (ap || 0) / tot) : 0;
+    const flags = [magical ? `${ico('magical')}Magical` : '', flaming ? `${ico('flaming')}Flaming` : ''].filter(Boolean).join(' · ');
+    const label = dkind === 'vortex' ? 'Damage per second' : dkind === 'bombardment' ? 'Damage per impact' : 'Damage per hit';
+    block1 = row(label, `<b>${fmt(tot)}</b> <span class="muted">(${apPct}% ${ico('ap')}AP)</span>`) +
+      row(dkind === 'vortex' ? 'Vortexes' : 'Impacts', hits > 1 ? `<b>${hits}</b>` : '') +
+      row(dkind === 'vortex' ? 'Vortex duration' : '', dkind === 'vortex' && vdur ? sec(vdur) : '') +
+      row('Radius', radius ? m(radius) : '') + row('Movement speed', speed ? `${Math.round(speed)}m/s` : '') +
+      row('Damage type', flags);
   }
-  if (dpt) dmgHtml += `<div class="dmg"><div class="k">Damage over time</div><div class="v"><span><b>${fmt(dpt)}</b> per tick</span></div></div>`;
+  if (dpt) block1 += row('Damage over time', `<b>${fmt(dpt)}</b> per tick`);
+  // bloc 2 : lancement
+  const block2 = row('Range', range ? m(range) : '') + row('Area', area ? m(area) : '') + row('Duration', duration ? sec(duration) : '') +
+    row('Cooldown', cooldown ? sec(cooldown) : '') + row('Uses', uses || '');
+  const block3 = row('Affected units', affects ? `Affects ${esc(affects)}` : '');
   const lines = (effects || '').split(' | ').filter(Boolean).map(l => {
     const cls = /^-|Inflicts/.test(l) ? 'neg' : /^\+|Gains/.test(l) ? 'pos' : '';
     const img = cls === 'neg' ? DATA.skin.effNeg : cls === 'pos' ? DATA.skin.effPos : null;
     return `<li class="${cls}">${img ? `<img src="images/${esc(img)}" alt="">` : ''}${esc(l)}</li>`; }).join('');
-  return `<h5>${esc(name)}</h5>${meta ? `<div class="meta">${meta}</div>` : ''}${dmgHtml}${lines ? `<ul${DATA.skin.effPos ? ' class="icons"' : ''}>${lines}</ul>` : ''}`;
+  const pc = (prosCons || []).map(([pos, t]) => `<li class="${pos ? 'pro' : 'con'}">${esc(t)}</li>`).join('');
+  return `<div class="tip-head">${icon}<div class="tip-title"><h5>${esc(name)}</h5><span class="tip-kind">${kindName}${type ? ` · ${esc(type)}` : ''}${passive && kindName !== 'Passive ability' ? ' · Passive' : ''}</span></div>
+      ${mana ? `<span class="tip-mana" title="Winds of magic cost">${mana}</span>` : ''}</div>
+    ${block1 ? `<div class="tip-grid">${block1}</div>` : ''}${block2 ? `<div class="tip-grid">${block2}</div>` : ''}${block3 ? `<div class="tip-grid">${block3}</div>` : ''}
+    ${lines ? `<ul${DATA.skin.effPos ? ' class="icons"' : ''}>${lines}</ul>` : ''}${pc ? `<ul class="pc">${pc}</ul>` : ''}`;
 }
 function setupTooltips() {
   const tip = $('tip');

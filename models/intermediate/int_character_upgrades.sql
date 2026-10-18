@@ -60,9 +60,19 @@ all_abilities as (
 ),
 
 item_lists as (
-    -- liste d'objets de bataille personnalisée, par clé d'unité (table au nom trompeur, vérifiée en jeu sur 9 personnages)
+    -- listes d'objets de bataille personnalisée. La table est indexée par nom de personnage de bataille
+    -- (battle_set_piece_armies_characters.character_name), qui renvoie à l'unité (unit_type) : on garde les deux clés.
+    -- Sans ce renvoi, les seigneurs légendaires dont le nom de personnage diffère de la clé d'unité n'avaient pas
+    -- d'objets (Khalida : wh2_dlc09_cha_cha_khalida_0 -> wh2_dlc09_tmb_cha_khalida_0, Settra…).
     select unit_key as list_unit_key, ancillary_key
     from {{ ref('stg_dump__battle_set_piece_armies_characters_items') }}
+    union
+    select ch.unit_type, it.ancillary_key
+    from {{ ref('stg_dump__battle_set_piece_armies_characters_items') }} it
+    join {{ ref('stg_dump__battle_set_piece_armies_characters') }} ch on ch.character_name = it.unit_key
+    where ch.unit_type is not null
+      and ch.character_name not like '%\_qb\_%' escape '\'      -- batailles de quête
+      and ch.character_name not like '%endless%'                   -- mode survie
 ),
 
 agent_units as (
@@ -102,6 +112,17 @@ texts as (
     select loc_key, resolved_text from {{ ref('stg_loc_texts') }}
 ),
 
+item_icons as (
+    -- icône d'un objet : celle de la capacité qu'il donne (ancillary_to_effects -> effet -> capacité),
+    -- dans ui/battle ui/ability_icons (ex. wh2_main_item_abilities_book_of_hoeth)
+    select ae.ancillary as ancillary_key, min(ua.icon_name) as icon_name
+    from {{ ref('stg_dump__ancillary_to_effects') }} ae
+    join {{ ref('stg_dump__effect_bonus_value_unit_ability_junctions') }} ej on ej.effect_key = ae.effect
+    join {{ ref('stg_dump__unit_abilities') }} ua on ua.ability_key = ej.ability_key
+    where nullif(ua.icon_name, '') is not null
+    group by ae.ancillary
+),
+
 rarity_groups as (
     -- groupes de rareté du jeu, avec leur couleur (col_hex) ; les objets y sont rangés par uniqueness_score
     select uniqueness_group_key, ui_state, col_hex, uniqueness_min, uniqueness_max
@@ -138,7 +159,8 @@ select
     i.race_key, i.unit_key, 'item', i.ancillary_key, t.resolved_text, rg.ui_state, null,
     case rg.ui_state when 'common' then 100 when 'uncommon' then 150 when 'rare' then 200 when 'legendary' then 200 end,
     case when rg.ui_state is null then 'inconnu (rareté absente)' else 'rareté (vérifié en jeu)' end, 'liste d''objets du personnage',
-    i.category, rg.ui_state, rg.col_hex, null, '{{ var("patch") }}'
+    i.category, rg.ui_state, rg.col_hex, ic.icon_name, '{{ var("patch") }}'
 from items i
 left join texts t on t.loc_key = 'ancillaries_onscreen_name_' || i.ancillary_key
+left join item_icons ic on ic.ancillary_key = i.ancillary_key
 left join rarity_groups rg on i.uniqueness_score between rg.uniqueness_min and rg.uniqueness_max

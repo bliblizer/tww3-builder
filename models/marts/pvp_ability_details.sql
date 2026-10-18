@@ -14,6 +14,21 @@ with keys as (
     select distinct trait_key, 'ability' from {{ ref('pvp_unit_traits') }} where kind = 'ability'
 ),
 
+item_ability as (
+    -- un objet donne le plus souvent une capacité (ancillary_to_effects -> effet -> capacité) : ses détails
+    -- (mana, recharge, dégâts, effets) sont ceux de cette capacité
+    select ae.ancillary as item_key, min(ej.ability_key) as ability_key
+    from {{ ref('stg_dump__ancillary_to_effects') }} ae
+    join {{ ref('stg_dump__effect_bonus_value_unit_ability_junctions') }} ej on ej.effect_key = ae.effect
+    where ae.ancillary in (select key from keys where kind = 'item')
+    group by ae.ancillary
+),
+
+src as (   -- clé dont on lit les détails : la capacité de l'objet, sinon la clé elle-même
+    select k.key, k.kind, coalesce(ia.ability_key, k.key) as akey
+    from keys k left join item_ability ia on ia.item_key = k.key
+),
+
 texts as (select loc_key, resolved_text from {{ ref('stg_loc_texts') }}),
 
 clean as (
@@ -27,7 +42,7 @@ phases as (
     select j.ability_key, j."order" as phase_order, j.target_self, j.target_friends, j.target_enemies, p.*
     from {{ ref('stg_dump__special_ability_to_special_ability_phase_junctions') }} j
     join {{ ref('stg_dump__special_ability_phases') }} p using (phase_key)
-    where j.ability_key in (select key from keys)
+    where j.ability_key in (select akey from src)
 ),
 
 effect_lines as (
@@ -93,6 +108,8 @@ damage as (
            coalesce(v.damage_ap, pb_p.dmg_ap, pa.dmg_ap)                                     as dmg_ap,
            coalesce(nullif(v.num_vortexes, 0), pb.num_projectiles * pb_p.hits, pa.hits)      as dmg_hits,
            v.duration                                                                        as dmg_duration,
+           coalesce(nullif(v.goal_radius, 0), nullif(v.start_radius, 0), nullif(pb.radius_spread, 0)) as dmg_radius,
+           nullif(v.movement_speed, 0)                                                       as dmg_speed,
            coalesce(v.is_magical, pb_p.magical, pa.magical)                                  as dmg_magical,
            coalesce(v.ignition_amount > 0, pb_p.flaming, pa.flaming)                         as dmg_flaming
     from {{ ref('stg_dump__unit_special_abilities') }} sa
@@ -100,7 +117,31 @@ damage as (
     left join {{ ref('stg_dump__projectile_bombardments') }} pb on pb.bombardment_key = nullif(sa.bombardment, '')
     left join proj pb_p on pb_p.projectile_key = pb.projectile_type
     left join {{ ref('stg_dump__battle_vortexs') }} v on v.vortex_key = nullif(sa.vortex, '')
-    where sa.ability_key in (select key from keys)
+    where sa.ability_key in (select akey from src)
+),
+
+ui_pros_cons as (
+    -- points forts et faibles affichés en bas de l'info-bulle du jeu (« Strong vs multiple units »…),
+    -- dans l'ordre du jeu : « positive|texte » ou « negative|texte », séparés par « ¦ »
+    select j.ability as ability_key,
+           string_agg(e.effect_state || '|' || n.txt, ' ¦ ' order by e.sort_order, n.txt) as pros_cons
+    from {{ ref('stg_dump__unit_abilities_to_additional_ui_effects_juncs') }} j
+    join {{ ref('stg_dump__unit_abilities_additional_ui_effects') }} e on e.key = j.effect
+    join clean n on n.loc_key = 'unit_abilities_additional_ui_effects_localised_text_' || j.effect
+    where j.ability in (select akey from src) and nullif(n.txt, '') is not null
+    group by j.ability
+),
+
+targets as (
+    -- unités touchées, comme la ligne « Affected units » du jeu
+    select sa.ability_key,
+           nullif(concat_ws(', ',
+             case when sa.target_enemies then 'enemies' || case when sa.num_effected_enemy_units > 0 then ' (max: ' || sa.num_effected_enemy_units || ')' else '' end end,
+             case when sa.target_friends then 'allies' || case when sa.num_effected_friendly_units > 0 then ' (max: ' || sa.num_effected_friendly_units || ')' else '' end end,
+             case when sa.target_self or sa.affect_self then 'self' end), '')                as affects,
+           case when sa.effect_range > 0 then sa.effect_range end                        as area_radius
+    from {{ ref('stg_dump__unit_special_abilities') }} sa
+    where sa.ability_key in (select akey from src)
 )
 
 select
@@ -124,13 +165,21 @@ select
     coalesce(dm.dmg_magical, false)                                             as dmg_magical,
     coalesce(dm.dmg_flaming, false)                                             as dmg_flaming,
     ps.damage_per_tick,
+    ty.txt                                                         as ability_type,   -- « Wind », « Direct damage »…
+    dm.dmg_radius, dm.dmg_speed,                                                     -- rayon et vitesse d'un vortex / bombardement
+    tg.affects, tg.area_radius,                                                      -- unités touchées, rayon de la zone d'effet
+    pc.pros_cons,
     '{{ var("patch") }}'                                           as patch
-from keys k
-left join {{ ref('stg_dump__unit_special_abilities') }} sa on sa.ability_key = k.key
+from src k
+left join {{ ref('stg_dump__unit_special_abilities') }} sa on sa.ability_key = k.akey
+left join {{ ref('stg_dump__unit_abilities') }} ua on ua.ability_key = k.akey
+left join clean ty on ty.loc_key = 'unit_ability_types_onscreen_name_' || ua.type
+left join ui_pros_cons pc on pc.ability_key = k.akey
+left join targets tg on tg.ability_key = k.akey
 left join clean nm      on nm.loc_key = 'unit_abilities_onscreen_name_' || k.key
 left join clean d       on d.loc_key  = 'unit_abilities_tooltip_text_' || k.key
 left join clean nm_item on nm_item.loc_key = 'ancillaries_onscreen_name_' || k.key
 left join clean d_item  on d_item.loc_key  = 'ancillaries_colour_text_' || k.key
-left join effects ef on ef.ability_key = k.key
-left join phase_summary ps on ps.ability_key = k.key
-left join damage dm on dm.ability_key = k.key
+left join effects ef on ef.ability_key = k.akey
+left join phase_summary ps on ps.ability_key = k.akey
+left join damage dm on dm.ability_key = k.akey
