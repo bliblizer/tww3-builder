@@ -464,7 +464,7 @@ def st_row(u):
     r[5] = 1 if r[5] is not None else 0            # « a du tir »
     return [int(v) if isinstance(v, bool) else v for v in r]
 write_page(ARMIES_TEMPLATE, ARMIES_OUT, {
-    'patch': PATCH, 'budget': D['budget'], 'maxUnits': D['maxUnits'], 'xp': D['xp'], 'spellStep': 0.047,
+    'patch': PATCH, 'budget': D['budget'], 'maxUnits': D['maxUnits'], 'xp': D['xp'], 'spellStep': D.get('spellStep', 0.047),
     'races': [dict(rr, faction=by_key[rr['key']].get('faction')) for rr in race_list],
     'roster': {rk: [{'id': c['id'], 'n': c['n'], 'img': c.get('img'), 't': c['t'], 'opts': [{k: o.get(k) for k in OPT_KEYS if o.get(k) not in (None, False, [], '')} for o in c['opts']]}
                     for c in cards] for rk, cards in D['roster'].items()},

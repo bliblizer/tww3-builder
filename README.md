@@ -194,7 +194,7 @@ Limites de la V0 :
 - **À droite** : les **statistiques de la composition**. Ce panneau reste visible quand on fait défiler la page. On y trouve :
   - **l'en-tête** : unités / 20, total des modèles, fonds dépensés ;
   - **Funds by role** : une barre empilée de la part des fonds par rôle (lord, héros, infanterie, tir, artillerie, cavalerie et chars, monstres, bêtes de guerre), avec unités, modèles et or au survol ;
-  - **Damage profile** : puissance de mêlée (Σ Weapon Strength × modèles) et puissance de tir (Σ Missile Strength × modèles), totales et pour 1 000 pièces d'or, répartition mêlée / tir, et part perforante, magique et enflammée de chacune. Une info-bulle ⓘ explique chaque calcul et ses limites (la mêlée est un coup, le tir un débit sur 10 s) ;
+  - **Damage profile** : puissance de mêlée (Σ Weapon Strength × modèles) et puissance de tir (Σ Missile Strength × modèles), totales et pour 1 000 pièces d'or, répartition mêlée / tir, part perforante de chacune ; **attaques magiques** et **attaques enflammées** : part des fonds des unités qui en ont, en mêlée ou au tir (une seule valeur chacune). Une info-bulle ⓘ explique chaque calcul et ses limites (la mêlée est un coup, le tir un débit sur 10 s) ;
   - **Answers to threats** : une jauge par besoin, en part des fonds — anti-large (`is_anti_large`), anti-armure (`is_armour_piercing`), anti-volants (unités de tir et volants), magie (attaques magiques, domaine de magie ou sort choisi). Un repère marque un minimum habituel (15 %, 20 %, 15 %, 10 %, constante `THREAT_ANSWERS`) : vert au-dessus, or en dessous, rouge et alerte à zéro ;
   - **Speed** : vitesse moyenne pondérée par le coût, part des volants, une **bande de vitesse** (une ligne par rôle, un point par vitesse avec le nombre d'unités, repères lent à 30, rapide à 80 et moyenne de l'armée ; au survol, la vitesse et les unités) et les unités rapides (≥ 80) et lentes (≤ 30) ;
   - **Health** : vie totale et vie pour 1 000 pièces d'or.
@@ -552,6 +552,20 @@ Affichés en fin de build et écrits dans `exports/meta_checks.csv` (niveau, fic
 2. Dans GitHub Desktop, onglet **Changes** : relis les fichiers modifiés.
 3. Écris un résumé en bas à gauche, par exemple « Roster : ajout des images », puis clique sur **Commit to main**.
 4. Clique sur **Push origin**. Le code est sauvegardé sur GitHub, et le site en ligne se met à jour en une à deux minutes.
+
+## Construire tout le site en une commande
+
+```
+python scripts/build_all.py              # dbt, puis build_app.py, puis build_meta.py, puis les tests du builder
+python scripts/build_all.py --no-dbt     # données déjà construites
+python scripts/build_all.py --no-tests   # sans les tests (Playwright non installé)
+```
+
+L'ordre compte : `build_meta.py` lit le `docs/index.html` produit par `build_app.py`. dbt est lancé par `python -m dbt.cli.main` (Windows peut bloquer `dbt.exe`). Le script s'arrête à la première étape en erreur.
+
+**Tests de prix sur des armées relevées en jeu** : `tests/fixtures/screenshot_armies.csv` contient 10 armées reconstruites à partir de captures de l'écran de personnalisation du jeu, avec le coût affiché de chaque carte (rangs et personnalisation compris). `test_app.py` vérifie que le builder retrouve chaque coût. Une ligne dont la colonne `known_issue` est remplie est signalée « CONNU » sans faire échouer les tests (aujourd'hui : l'Exalted Great Unclean One, 2 950 dans le builder contre 2 850 en jeu).
+
+**Portraits des seigneurs légendaires** : facultatif, le dossier `assets/portraits_portholes/` (copie de `ui/portraits/portholes` du jeu) est aussi fouillé quand une carte ou un portrait manque dans `assets/portraits_units/`.
 
 ## Mettre à jour pour un nouveau patch
 

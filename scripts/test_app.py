@@ -1,6 +1,7 @@
 """Test (facultatif) du builder : il doit rendre exactement les mêmes verdicts que la spécification SQL
 (models/validation/army_validation.sql) sur les armées de test (seeds/tests/), et les mêmes prix que
 models/validation/unit_price_checks.sql sur les prix relevés en jeu (seeds/tests/test_unit_prices.csv, ±1),
+les coûts carte par carte d'armées relevées sur des captures du jeu (tests/fixtures/screenshot_armies.csv),
 et l'aller-retour des fichiers du jeu : import puis export de chaque tests/fixtures/*.army_setup doit redonner le même
 contenu (faction, unités, général, rang, éléments), sauf les unités non jouables en PvP, ignorées à l'import.
 
@@ -68,6 +69,22 @@ async def main():
             print(('OK ' if good else 'ÉCART'), 'aller-retour', os.path.basename(f))
         print(f'{trip_ok}/{trip_n} fichiers .army_setup identiques après import puis export')
         ok = ok if trip_ok == trip_n else -1
+
+        # armées relevées sur des captures du jeu : coût de chaque carte (rang et personnalisation compris)
+        from urllib.parse import urlencode
+        shot_ok = shot_n = 0
+        for r in csv.DictReader(open(os.path.join(ROOT, 'tests', 'fixtures', 'screenshot_armies.csv'), encoding='utf-8')):
+            await pg.goto('about:blank')   # sinon un simple changement d'ancre ne recharge pas la page
+            await pg.goto('file:///' + os.path.join(ROOT, 'docs', 'index.html').replace(os.sep, '/') + '#' + urlencode({'v': '1', 'r': r['race_key'], 'a': r['army_code']}))
+            await pg.wait_for_timeout(300)
+            got = await pg.evaluate('state.army.map(u => unitCost(u))')
+            want = [int(x) for x in r['expected_costs'].split('|')]
+            diff = [(i, g, w) for i, (g, w) in enumerate(zip(got, want)) if g != w] + ([('nb', len(got), len(want))] if len(got) != len(want) else [])
+            if diff and r['known_issue']: print('CONNU', r['army'], '|', r['known_issue'], '|', diff); continue
+            shot_n += 1; shot_ok += not diff
+            print(('OK ' if not diff else 'ÉCART'), 'capture', r['army'], '|' if diff else '', diff or '')
+        print(f'{shot_ok}/{shot_n} armées relevées en jeu : coûts identiques carte par carte')
+        ok = ok if shot_ok == shot_n else -1
         await b.close()
         return ok == len(armies) and not errs
 sys.exit(0 if asyncio.run(main()) else 1)

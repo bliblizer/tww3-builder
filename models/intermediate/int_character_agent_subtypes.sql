@@ -17,6 +17,11 @@ direct_links as (
     select unit_key, agent_subtype_key from {{ ref('stg_dump__agent_subtypes') }} where unit_key is not null
     union
     select unit_key, agent_subtype_key from {{ ref('stg_dump__agent_subtype_subculture_overrides') }} where unit_key is not null
+    union
+    -- personnages de bataille (custom battle) : l'unité et son type de personnage, utile pour les versions
+    -- multijoueur des seigneurs légendaires (Nagash, Mannfred, Arkhan, Boris Todbringer, Kairos…)
+    select unit_type, agent_subtype from {{ ref('stg_dump__battle_set_piece_armies_characters') }}
+    where unit_type is not null and nullif(agent_subtype, '') is not null
 ),
 
 labels as (

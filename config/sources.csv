@@ -52,22 +52,22 @@ db/effect_bonus_value_unit_ability_junctions_tables/data__.tsv,personnalisation,
 db/unit_special_abilities_tables/data__.tsv,personnalisation,Détail des capacités (mana_cost > 0 = sort),candidat
 db/ancillary_uniqueness_groupings_tables/data__.tsv,personnalisation,Groupes de rareté (common / uncommon / rare / unique),candidat
 text/db/units_custom_battle_type_categories__.loc.tsv,textes,Noms des catégories de variantes (Bloodlines…),confirmé
-db/land_units_tables/data__.tsv,unites,Land units : entité, monture, moteur (pour le vol et les statistiques),confirmé
+db/land_units_tables/data__.tsv,unites,"Land units : entité, monture, moteur (pour le vol et les statistiques)",confirmé
 db/battle_entities_tables/data__.tsv,unites,Entités de combat : vitesses dont fly_speed (vol),confirmé
 db/mounts_tables/data__.tsv,unites,Montures -> entité de combat,confirmé
 db/battle_set_piece_armies_characters_items_tables/data__.tsv,personnalisation,Objets proposés à chaque personnage en bataille personnalisée (clé d unité),confirmé
 db/unit_armour_types_tables/data__.tsv,statistiques,Type d armure -> valeur d armure,confirmé
 db/unit_shield_types_tables/data__.tsv,statistiques,Bouclier -> chance de bloquer les projectiles,confirmé
-db/melee_weapons_tables/data__.tsv,statistiques,Armes de mêlée (dégâts, perforants, bonus),confirmé
+db/melee_weapons_tables/data__.tsv,statistiques,"Armes de mêlée (dégâts, perforants, bonus)",confirmé
 db/missile_weapons_tables/data__.tsv,statistiques,Armes de tir -> projectile,confirmé
-db/projectiles_tables/data__.tsv,statistiques,Projectiles (dégâts, portée, rechargement),confirmé
+db/projectiles_tables/data__.tsv,statistiques,"Projectiles (dégâts, portée, rechargement)",confirmé
 db/projectiles_explosions_tables/data__.tsv,statistiques,Explosions des projectiles,confirmé
 db/unit_attributes_tables/data__.tsv,statistiques,Attributs d unités,confirmé
 db/unit_attributes_to_groups_junctions_tables/data__.tsv,statistiques,Attributs de chaque groupe d attributs (land_units.attribute_group),confirmé
 text/db/unit_attributes__.loc.tsv,textes,Noms des attributs d unités,confirmé
 text/db/ui_text_replacements__.loc.tsv,textes,Textes de remplacement référencés par les renvois tr (ex. Vanguard Deployment),confirmé
 db/special_ability_to_special_ability_phase_junctions_tables/data__.tsv,capacites,Capacité -> phases d effet,confirmé
-db/special_ability_phases_tables/data__.tsv,capacites,Phases d effet des capacités (durée, soins, dégâts…),confirmé
+db/special_ability_phases_tables/data__.tsv,capacites,"Phases d effet des capacités (durée, soins, dégâts…)",confirmé
 db/special_ability_phase_stat_effects_tables/data__.tsv,capacites,Effets chiffrés des phases sur les statistiques,confirmé
 db/special_ability_phase_attribute_effects_tables/data__.tsv,capacites,Attributs donnés par les phases,confirmé
 db/special_ability_phases_to_additional_ui_effects_junctions_tables/data__.tsv,capacites,Lignes d effet affichées dans l info-bulle du jeu,confirmé

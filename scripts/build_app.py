@@ -142,6 +142,11 @@ def is_campaign_only_portrait(path):
 
 card_found = scan(ASSETS)
 portrait_found = scan(PORTRAIT_ASSETS, is_campaign_only_portrait)
+# facultatif : ui/portraits/portholes du jeu -> assets/portraits_portholes/ ; les portraits des seigneurs légendaires qui
+# manquent dans portraits_units (Archaon, Malekith…) y sont référencés par la table des personnages de bataille
+PORTHOLE_ASSETS = os.path.join(ROOT, 'assets', 'portraits_portholes')
+for k, v in (scan(PORTHOLE_ASSETS) if os.path.isdir(PORTHOLE_ASSETS) else {}).items():
+    portrait_found.setdefault(k, v)
 
 # Choix de l'image d'une carte. Dans le jeu, la carte d'un personnage est le plus souvent construite à partir de son
 # portrait (ui/portraits/units) : le nom de carte donné par la table des variantes n'existe pas dans ui/units/icons.
@@ -565,7 +570,7 @@ data = {'patch': patch, 'budget': budget, 'maxUnits': max_units, 'tabs': tabs, '
         'tags': tags, 'xp': xp, 'typeCats': type_cats, 'skin': skin,
         'statCols': STAT_COLS, 'stats': stats, 'statScale': stat_scale, 'traits': traits,
         'details': details, 'factionRace': faction_race, 'exportInnate': export_innate, 'statIcons': stat_icons,
-        'raceProfiles': race_profiles, 'markIcons': mark_icons, 'unitTiers': unit_tiers, 'melee': melee_extra, 'templates': templates, 'archetypes': archetypes,
+        'raceProfiles': race_profiles, 'spellStep': SPELL_STEP, 'markIcons': mark_icons, 'unitTiers': unit_tiers, 'melee': melee_extra, 'templates': templates, 'archetypes': archetypes,
         'factionCodes': {c: r for c, r in code_race.items() if r}}
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/')
 

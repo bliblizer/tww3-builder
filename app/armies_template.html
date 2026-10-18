@@ -134,6 +134,7 @@ h1{margin:0;font:700 34px Cinzel,Georgia,serif;color:#f4ead6}
 .topbar { position: sticky; top: 0; z-index: 45; }
 @media (max-width: 760px) { .topbar { position: static; } }
 .topbar{background:linear-gradient(90deg,#4a1d17,#2a1e1a 60%);box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.note.due{border-color:var(--gold);background:rgba(226,182,90,.12)}
 </style></head>
 <body>
 <header class="topbar"><a class="brand" href="index.html">TWW3 Army Builder</a><span class="pill">Game data <b id="patchTxt"></b></span><nav class="site-nav" aria-label="Site"><a href="index.html">Army Builder</a><a href="armies.html" aria-current="page">My Armies</a><a href="meta.html">Faction Guide</a><a href="magic.html">Magic</a><a href="overview.html">Meta Overview</a></nav></header>
@@ -146,7 +147,7 @@ h1{margin:0;font:700 34px Cinzel,Georgia,serif;color:#f4ead6}
    <button class="b" id="backupBtn">⛁ <span class="lbl">Backup</span></button>
   </div>
  </div>
- <p class="note">💾 <span>Your armies live <b>in this browser</b>. Use <b>Backup</b> to save them all to a file, and <b>Import</b> to bring them to another computer or browser.</span></p>
+ <p class="note" id="backupNote">💾 <span>Your armies live <b>in this browser</b>. Use <b>Backup</b> to save them all to a file, and <b>Import</b> to bring them to another computer or browser.</span><span id="lastBackup"></span></p>
  <div class="layout">
   <aside class="side" aria-label="Filters">
    <input class="search" id="q" type="search" placeholder="Search name, unit, notes, tags…" aria-label="Search">
@@ -184,7 +185,15 @@ $('patchTxt').textContent = DATA.patch.replace('patch_', 'patch ');
 
 /* ---------- Stockage (même clé que le bouton Save du builder) ----------
    armée : { id, name, r, a, m, cost, units, saved, updated, patch, fav, folder, tags[], source } */
-const KEY = 'tww3-builder:armies', FKEY = 'tww3-builder:folders';
+const KEY = 'tww3-builder:armies', FKEY = 'tww3-builder:folders', BKEY = 'tww3-builder:last-backup';
+/* rappel de sauvegarde : le navigateur peut effacer ses données ; au-delà de 30 jours (ou jamais), le rappel passe en évidence */
+function renderBackupNote() {
+  let last = null; try { last = localStorage.getItem(BKEY); } catch {}
+  const days = last ? Math.floor((Date.now() - new Date(last)) / 864e5) : null, el = $('lastBackup');
+  if (!armies.length) { el.textContent = ''; $('backupNote').classList.remove('due'); return; }
+  el.innerHTML = last ? ` Last backup: <b>${days <= 0 ? 'today' : days === 1 ? 'yesterday' : days + ' days ago'}</b>.` : ' <b>No backup yet.</b>';
+  $('backupNote').classList.toggle('due', !last || days > 30);
+}
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || d); } catch { return JSON.parse(d); } };
 let armies = load(KEY, '[]'), folders = load(FKEY, '[]');
 function persist() {
@@ -318,6 +327,7 @@ function render() {
   } else $('host').innerHTML = `<div class="${view === 'list' ? 'list' : 'grid'}">${list.map(card).join('')}</div>`;
   [...sel].forEach(id => { if (!armies.some(e => e.id === id)) sel.delete(id); });
   $('bulk').classList.toggle('on', sel.size > 0); $('selN').textContent = `${sel.size} selected`; $('cmpBtn').disabled = sel.size !== 2;
+  renderBackupNote();
 }
 function toast(t, warn, undo) {
   const el = $('toast'); el.innerHTML = (warn ? '⚠ ' : '✓ ') + esc(t) + (undo ? '<button type="button">Undo</button>' : ''); el.hidden = false;
@@ -497,7 +507,8 @@ function backup(list = armies, name = 'my-armies') {
   const data = { app: 'tww3-builder', version: 1, patch: DATA.patch, exported: new Date().toISOString(), folders, armies: list };
   download(new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' }), `${name}-${new Date().toISOString().slice(0, 10)}.json`);
 }
-$('backupBtn').onclick = () => { if (!armies.length) return toast('Nothing to back up yet', true); backup(); toast(`Backup downloaded (${armies.length} armies)`); };
+$('backupBtn').onclick = () => { if (!armies.length) return toast('Nothing to back up yet', true); backup();
+  try { localStorage.setItem(BKEY, new Date().toISOString()); } catch {} toast(`Backup downloaded (${armies.length} armies)`); render(); };
 
 /* ---------- Actions groupées ---------- */
 $('cmpBtn').onclick = compare;

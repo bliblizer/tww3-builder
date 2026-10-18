@@ -864,7 +864,7 @@ const dimTitle = (card, k) => k === 'mount' ? 'Mounts'
    - prix de base de l'option (monture comprise) ; rang r : arrondi(prix x multiplicateur_r) + coût fixe_r (hypothèse)
    - capacités et objets cochés : grille de rareté (common 100, uncommon 150, rare 200, legendary 200)
    - sorts cochés : arrondi inférieur de somme(prix de rareté du k-ième sort x (1 - 0,047 k)), du plus cher au moins cher */
-const SPELL_STEP = 0.047;
+const SPELL_STEP = DATA.spellStep ?? 0.047;   // remise dégressive des sorts : valeur fournie par build_app.py
 const upgradesOf = raceKey => (DATA.up[raceKey] || {});
 const defaultSel = () => new Set();   // par défaut, aucun sort / capacité / objet n'est coché
 const rankedBase = (c, rank) => Math.round(c * DATA.xp[rank][0]) + DATA.xp[rank][1];
@@ -1762,8 +1762,9 @@ function renderComposition() {
   const misShare = f => pc(sum(army.filter(f), u => (statOf(u.opt.u, 'missile_strength') || 0) * models(u)), mis);
   const melAP = pc(sum(army, u => (statOf(u.opt.u, 'weapon_ap_damage') || 0) * models(u)), mel);
   const misAP = misShare(u => statOf(u.opt.u, 'missile_ap'));
-  const mag = [melShare(u => statOf(u.opt.u, 'melee_magical')), misShare(u => statOf(u.opt.u, 'missile_magical'))];
-  const fire = [melShare(u => statOf(u.opt.u, 'melee_flaming')), misShare(u => statOf(u.opt.u, 'missile_flaming'))];
+  // attaques magiques / enflammées : part des fonds des unités qui en ont, en mêlée OU au tir (une seule valeur)
+  const mag = fundsOf(u => statOf(u.opt.u, 'melee_magical') || statOf(u.opt.u, 'missile_magical'));
+  const fire = fundsOf(u => statOf(u.opt.u, 'melee_flaming') || statOf(u.opt.u, 'missile_flaming'));
   const mbar = (v, col) => `<span class="cp-bar"><i style="width:${Math.min(100, v).toFixed(1)}%;background:${col}"></i></span>`;
   // réponses aux menaces
   const needs = THREAT_ANSWERS.map(([ic, nm, f, why, ref]) => ({ ic, nm, why, ref, v: fundsOf(f) }));
@@ -1805,10 +1806,10 @@ function renderComposition() {
     <div class="cp-mini">
       <span>Melee armour-piercing</span>${mbar(melAP, 'var(--gold)')}<b>${Math.round(melAP)}%</b>
       <span>Missile armour-piercing</span>${mbar(misAP, 'var(--gold)')}<b>${mis ? Math.round(misAP) + '%' : '–'}</b>
-      <span>Magical (melee / missile)</span>${mbar(Math.max(...mag), '#a07ce0')}<b>${Math.round(mag[0])}% / ${mis ? Math.round(mag[1]) + '%' : '–'}</b>
-      <span>Flaming (melee / missile)</span>${mbar(Math.max(...fire), '#e0703a')}<b>${Math.round(fire[0])}% / ${mis ? Math.round(fire[1]) + '%' : '–'}</b>
+      <span title="Share of the funds spent on units with magical attacks (melee or missile)">Magical attacks</span>${mbar(mag, '#a07ce0')}<b>${Math.round(mag)}%</b>
+      <span title="Share of the funds spent on units with flaming attacks (melee or missile)">Flaming attacks</span>${mbar(fire, '#e0703a')}<b>${Math.round(fire)}%</b>
     </div>
-    <p class="muted cp-note">Shares are shares of each power.</p>
+    <p class="muted cp-note">Armour-piercing: share of each power. Magical and flaming: share of the funds spent on units with such attacks.</p>
     <h4 class="block-title serif">Answers to threats</h4>
     ${needHtml}
     <p class="muted cp-note">Share of the funds. The white mark is a usual minimum: green above, gold below, red at zero.</p>
@@ -2601,7 +2602,7 @@ function init() {
   $('clearArmy').addEventListener('click', () => { if (!state.army.length) return; commit(); state.army = []; state.focus = null; renderAll(); });
   setupTools();
   $('footer').textContent = `Data: Total War: WARHAMMER III game files (${DATA.patch.replace('patch_', 'patch ')}), ` +
-    `budget ${fmt(DATA.budget)}, up to ${DATA.maxUnits} units. Experience rank costs are estimates. ` +
+    `budget ${fmt(DATA.budget)}, up to ${DATA.maxUnits} units. Experience rank costs checked in game for ranks 1 and 2 (higher ranks: same formula, not yet checked). ` +
     `Unofficial fan-made tool, not affiliated with Creative Assembly or Games Workshop.`;
   setupDragAndDrop();
   setupTooltips();

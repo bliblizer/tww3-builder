@@ -16,6 +16,13 @@ with caps as (
 
 cards as (
     select race_key, unit_key, card_id from {{ ref('int_unit_cards') }}
+),
+
+characters as (
+    -- character_name est un nom de personnage de bataille (ex. wh3_dlc29_cha_nagash) : il renvoie à son unité
+    select character_name, min(unit_type) as unit_key
+    from {{ ref('stg_dump__battle_set_piece_armies_characters') }}
+    where unit_type is not null group by character_name
 )
 
 select
@@ -26,4 +33,5 @@ select
     c.cap,
     '{{ var("patch") }}'    as patch
 from caps c
-left join cards k on k.race_key = c.subculture_key and k.unit_key = c.character_name
+left join characters ch on ch.character_name = c.character_name
+left join cards k on k.race_key = c.subculture_key and k.unit_key = coalesce(ch.unit_key, c.character_name)
