@@ -1,0 +1,61 @@
+﻿race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_master_necromancer_0,Master Necromancer,characters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_heinrich_kemmler,Heinrich Kemmler,characters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_cha_helman_ghorst_0,Helman Ghorst,characters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_vampire_lord_0,Vampire Lord,characters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_pro02_vmp_cha_isabella_von_carstein_0,Isabella von Carstein,characters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_mannfred_von_carstein_mp,Mannfred von Carstein,characters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_neferata_mp,Neferata,characters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_cha_strigoi_ghoul_king_0,Strigoi Ghoul King,characters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc05_vmp_cha_red_duke_0,The Red Duke,characters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_cha_vlad_von_carstein_0,Vlad von Carstein,characters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_necromancer_0,Necromancer,characters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_dieter_helsnicht,Dieter Helsnicht,characters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_wight_king_0,Wight King,characters,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_lahmian_vampire,Lahmian Vampire,characters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc05_vmp_cha_vampire_shadows_0,Vampire,characters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cha_banshee,Banshee,characters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_krell,Krell,characters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cha_walach_harkon,Walach Harkon,characters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh2_dlc11_cst_cha_mourngul_haunter,Mourngul Haunter,characters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_zombie,Zombies,infantry,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_inf_tithe_0,The Tithe (Zombies),infantry,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_skeleton_warriors_0,Skeleton Warriors,infantry,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_skeleton_warriors_1,Skeleton Spearmen,infantry,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_inf_spirit_host,Spirit Host,infantry,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_inf_konigstein_stalkers_0,The Konigstein Stalkers (Skeleton Warriors),infantry,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_crypt_ghouls,Crypt Ghouls,infantry,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_inf_feasters_in_the_dusk_0,The Feasters in the Dusk (Crypt Ghouls),infantry,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_cairn_wraiths,Cairn Wraiths,infantry,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_grave_guard_0,Grave Guard,infantry,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_main_vmp_inf_grave_guard_2,Grave Guard (Halberds),infantry,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_inf_grave_guard_1,Grave Guard (Great Weapons),infantry,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_inf_sternsmen_0,The Sternsmen (Grave Guard),infantry,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_inf_lahmian_handmaidens_death,Lahmian Handmaidens (Death),infantry,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_inf_lahmian_handmaidens_shadow,Lahmian Handmaidens (Shadows),infantry,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_veh_corpse_cart_0,Corpse Cart,monsters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_fell_bats,Fell Bats,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_dire_wolves,Dire Wolves,monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_veh_corpse_cart_1,Corpse Cart (Balefire),monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_veh_corpse_cart_2,Corpse Cart (Unholy Lodestone),monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_mon_direpack_0,The Direpack (Dire Wolves),monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_crypt_horrors,Crypt Horrors,monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cav_black_knights_0,Black Knights,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh2_dlc11_cst_mon_mournguls_0,Mournguls,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cav_black_knights_3,Black Knights (Lances & Barding),monsters,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_vargheists,Vargheists,monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_veh_black_coach,Black Coach,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh2_dlc11_cst_mon_mournguls_ror_0,Night Terrors (Mournguls),monsters,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_mon_devils_swartzhafen_0,The Devils of Swartzhafen (Vargheists),monsters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_cav_vereks_reavers_0,Verek's Reavers (Black Knights – Lances & Barding),monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_veh_coven_throne,Coven Throne,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_cav_drakenhof_templars,Drakenhof Templars,monsters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_cav_hexwraiths,Hexwraiths,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_veh_mortis_engine_0,Mortis Engine,monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_varghulf,Varghulf,monsters,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_main_vmp_blood_knights_sword_shield,Blood Knights,monsters,weak,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc02_vmp_cav_blood_knights_0,Blood Knights (Lances),monsters,meta,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_cav_chillgheists_0,The Chillgheists (Hexwraiths),monsters,viable,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_dlc04_vmp_veh_claw_of_nagash_0,The Claw of Nagash (Mortis Engine),monsters,strong,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh_main_vmp_mon_terrorgheist,Terrorgheist,monsters,situational,,blibli,noob,patch_9.0
+wh_main_sc_vmp_vampire_counts,wh3_dlc29_vmp_mon_zombie_dragon,Zombie Dragon,monsters,viable,,blibli,noob,patch_9.0

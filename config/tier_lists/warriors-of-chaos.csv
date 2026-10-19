@@ -1,0 +1,98 @@
+﻿race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh_main_sc_chs_chaos,wh_dlc01_chs_cha_chaos_sorcerer_lord_death_0,Chaos Sorcerer Lord,characters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cha_chaos_lord_0,Chaos Lord,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_tze_cha_vilitch,Vilitch the Curseling,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_cha_prince_sigvald_the_magnificent,Prince Sigvald the Magnificent,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_nur_cha_festus,Festus the Leechlord,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_kho_cha_valkia,Valkia the Bloody,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cha_archaon_the_everchosen_0,Archaon the Everchosen,characters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_sla_cha_azazel,Azazel,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_cha_daemon_prince,Daemon Prince,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cha_lord_of_change_0,Sarthorael the Everwatcher,characters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_cha_kholek,Kholek Suneater,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_dae_cha_be_lakor_0,Be'lakor,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_cha_glottkin,The Glottkin,characters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cha_chaos_sorcerer_death_0,Chaos Sorcerer,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cha_exalted_hero_0,Exalted Hero,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_sla_cha_styrkaar_the_sortsvinaer,Styrkaar of the Sortsvinaer,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_cha_bloab,Bloab Rotspawned,characters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_cha_gutrot_spume,Gutrot Spume,characters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_cha_morbidex,Morbidex Twiceborn,characters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_cha_orghotts,Orghotts Daemonspew,characters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc26_kho_cha_scyla_anfingrimm,Scyla Anfingrimm,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc24_tze_cha_aekold_helbrass,Aekold Helbrass,characters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_pro11_chs_cha_harald_hammerstorm,Harald Hammerstorm,characters,situational,Must have vs Vampire Counts,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chaos_marauders_0,Marauders,infantry,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chaos_marauders_1,Marauders (Great Weapons),infantry,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chaos_marauders_mtze_spears,Marauders of Tzeentch (Spears),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chaos_marauders_mkho_dualweapons,Marauders of Khorne (Dual Weapons),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chaos_marauders_msla_hellscourges,Marauders of Slaanesh (Hellscourges),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_flayerkin,Flayerkin,infantry,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chaos_warriors_0,Chaos Warriors,infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_inf_forsaken_0,Forsaken,infantry,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_inf_chaos_warriors_2,Chaos Warriors (Great Weapons),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chaos_warriors_1,Chaos Warriors (Halberds),infantry,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_kho_inf_chaos_warriors_2,Chaos Warriors of Khorne (Dual Weapons),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chaos_warriors_msla_hellscourges,Chaos Warriors of Slaanesh (Hellscourges),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_inf_chaos_warriors_ror_0,Mirror Guard (Chaos Warriors),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_inf_forsaken_ror_0,The Daemonspew (Forsaken),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc06_chs_inf_aspiring_champions_0,Aspiring Champions,infantry,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chosen_0,Chosen,infantry,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_inf_chosen_1,Chosen (Great Weapons),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_inf_chosen_2,Chosen (Halberds),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chosen_mkho_dualweapons,Chosen of Khorne (Dual Weapons),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_chosen_msla_hellscourges,Chosen of Slaanesh (Hellscourges),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_putrid_blightkings_axe_shield,Putrid Blightkings,infantry,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_inf_aspiring_champions_mtze_ror,The Severed Claw (Aspiring Champions),infantry,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_putrid_blightkings_dual_axe,Putrid Blightkings (Dual Axes),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_putrid_blightkings_great_weapons,Putrid Blightkings (Great Weapons),infantry,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_chosen_mnur_ror,Sons of the Last Plague (Chosen of Nurgle – Great Weapons),infantry,situational,Good in a blob cheese,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc26_chs_inf_chosen_mkho_ror,The Slaughtergard (Chosen of Khorne – Halberds),infantry,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_inf_putrid_blightkings_dual_axe_ror,The Repugnauts of Brass Keep (Putrid Blightkings – Dual Axes),infantry,situational,Good in a blob cheese,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cav_marauder_horsemen_0,Marauder Horsemen,range,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cav_marauder_horsemen_1,Marauder Horsemen (Throwing Axes),range,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc06_chs_cav_marauder_horsemasters_0,Marauder Horsemasters,range,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_art_hellcannon,Hellcannon,range,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_art_hellcannon_ror_0,The Soul of Damnation (Hellcannon),range,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_mon_chaos_warhounds_0,Chaos Warhounds,monsters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_mon_chaos_warhounds_1,Chaos Warhounds (Poison),monsters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_sla_cav_hellstriders_0,Hellstriders of Slaanesh,monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_sla_cav_hellstriders_1,Hellstriders of Slaanesh (Hellscourges),monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cav_chaos_chariot,Chaos Chariots,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_mon_trolls,Chaos Trolls,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc06_chs_feral_manticore,Chaos Feral Manticore,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_mon_trolls_1,Chaos Trolls (Armoured),monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_mon_chaos_spawn,Chaos Spawn,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_cav_chaos_chariot_msla_ror,The Sibilant Slaughtercade (Chaos Chariots),monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc25_nur_mon_bile_trolls,Bile Trolls,monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc24_tze_mon_cockatrice,Cockatrice,monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc26_kho_mon_bloodbeast_of_khorne,Bloodbeasts of Khorne,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_nor_mon_dread_maw_underground,Dread Maw,monsters,viable,"Good vs immobile range (WE, HE...)",alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_cav_gorebeast_chariot,Gorebeast Chariots,monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_mon_warshrine,Chaos Warshrine,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_mon_chaos_spawn_ror_0,Wyrd Spawn (Chaos Spawn),monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cav_chaos_knights_0,Chaos Knights,monsters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_cav_chaos_knights_1,Chaos Knights (Lances),monsters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_mon_giant_spined_chaos_beast,Giant Spined Chaos Beast,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_main_chs_mon_giant,Chaos Giant,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_nor_mon_chimera,Chimera,monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_tze_cav_doom_knights_0,Doom Knights of Tzeentch,monsters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_cav_chaos_knights_ror_0,Swords of Chaos (Chaos Knights),monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_mon_dragon_ogre,Dragon Ogres,monsters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_mon_basilisk,Basilisk,monsters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_mon_giant_spined_chaos_beast_ror,Bane of Wittengast (Giant Spined Chaos Beast),monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_chs_mon_giant_mnur_ror,Bilious Thunderguff (Chaos Giant),monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_twa07_tze_cav_doom_knights_ror_0,Knights of Immolation (Doom Knights of Tzeentch),monsters,viable,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_main_kho_cav_skullcrushers_0,Skullcrushers of Khorne,monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_sla_mon_champions_of_slaanesh,Champions Of Slaanesh,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc25_nur_cav_rot_knights,Rot Knights,monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_pro04_chs_mon_dragon_ogre_ror_0,Summoners of Rage (Dragon Ogres),monsters,strong,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_woc_mon_chimera_ror,Bloodshriek Chimera (Chimera),monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc20_kho_cav_skullcrushers_mkho_ror,Knights of the Brazen Throne (Skullcrushers of Khorne),monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc27_sla_mon_champions_of_slaanesh_ror,Pleasure Guard (Champions of Slaanesh),monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc29_chs_mon_chaos_siege_giant,Chaos Siege Giant,monsters,situational,Very good only in the right matchup,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh_dlc01_chs_mon_dragon_ogre_shaggoth,Dragon Ogre Shaggoth,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc24_tze_mon_mutalith_vortex_beast,Mutalith Vortex Beast,monsters,situational,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc26_kho_mon_slaughterbrute,Slaughterbrute,monsters,weak,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc25_nur_cav_rot_knights_ror,The Rotting Riders (Rot Knights),monsters,meta,,alex,,patch_9.0
+wh_main_sc_chs_chaos,wh3_dlc24_tze_mon_mutalith_vortex_beast_ror,Aeson the Fallen (Mutalith Vortex Beast),monsters,viable,Very good vs blob,alex,,patch_9.0
