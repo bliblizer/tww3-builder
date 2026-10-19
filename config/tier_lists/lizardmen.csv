@@ -1,0 +1,67 @@
+﻿race_key,root_unit_key,unit_name,group,tier,note,contributor,experience,patch
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cha_skink_chief_red_crested_0,Red Crested Skink Chief,characters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_lord_mazdamundi_0,Lord Mazdamundi,characters,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_cha_slann_mage_priest_fire_0,Slann Mage-Priest,characters,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_saurus_old_blood_0,Saurus Oldblood,characters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cha_tiktaqto_1,Tiktaq'to,characters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_cha_gor_rok_0,Gor-Rok,characters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_kroq_gar_0,Kroq-Gar,characters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cha_tehenhauin_0,Tehenhauin,characters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_cha_oxyotl_0,Oxyotl,characters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_cha_kroxigor_ancient_0,Kroxigor Ancient,characters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_cha_nakai_0,Nakai the Wanderer,characters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_skink_priest_beasts_0,Skink Priest,characters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_skink_chief_0,Skink Chief,characters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cha_saurus_scar_veteran_0,Saurus Scar-Veteran,characters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_lzd_cha_kroak_0,Lord Kroak,characters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_cha_skink_oracle_troglodon_0,Skink Oracle,characters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_skink_cohort_0,Skink Cohort,infantry,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_inf_skink_red_crested_0,Red Crested Skinks,infantry,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_inf_chameleon_stalkers_0,Chameleon Stalkers,infantry,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_saurus_spearmen_0,Saurus Spears,infantry,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_saurus_warriors_0,Saurus Warriors,infantry,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_inf_skink_red_crested_ror_0,Cohort of Sotek (Red Crested Skinks),infantry,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_saurus_spearmen_1,Saurus Spears (Shields),infantry,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_saurus_warriors_1,Saurus Warriors (Shields),infantry,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_inf_saurus_warriors_ror_0,Legion of Chaqua (Saurus Spears),infantry,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_temple_guards,Temple Guard,infantry,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_inf_temple_guards_ror_0,Star Chamber Guardians (Temple Guard),infantry,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_skink_skirmishers_0,Skink Skirmishers,range,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_skink_cohort_1,Skink Cohort (Javelins),range,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_terradon_riders_0,Terradon Riders,range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_inf_chameleon_skinks_0,Chameleon Skinks,range,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_terradon_riders_1,Terradon Riders (Fireleech Bolas),range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_razordon_pack_0,Razordon Hunting Pack,range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cav_terradon_riders_ror_0,Pahaux Sentinels (Terradon Riders),range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_salamander_pack_0,Salamander Hunting Pack,range,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_ancient_salamander_0,Ancient Salamander,range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_razordon_pack_ror_0,Amaxon Barbs (Razordon Hunting Pack),range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_salamander_pack_ror_0,The Umbral Tide (Salamander Hunting Pack),range,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_bastiladon_2,Bastiladon (Solar Engine),range,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_stegadon_1,Stegadon,range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_mon_troglodon_0,Feral Troglodon,range,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_mon_troglodon_ror_0,The Pale Death (Feral Troglodon),range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_ancient_stegadon,Ancient Stegadon,range,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_ancient_stegadon_ror_0,The Thunderous One (Ancient Stegadon),range,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_cold_ones_feral_0,Feral Cold Ones,monsters,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_bastiladon_0,Feral Bastiladon,monsters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_cold_ones_1,Cold One Riders,monsters,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_stegadon_0,Feral Stegadon,monsters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_bastiladon_3,Bastiladon (Ark of Sotek),monsters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_bastiladon_1,Bastiladon (Revivification Crystal),monsters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_cold_one_spearmen_1,Cold One Spear-Riders,monsters,meta,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_kroxigors,Kroxigor,monsters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cav_ripperdactyl_riders_0,Ripperdactyl Riders,monsters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_sacred_kroxigors_0,Sacred Kroxigor,monsters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cav_cold_one_spearriders_ror_0,Pok-Hopak Cohort (Cold One Spear-Riders),monsters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_cav_ripperdactyl_riders_ror_0,Colossadon Hunters (Ripperdactyl Riders),monsters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_mon_carnosaur_0,Feral Carnosaur,monsters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_main_lzd_cav_horned_ones_0,Horned Ones,monsters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_mon_coatl_0,Coatl,monsters,viable,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_sacred_kroxigors_ror_0,Cohort of Huatl (Sacred Kroxigor),monsters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_mon_carnosaur_ror_0,Geltblöm's Terror (Feral Carnosaur),monsters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc17_lzd_mon_coatl_ror_0,Spirit of Tepok (Coatl),monsters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc12_lzd_mon_ancient_stegadon_1,Ancient Stegadon (Engine of the Gods),monsters,weak,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_dread_saurian_0,Feral Dread Saurian,monsters,strong,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_dread_saurian_1,Dread Saurian,monsters,situational,,IIorionII,,patch_9.0
+wh2_main_sc_lzd_lizardmen,wh2_dlc13_lzd_mon_dread_saurian_ror_0,The Shredder of Lustria (Dread Saurian),monsters,weak,,IIorionII,,patch_9.0
